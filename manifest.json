@@ -1,10 +1,10 @@
 {
-  "name": "Gym App",
+  "name": "Gym App Pro",
   "short_name": "Gym",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#111",
   "theme_color": "#111",
+  "background_color": "#111",
   "icons": [
     {
       "src": "icon.png",
