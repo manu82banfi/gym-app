@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Gym App</title>
 
 <link rel="manifest" href="manifest.json">
@@ -15,17 +16,34 @@
 
 <header>
   <h2>Gym App</h2>
-  <button onclick="nuovaScheda()">+ Nuova Scheda</button>
-  <button onclick="salvaScheda()">💾 Salva</button>
+
+  <button onclick="aggiungiEsercizio()">+ Esercizio</button>
+  <button onclick="nuovaScheda()">Nuova</button>
 </header>
 
 <main id="app"></main>
 
+<script src="firebase.js"></script>
 <script src="app.js"></script>
 
 <script>
+/* 🚀 SW PRO MODE */
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+  navigator.serviceWorker.register("sw.js").then(reg => {
+
+    // ascolta update automatico
+    reg.addEventListener("updatefound", () => {
+      const newSW = reg.installing;
+
+      newSW.addEventListener("statechange", () => {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          // forza aggiornamento immediato
+          window.location.reload();
+        }
+      });
+    });
+
+  });
 }
 </script>
 
