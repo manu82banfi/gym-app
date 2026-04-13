@@ -3,6 +3,9 @@ let scheda = {
   esercizi: []
 };
 
+// ======================
+// 🎨 RENDER
+// ======================
 function render() {
   const app = document.getElementById("app");
   app.innerHTML = "";
@@ -16,7 +19,7 @@ function render() {
         onchange="updateEsercizioNome(${i}, this.value)">
 
       <div class="serie">
-        ${ex.serie.map((s, j) => `
+        ${(ex.serie || []).map((s, j) => `
           <div>
             <input type="number" value="${s.reps}" 
               onchange="updateReps(${i}, ${j}, this.value)">
@@ -34,11 +37,17 @@ function render() {
   });
 }
 
+// ======================
+// ➕ NUOVA SCHEDA
+// ======================
 function nuovaScheda() {
   scheda = { nome: "Nuova Scheda", esercizi: [] };
   render();
 }
 
+// ======================
+// ➕ ESERCIZI
+// ======================
 function aggiungiEsercizio() {
   scheda.esercizi.push({
     nome: "Nuovo esercizio",
@@ -47,13 +56,21 @@ function aggiungiEsercizio() {
   render();
 }
 
+// ======================
+// ➕ SERIE
+// ======================
 function aggiungiSerie(i) {
+  if (!scheda.esercizi[i].serie) {
+    scheda.esercizi[i].serie = [];
+  }
+
   scheda.esercizi[i].serie.push({ reps: 10, kg: 20 });
   render();
 }
 
-// ===== FIX UPDATE =====
-
+// ======================
+// ✏️ UPDATE
+// ======================
 function updateEsercizioNome(i, value) {
   scheda.esercizi[i].nome = value;
 }
@@ -66,8 +83,9 @@ function updateKg(i, j, value) {
   scheda.esercizi[i].serie[j].kg = Number(value);
 }
 
-// ===== LOCAL SAVE =====
-
+// ======================
+// 💾 LOCAL SAVE
+// ======================
 function salvaScheda() {
   localStorage.setItem("scheda", JSON.stringify(scheda));
   alert("Salvata locale!");
@@ -75,15 +93,26 @@ function salvaScheda() {
 
 function caricaLocale() {
   const dati = localStorage.getItem("scheda");
-  if (dati) scheda = JSON.parse(dati);
+
+  if (dati) {
+    scheda = JSON.parse(dati);
+  }
+
   render();
 }
 
+// ======================
+// 🌍 GLOBAL SCOPE FIX
+// ======================
 window.nuovaScheda = nuovaScheda;
 window.aggiungiEsercizio = aggiungiEsercizio;
 window.aggiungiSerie = aggiungiSerie;
 window.salvaScheda = salvaScheda;
-window.caricaCloud = caricaCloud;
+window.updateEsercizioNome = updateEsercizioNome;
+window.updateReps = updateReps;
+window.updateKg = updateKg;
 
-// avvio
+// ======================
+// 🚀 START
+// ======================
 caricaLocale();
