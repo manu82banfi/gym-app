@@ -79,5 +79,11 @@ function caricaLocale() {
   render();
 }
 
+window.nuovaScheda = nuovaScheda;
+window.aggiungiEsercizio = aggiungiEsercizio;
+window.aggiungiSerie = aggiungiSerie;
+window.salvaScheda = salvaScheda;
+window.caricaCloud = caricaCloud;
+
 // avvio
 caricaLocale();
