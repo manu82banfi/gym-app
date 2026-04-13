@@ -16,11 +16,17 @@
 <header>
   <h2>Gym App</h2>
 
-  <button onclick="nuovaScheda()">+ Scheda</button>
-  <button onclick="apriListaSchede()">📋 Schede</button>
-  <button onclick="aggiungiEsercizio()">+ Esercizio</button>
-  <button onclick="salvaLocale()">💾 Salva</button>
-  <button onclick="salvaCloud()">☁️ Cloud</button>
+  <button onclick="nuovaScheda()">Nuova scheda</button>
+  <button onclick="apriSchede()">Schede</button>
+
+  <select id="tipoRiga" onchange="onSelectTipoRiga()">
+    <option value="exercise">Inserisci esercizio</option>
+    <option value="spacer">Spazio</option>
+    <option value="marker">Marker muscolo</option>
+  </select>
+
+  <button onclick="aggiungiRiga()">Aggiungi</button>
+  <button onclick="salvaCloud()">Salva in Cloud</button>
 </header>
 
 <main id="app"></main>

@@ -1,6 +1,6 @@
 body {
-  font-family: Arial;
   margin: 0;
+  font-family: Arial;
   background: #111;
   color: white;
 }
@@ -8,33 +8,41 @@ body {
 header {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
   padding: 10px;
   background: #222;
-  position: sticky;
-  top: 0;
-  flex-wrap: wrap;
 }
 
-button {
-  padding: 8px;
-}
-
-#app {
-  padding: 10px;
+button, select {
+  padding: 6px;
 }
 
 .card {
   background: #1e1e1e;
   padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
+  margin: 10px;
+  border-radius: 8px;
 }
 
-.card input {
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
+  gap: 5px;
+}
+
+.grid input {
   width: 100%;
-  margin: 3px 0;
-  padding: 5px;
   background: #333;
   color: white;
   border: none;
+}
+
+.header {
+  font-weight: bold;
+}
+
+.marker {
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: bold;
 }

@@ -1,38 +1,29 @@
 let schede = [];
-let schedaAttivaId = null;
+let schedaAttiva = null;
+let tipoRigaSelezionata = "exercise";
 
 // ======================
-// INIT SICURO
+// INIT
 // ======================
 async function init() {
   const local = localStorage.getItem("schede");
-  if (local) {
-    schede = JSON.parse(local);
-  }
+  if (local) schede = JSON.parse(local);
 
   const cloud = await caricaCloud();
-  if (cloud && cloud.length > 0) {
-    schede = cloud;
-  }
+  if (cloud && cloud.length) schede = cloud;
 
-  // GARANTISCI ALMENO 1 SCHEDA
-  if (schede.length === 0) {
-    schede.push({
-      id: Date.now(),
-      nome: "Nuova Scheda",
-      esercizi: []
-    });
-  }
+  if (!schede.length) nuovaScheda();
+  else schedaAttiva = schede[0].id;
 
-  schedaAttivaId = schede[0].id;
   render();
+  autosyncLoop();
 }
 
 // ======================
 // GET SCHEDA
 // ======================
 function getScheda() {
-  return schede.find(s => s.id === schedaAttivaId);
+  return schede.find(s => s.id === schedaAttiva);
 }
 
 // ======================
@@ -40,38 +31,57 @@ function getScheda() {
 // ======================
 function render() {
   const app = document.getElementById("app");
-  const scheda = getScheda();
-
-  if (!scheda) return;
+  const s = getScheda();
+  if (!s) return;
 
   app.innerHTML = `
     <h3 contenteditable oninput="renameScheda(this.innerText)">
-      ${scheda.nome}
+      ${s.nome}
     </h3>
   `;
 
-  scheda.esercizi.forEach((ex, i) => {
+  s.righe.forEach((r, i) => {
     const div = document.createElement("div");
     div.className = "card";
 
-    div.innerHTML = `
-      <input value="${ex.nome}"
-        onchange="updateEsercizio(${i}, this.value)">
+    if (r.type === "header") {
+      div.innerHTML = `
+        <b>HEADER COLONNE</b>
+        <div class="grid header">
+          <div>ESERCIZIO</div>
+          <div>SERIE</div>
+          <div>REP-RANGE</div>
+          <div>KG</div>
+          <div>REC.</div>
+          <div>NOTE / PROG.</div>
+        </div>
+      `;
+    }
 
-      <div class="serie">
-        ${(ex.serie || []).map((s, j) => `
-          <div>
-            <input type="number" value="${s.reps}"
-              onchange="updateReps(${i}, ${j}, this.value)">
-            x
-            <input type="number" value="${s.kg}"
-              onchange="updateKg(${i}, ${j}, this.value)">
-          </div>
-        `).join("")}
-      </div>
+    if (r.type === "exercise") {
+      div.innerHTML = `
+        <div class="grid">
+          <input value="${r.nome}" onchange="updEx(${i},this.value)">
+          <input value="${r.serie}" onchange="upd(i,'serie',this.value)">
+          <input value="${r.repRange}" onchange="upd(i,'repRange',this.value)">
+          <input value="${r.kg}" onchange="upd(i,'kg',this.value)">
+          <input value="${r.rec}" onchange="upd(i,'rec',this.value)">
+          <input value="${r.note}" onchange="upd(i,'note',this.value)">
+        </div>
+      `;
+    }
 
-      <button onclick="aggiungiSerie(${i})">+ Serie</button>
-    `;
+    if (r.type === "spacer") {
+      div.innerHTML = `<div style="height:20px"></div>`;
+    }
+
+    if (r.type === "marker") {
+      div.innerHTML = `
+        <div class="marker" style="background:${r.color}">
+          ${r.label}
+        </div>
+      `;
+    }
 
     app.appendChild(div);
   });
@@ -84,129 +94,162 @@ function nuovaScheda() {
   const s = {
     id: Date.now(),
     nome: "Nuova Scheda",
-    esercizi: []
+    righe: [{ type: "header" }]
   };
 
   schede.push(s);
-  schedaAttivaId = s.id;
+  schedaAttiva = s.id;
   render();
 }
 
-function apriListaSchede() {
+// ======================
+// LISTA SCHEDE
+// ======================
+function apriSchede() {
   const app = document.getElementById("app");
 
   app.innerHTML = `
-    <h3>📋 Schede</h3>
+    <h3>Schede</h3>
     ${schede.map(s => `
       <div class="card">
-        <b>${s.nome}</b>
-        <br><br>
+        <b>${s.nome}</b><br><br>
 
-        <button onclick="apriScheda(${s.id})">Apri</button>
-        <button onclick="duplicaScheda(${s.id})">Copia</button>
-        <button onclick="eliminaScheda(${s.id})">Elimina</button>
+        <button onclick="apri(${s.id})">Apri</button>
+        <button onclick="copia(${s.id})">Copia</button>
+        <button onclick="elimina(${s.id})">Elimina</button>
       </div>
     `).join("")}
   `;
 }
 
-function apriScheda(id) {
-  schedaAttivaId = id;
+function apri(id) {
+  schedaAttiva = id;
   render();
 }
 
-function eliminaScheda(id) {
+function elimina(id) {
   schede = schede.filter(s => s.id !== id);
+  if (!schede.length) nuovaScheda();
+  else schedaAttiva = schede[0].id;
+  apriSchede();
+}
 
-  if (schede.length === 0) {
-    schede.push({
-      id: Date.now(),
-      nome: "Nuova Scheda",
-      esercizi: []
+function copia(id) {
+  const s = schede.find(x => x.id === id);
+  schede.push({
+    ...s,
+    id: Date.now(),
+    nome: s.nome + " (copia)"
+  });
+  apriSchede();
+}
+
+// ======================
+// RIGHE
+// ======================
+function aggiungiRiga() {
+  const s = getScheda();
+
+  if (tipoRigaSelezionata === "exercise") {
+    s.righe.push({
+      type: "exercise",
+      nome: "Esercizio",
+      serie: "",
+      repRange: "",
+      kg: "",
+      rec: "",
+      note: ""
     });
   }
 
-  schedaAttivaId = schede[0].id;
+  if (tipoRigaSelezionata === "spacer") {
+    s.righe.push({ type: "spacer" });
+  }
+
+  if (tipoRigaSelezionata === "marker") {
+    const colors = {
+      bicipiti: "green",
+      tricipiti: "red",
+      addominali: "orange",
+      gambe: "violet",
+      dorso: "white",
+      petto: "lightblue",
+      spalle: "yellow"
+    };
+
+    const key = prompt("Muscolo?");
+    s.righe.push({
+      type: "marker",
+      label: key,
+      color: colors[key] || "gray"
+    });
+  }
+
   render();
 }
 
-function duplicaScheda(id) {
-  const orig = schede.find(s => s.id === id);
-
-  const copia = {
-    ...orig,
-    id: Date.now(),
-    nome: orig.nome + " (copia)"
-  };
-
-  schede.push(copia);
-  render();
+// ======================
+// UPDATE
+// ======================
+function upd(i, field, val) {
+  getScheda().righe[i][field] = val;
 }
 
-function renameScheda(val) {
-  const s = getScheda();
-  if (s) s.nome = val;
+function updEx(i, val) {
+  getScheda().righe[i].nome = val;
 }
 
 // ======================
-// ESERCIZI (FIX CRITICO QUI)
+// NOME SCHEDA
 // ======================
-function aggiungiEsercizio() {
-  const s = getScheda();
-  if (!s) return;
+function renameScheda(v) {
+  getScheda().nome = v;
+}
 
-  s.esercizi.push({
-    nome: "Nuovo esercizio",
-    serie: [{ reps: 10, kg: 20 }]
+// ======================
+// LOCAL AUTO SAVE
+// ======================
+function autosave() {
+  localStorage.setItem("schede", JSON.stringify(schede));
+}
+
+// ======================
+// CLOUD
+// ======================
+async function salvaCloud() {
+  await fetch(BASE_URL, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Master-Key": API_KEY
+    },
+    body: JSON.stringify(schede)
   });
 
-  render();
-}
-
-function aggiungiSerie(i) {
-  const s = getScheda();
-  s.esercizi[i].serie.push({ reps: 10, kg: 20 });
-  render();
-}
-
-function updateEsercizio(i, val) {
-  const s = getScheda();
-  s.esercizi[i].nome = val;
-}
-
-function updateReps(i, j, val) {
-  const s = getScheda();
-  s.esercizi[i].serie[j].reps = Number(val);
-}
-
-function updateKg(i, j, val) {
-  const s = getScheda();
-  s.esercizi[i].serie[j].kg = Number(val);
+  alert("☁️ Salvato");
 }
 
 // ======================
-// SAVE
+// AUTO SYNC LOOP
 // ======================
-function salvaLocale() {
-  localStorage.setItem("schede", JSON.stringify(schede));
-  alert("💾 Salvato locale");
+function autosyncLoop() {
+  setInterval(() => {
+    autosave();
+    salvaCloud();
+  }, 30000); // ogni 30s
 }
 
-// ======================
-// GLOBAL
 // ======================
 window.nuovaScheda = nuovaScheda;
-window.apriListaSchede = apriListaSchede;
-window.apriScheda = apriScheda;
-window.eliminaScheda = eliminaScheda;
-window.duplicaScheda = duplicaScheda;
-window.aggiungiEsercizio = aggiungiEsercizio;
-window.aggiungiSerie = aggiungiSerie;
-window.updateEsercizio = updateEsercizio;
-window.updateReps = updateReps;
-window.updateKg = updateKg;
-window.salvaLocale = salvaLocale;
+window.apriSchede = apriSchede;
+window.apri = apri;
+window.copia = copia;
+window.elimina = elimina;
+window.aggiungiRiga = aggiungiRiga;
+window.upd = upd;
+window.updEx = updEx;
 window.renameScheda = renameScheda;
+window.salvaCloud = salvaCloud;
 
 // START
 init();
