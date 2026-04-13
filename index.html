@@ -15,6 +15,7 @@
 
 <header>
   <h2>Gym App</h2>
+
   <button onclick="nuovaScheda()">+ Nuova Scheda</button>
   <button onclick="aggiungiEsercizio()">+ Esercizio</button>
   <button onclick="salvaScheda()">💾 Salva locale</button>
@@ -29,7 +30,9 @@
 
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("SW attivo"))
+    .catch(err => console.error("SW errore:", err));
 }
 </script>
 

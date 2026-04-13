@@ -4,7 +4,7 @@ let scheda = {
 };
 
 // ======================
-// 🎨 RENDER
+// RENDER
 // ======================
 function render() {
   const app = document.getElementById("app");
@@ -38,7 +38,7 @@ function render() {
 }
 
 // ======================
-// ➕ NUOVA SCHEDA
+// NUOVA SCHEDA
 // ======================
 function nuovaScheda() {
   scheda = { nome: "Nuova Scheda", esercizi: [] };
@@ -46,7 +46,7 @@ function nuovaScheda() {
 }
 
 // ======================
-// ➕ ESERCIZI
+// ESERCIZIO
 // ======================
 function aggiungiEsercizio() {
   scheda.esercizi.push({
@@ -57,19 +57,15 @@ function aggiungiEsercizio() {
 }
 
 // ======================
-// ➕ SERIE
+// SERIE
 // ======================
 function aggiungiSerie(i) {
-  if (!scheda.esercizi[i].serie) {
-    scheda.esercizi[i].serie = [];
-  }
-
   scheda.esercizi[i].serie.push({ reps: 10, kg: 20 });
   render();
 }
 
 // ======================
-// ✏️ UPDATE
+// UPDATE
 // ======================
 function updateEsercizioNome(i, value) {
   scheda.esercizi[i].nome = value;
@@ -84,7 +80,7 @@ function updateKg(i, j, value) {
 }
 
 // ======================
-// 💾 LOCAL SAVE
+// LOCAL SAVE
 // ======================
 function salvaScheda() {
   localStorage.setItem("scheda", JSON.stringify(scheda));
@@ -93,16 +89,12 @@ function salvaScheda() {
 
 function caricaLocale() {
   const dati = localStorage.getItem("scheda");
-
-  if (dati) {
-    scheda = JSON.parse(dati);
-  }
-
+  if (dati) scheda = JSON.parse(dati);
   render();
 }
 
 // ======================
-// 🌍 GLOBAL SCOPE FIX
+// GLOBAL FIX (IMPORTANTISSIMO)
 // ======================
 window.nuovaScheda = nuovaScheda;
 window.aggiungiEsercizio = aggiungiEsercizio;
@@ -112,7 +104,5 @@ window.updateEsercizioNome = updateEsercizioNome;
 window.updateReps = updateReps;
 window.updateKg = updateKg;
 
-// ======================
-// 🚀 START
-// ======================
+// START
 caricaLocale();

@@ -1,66 +1,57 @@
+const CACHE_NAME = "gym-app-cache-v1";
 
-const CACHE = "gym-cache-dynamic-v1";
+const FILES = [
+  "./",
+  "index.html",
+  "app.js",
+  "cloud.js",
+  "style.css",
+  "manifest.json",
+  "icon.png"
+];
 
-// ======================
-// 🚀 INSTALL (immediato)
-// ======================
-
-self.addEventListener("install", event => {
-  self.skipWaiting(); // attiva subito
+// INSTALL
+self.addEventListener("install", (event) => {
+  self.skipWaiting(); // forza attivazione immediata
 
   event.waitUntil(
-    caches.open(CACHE).then(cache => {
-      return cache.addAll([
-        "./",
-        "index.html",
-        "app.js",
-        "style.css",
-        "manifest.json"
-      ]);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(FILES);
     })
   );
 });
 
-// ======================
-// 🔥 ACTIVATE (forza update)
-// ======================
-
-self.addEventListener("activate", event => {
+// ATTIVAZIONE
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    self.clients.claim() // prende controllo subito
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key); // elimina vecchie cache
+          }
+        })
+      );
+    })
   );
+
+  self.clients.claim(); // prende controllo subito
 });
 
-// ======================
-// 🌐 FETCH INTELLIGENTE (PRO MODE)
-// ======================
-
-self.addEventListener("fetch", event => {
-
+// FETCH
+self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
-      .then(res => {
-        // aggiorna cache automaticamente
+      .then((res) => {
+        // aggiorna cache con versione nuova
         const clone = res.clone();
-        caches.open(CACHE).then(cache => {
+        caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, clone);
         });
-
         return res;
       })
       .catch(() => {
-        // fallback offline
         return caches.match(event.request);
       })
   );
-});
-
-// ======================
-// 🔄 AUTO UPDATE CACHE
-// ======================
-
-self.addEventListener("message", event => {
-  if (event.data === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
 });
