@@ -1,6 +1,5 @@
 let schede = [];
 let schedaAttiva = null;
-let tipoRigaSelezionata = "exercise";
 
 // ======================
 // INIT
@@ -13,10 +12,10 @@ async function init() {
   if (cloud && cloud.length) schede = cloud;
 
   if (!schede.length) nuovaScheda();
-  else schedaAttiva = schede[0].id;
 
+  schedaAttiva = schede[0].id;
   render();
-  autosyncLoop();
+  autosync();
 }
 
 // ======================
@@ -44,29 +43,17 @@ function render() {
     const div = document.createElement("div");
     div.className = "card";
 
-    if (r.type === "header") {
-      div.innerHTML = `
-        <b>HEADER COLONNE</b>
-        <div class="grid header">
-          <div>ESERCIZIO</div>
-          <div>SERIE</div>
-          <div>REP-RANGE</div>
-          <div>KG</div>
-          <div>REC.</div>
-          <div>NOTE / PROG.</div>
-        </div>
-      `;
-    }
+    // ❌ HEADER RIMOSSO COMPLETAMENTE (come richiesto)
 
     if (r.type === "exercise") {
       div.innerHTML = `
         <div class="grid">
           <input value="${r.nome}" onchange="updEx(${i},this.value)">
-          <input value="${r.serie}" onchange="upd(i,'serie',this.value)">
-          <input value="${r.repRange}" onchange="upd(i,'repRange',this.value)">
-          <input value="${r.kg}" onchange="upd(i,'kg',this.value)">
-          <input value="${r.rec}" onchange="upd(i,'rec',this.value)">
-          <input value="${r.note}" onchange="upd(i,'note',this.value)">
+          <input value="${r.serie}" onchange="upd(${i},'serie',this.value)">
+          <input value="${r.repRange}" onchange="upd(${i},'repRange',this.value)">
+          <input value="${r.kg}" onchange="upd(${i},'kg',this.value)">
+          <input value="${r.rec}" onchange="upd(${i},'rec',this.value)">
+          <input value="${r.note}" onchange="upd(${i},'note',this.value)">
         </div>
       `;
     }
@@ -94,7 +81,7 @@ function nuovaScheda() {
   const s = {
     id: Date.now(),
     nome: "Nuova Scheda",
-    righe: [{ type: "header" }]
+    righe: []
   };
 
   schede.push(s);
@@ -129,28 +116,40 @@ function apri(id) {
 
 function elimina(id) {
   schede = schede.filter(s => s.id !== id);
+
   if (!schede.length) nuovaScheda();
-  else schedaAttiva = schede[0].id;
+  schedaAttiva = schede[0].id;
+
   apriSchede();
 }
 
 function copia(id) {
   const s = schede.find(x => x.id === id);
+
   schede.push({
     ...s,
     id: Date.now(),
     nome: s.nome + " (copia)"
   });
+
   apriSchede();
 }
 
 // ======================
-// RIGHE
+// FIX: LETTURA CORRETTA SELECT
+// ======================
+function getTipoRiga() {
+  return document.getElementById("tipoRiga").value;
+}
+
+// ======================
+// AGGIUNTA RIGA (FIX BUG PRINCIPALE)
 // ======================
 function aggiungiRiga() {
   const s = getScheda();
+  const type = getTipoRiga(); // ✔ FIX: ora legge sempre valore aggiornato
 
-  if (tipoRigaSelezionata === "exercise") {
+  if (type === "exercise") {
     s.righe.push({
       type: "exercise",
       nome: "Esercizio",
@@ -162,11 +161,11 @@ function aggiungiRiga() {
     });
   }
 
-  if (tipoRigaSelezionata === "spacer") {
+  if (type === "spacer") {
     s.righe.push({ type: "spacer" });
   }
 
-  if (tipoRigaSelezionata === "marker") {
+  if (type === "marker") {
     const colors = {
       bicipiti: "green",
       tricipiti: "red",
@@ -177,7 +176,8 @@ function aggiungiRiga() {
       spalle: "yellow"
     };
 
-    const key = prompt("Muscolo?");
+    const key = prompt("Muscolo (bicipiti, tricipiti, ecc)?");
+
     s.righe.push({
       type: "marker",
       label: key,
@@ -207,7 +207,7 @@ function renameScheda(v) {
 }
 
 // ======================
-// LOCAL AUTO SAVE
+// AUTO SAVE
 // ======================
 function autosave() {
   localStorage.setItem("schede", JSON.stringify(schede));
@@ -226,17 +226,16 @@ async function salvaCloud() {
     body: JSON.stringify(schede)
   });
 
-  alert("☁️ Salvato");
+  alert("☁️ Salvato su cloud");
 }
 
 // ======================
-// AUTO SYNC LOOP
+// AUTO SYNC
 // ======================
-function autosyncLoop() {
+function autosync() {
   setInterval(() => {
     autosave();
-    salvaCloud();
-  }, 30000); // ogni 30s
+  }, 3000); // solo locale automatico (cloud manuale)
 }
 
 // ======================
@@ -251,5 +250,4 @@ window.updEx = updEx;
 window.renameScheda = renameScheda;
 window.salvaCloud = salvaCloud;
 
-// START
 init();
