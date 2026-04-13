@@ -3,7 +3,8 @@ const API_KEY = "$2a$10$O9DeoNpqBSYwuBJUsebAdON/SGrC8KTJ/btm8DGG/LxCTplTcq7LO";
 
 const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-async function salvaSuCloud(data) {
+// SALVA TUTTE LE SCHEDE
+async function salvaCloud() {
   try {
     await fetch(BASE_URL, {
       method: "PUT",
@@ -11,42 +12,25 @@ async function salvaSuCloud(data) {
         "Content-Type": "application/json",
         "X-Master-Key": API_KEY
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(schede)
     });
 
     alert("☁️ Salvato su cloud");
-  } catch (err) {
-    console.error(err);
+  } catch (e) {
     alert("Errore cloud");
   }
 }
 
-async function caricaDaCloud() {
+// CARICA TUTTE LE SCHEDE
+async function caricaCloud() {
   try {
     const res = await fetch(BASE_URL, {
-      headers: {
-        "X-Master-Key": API_KEY
-      }
+      headers: { "X-Master-Key": API_KEY }
     });
 
     const json = await res.json();
-    return json.record || null;
-
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
-
-// funzione pulsante
-async function caricaCloud() {
-  const data = await caricaDaCloud();
-
-  if (data) {
-    scheda = data;
-    render();
-    alert("☁️ Caricato da cloud");
-  } else {
-    alert("Niente dati cloud");
+    return json.record || [];
+  } catch (e) {
+    return [];
   }
 }

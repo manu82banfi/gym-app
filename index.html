@@ -16,11 +16,11 @@
 <header>
   <h2>Gym App</h2>
 
-  <button onclick="nuovaScheda()">+ Nuova Scheda</button>
+  <button onclick="nuovaScheda()">+ Scheda</button>
+  <button onclick="apriListaSchede()">📋 Schede</button>
   <button onclick="aggiungiEsercizio()">+ Esercizio</button>
-  <button onclick="salvaScheda()">💾 Salva locale</button>
-  <button onclick="salvaSuCloud(scheda)">☁️ Cloud</button>
-  <button onclick="caricaCloud()">📥 Cloud</button>
+  <button onclick="salvaScheda()">💾 Salva</button>
+  <button onclick="salvaCloud()">☁️ Cloud</button>
 </header>
 
 <main id="app"></main>
@@ -30,9 +30,7 @@
 
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("SW attivo"))
-    .catch(err => console.error("SW errore:", err));
+  navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 

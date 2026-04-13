@@ -12,6 +12,7 @@ header {
   background: #222;
   position: sticky;
   top: 0;
+  flex-wrap: wrap;
 }
 
 button {
@@ -36,10 +37,4 @@ button {
   background: #333;
   color: white;
   border: none;
-}
-
-.serie div {
-  display: flex;
-  gap: 5px;
-  margin: 5px 0;
 }
