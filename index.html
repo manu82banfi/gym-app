@@ -4,52 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym App</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111">
-
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-  <h2>Gym App</h2>
+  <!-- RIGA 1 -->
+  <div class="topbar">
+    <button onclick="nuovaScheda()">Nuova scheda</button>
+    <button onclick="apriSchede()">Elenco schede</button>
+    <button onclick="salvaCloud()">Salva in Cloud</button>
+    <button onclick="exportPDF()">Esporta PDF</button>
+  </div>
 
-  <button onclick="nuovaScheda()">Nuova scheda</button>
-  <button onclick="apriSchede()">Schede</button>
+  <!-- RIGA 2 (DINAMICA) -->
+  <div id="toolbar" class="toolbar hidden">
+    <select id="markerColor">
+      <option value="red">Rosso</option>
+      <option value="orange">Arancio</option>
+      <option value="green">Verde</option>
+      <option value="white">Bianco</option>
+      <option value="violet">Viola chiaro</option>
+      <option value="yellow">Giallo</option>
+    </select>
 
-  <select id="tipoRiga">
-    <option value="exercise">Esercizio</option>
-    <option value="spacer">Spazio</option>
-    <option value="marker">Marker</option>
-    <option value="header">Header</option>
-  </select>
-
-  <select id="markerColor" style="display:none">
-    <option value="green">Bicipiti</option>
-    <option value="red">Tricipiti</option>
-    <option value="orange">Addominali</option>
-    <option value="violet">Gambe</option>
-    <option value="white">Dorso</option>
-    <option value="lightblue">Petto</option>
-    <option value="yellow">Spalle</option>
-  </select>
-
-  <button onclick="aggiungiRiga()">Aggiungi</button>
-  <button onclick="salvaCloud()">Cloud</button>
+    <button onclick="addMarker()">Marker</button>
+    <button onclick="addSpacer()">Spazio</button>
+    <button onclick="addExercise(1)">Esercizio 1 riga</button>
+    <button onclick="addExercise(2)">Esercizio 2 righe</button>
+    <button onclick="addExercise(3)">Esercizio 3 righe</button>
+    <button onclick="addExercise(4)">Esercizio 4 righe</button>
+  </div>
 </header>
 
 <main id="app"></main>
 
 <script src="cloud.js"></script>
 <script src="app.js"></script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-
 </body>
 </html>

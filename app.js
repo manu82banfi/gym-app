@@ -1,5 +1,5 @@
 let schede = [];
-let schedaAttiva = null;
+let attiva = null;
 
 // ================= INIT =================
 async function init() {
@@ -9,173 +9,132 @@ async function init() {
   const cloud = await caricaCloud();
   if (cloud?.length) schede = cloud;
 
-  if (!schede.length) nuovaScheda();
-
-  schedaAttiva = schede[0].id;
-  render();
-  autosaveLoop();
+  renderHome();
 }
 
-// ================= GET =================
-function getScheda() {
-  return schede.find(s => s.id === schedaAttiva);
-}
-
-// ================= RENDER =================
-function render() {
-  const app = document.getElementById("app");
-  const s = getScheda();
-  if (!s) return;
-
-  app.innerHTML = `
-    <h3 contenteditable oninput="renameScheda(this.innerText)">
-      ${s.nome}
-    </h3>
+// ================= HOME =================
+function renderHome() {
+  document.getElementById("toolbar").classList.add("hidden");
+  document.getElementById("app").innerHTML = `
+    <div class="home">Seleziona o crea una scheda</div>
   `;
-
-  s.righe.forEach((r, i) => {
-    const div = document.createElement("div");
-    div.className = "card";
-
-    // HEADER
-    if (r.type === "header") {
-      div.innerHTML = `
-        <div class="grid header">
-          <div>ESERCIZIO</div>
-          <div>SERIE</div>
-          <div>REP-RANGE</div>
-          <div>KG</div>
-          <div>REC.</div>
-          <div>NOTE / PROG.</div>
-        </div>
-      `;
-    }
-
-    // EXERCISE
-    if (r.type === "exercise") {
-      div.innerHTML = `
-        <div class="grid">
-          <input value="${r.nome}" oninput="upd(${i},'nome',this.value)">
-          <input value="${r.serie}" oninput="upd(${i},'serie',this.value)">
-          <input value="${r.repRange}" oninput="upd(${i},'repRange',this.value)">
-          <input value="${r.kg}" oninput="upd(${i},'kg',this.value)">
-          <input value="${r.rec}" oninput="upd(${i},'rec',this.value)">
-          <input value="${r.note}" oninput="upd(${i},'note',this.value)">
-        </div>
-      `;
-    }
-
-    // SPACER (INVISIBILE)
-    if (r.type === "spacer") {
-      div.innerHTML = `<div class="spacer"></div>`;
-    }
-
-    // MARKER (SOLO COLORE)
-    if (r.type === "marker") {
-      div.innerHTML = `<div class="marker" style="background:${r.color}"></div>`;
-    }
-
-    app.appendChild(div);
-  });
 }
 
 // ================= NUOVA SCHEDA =================
 function nuovaScheda() {
-  schede.push({
+  const s = {
     id: Date.now(),
     nome: "Nuova Scheda",
-    righe: [{ type: "header" }]
-  });
+    blocchi: []
+  };
 
-  schedaAttiva = schede.at(-1).id;
-  render();
+  schede.push(s);
+  attiva = s.id;
+
+  renderScheda();
 }
 
-// ================= LISTA =================
-function apriSchede() {
-  const app = document.getElementById("app");
+// ================= RENDER SCHEDA =================
+function renderScheda() {
+  document.getElementById("toolbar").classList.remove("hidden");
 
-  app.innerHTML = `
-    <h3>Schede</h3>
-    ${schede.map(s => `
-      <div class="card">
-        <b>${s.nome}</b><br><br>
+  const s = schede.find(x => x.id === attiva);
 
-        <button onclick="apri(${s.id})">Apri</button>
-        <button onclick="copia(${s.id})">Copia</button>
-        <button onclick="elimina(${s.id})">Elimina</button>
+  let html = `
+    <div class="header-grid">
+      <div>ESERCIZIO</div>
+      <div>SERIE</div>
+      <div>REP</div>
+      <div>KG</div>
+      <div>REC</div>
+      <div>NOTE</div>
+    </div>
+  `;
+
+  s.blocchi.forEach((b, i) => {
+    if (b.type === "exercise") {
+      html += renderExercise(b, i);
+    }
+
+    if (b.type === "marker") {
+      html += `<div class="marker" style="background:${b.color}"></div>`;
+    }
+
+    if (b.type === "spacer") {
+      html += `<div class="spacer"></div>`;
+    }
+  });
+
+  document.getElementById("app").innerHTML = html;
+}
+
+// ================= EXERCISE =================
+function renderExercise(b, index) {
+  let rows = "";
+
+  for (let i = 0; i < b.rows; i++) {
+    rows += `
+      <div class="row">
+        ${i === 0 ? `<input value="${b.nome}" class="big">` : `<div></div>`}
+        <input value="${b.serie[i] || ""}">
+        ${i === 0 ? `<input value="${b.rep}" class="big">` : `<div></div>`}
+        <input value="${b.kg[i] || ""}">
+        ${i === 0 ? `<input value="${b.rec}" class="big">` : `<div></div>`}
+        ${i === 0 ? `<input value="${b.note}" class="big">` : `<div></div>`}
       </div>
-    `).join("")}
+    `;
+  }
+
+  return `
+    <div class="block" draggable="true">
+      ${rows}
+      <button onclick="del(${index})">X</button>
+    </div>
   `;
 }
 
-function apri(id) {
-  schedaAttiva = id;
-  render();
-}
+// ================= ADD =================
+function addExercise(n) {
+  const s = schede.find(x => x.id === attiva);
 
-function elimina(id) {
-  schede = schede.filter(s => s.id !== id);
-  if (!schede.length) nuovaScheda();
-  apriSchede();
-}
-
-function copia(id) {
-  const s = schede.find(x => x.id === id);
-  schede.push({
-    ...s,
-    id: Date.now(),
-    nome: s.nome + " (copia)"
+  s.blocchi.push({
+    type: "exercise",
+    rows: n,
+    nome: "",
+    serie: [],
+    kg: [],
+    rep: "",
+    rec: "",
+    note: ""
   });
-  apriSchede();
+
+  renderScheda();
 }
 
-// ================= AGGIUNGI RIGA =================
-function aggiungiRiga() {
-  const s = getScheda();
-  const tipo = document.getElementById("tipoRiga").value;
+function addMarker() {
+  const color = document.getElementById("markerColor").value;
 
-  if (tipo === "exercise") {
-    s.righe.push({
-      type: "exercise",
-      nome: "",
-      serie: "",
-      repRange: "",
-      kg: "",
-      rec: "",
-      note: ""
-    });
-  }
+  schede.find(x => x.id === attiva).blocchi.push({
+    type: "marker",
+    color
+  });
 
-  if (tipo === "header") {
-    s.righe.push({ type: "header" });
-  }
-
-  if (tipo === "spacer") {
-    s.righe.push({ type: "spacer" });
-  }
-
-  if (tipo === "marker") {
-    const color = document.getElementById("markerColor").value;
-    s.righe.push({ type: "marker", color });
-  }
-
-  render();
+  renderScheda();
 }
 
-// ================= UPDATE =================
-function upd(i, field, val) {
-  getScheda().righe[i][field] = val;
+function addSpacer() {
+  schede.find(x => x.id === attiva).blocchi.push({
+    type: "spacer"
+  });
+
+  renderScheda();
 }
 
-// ================= NOME =================
-function renameScheda(v) {
-  getScheda().nome = v;
-}
-
-// ================= AUTOSAVE =================
-function autosave() {
-  localStorage.setItem("schede", JSON.stringify(schede));
+// ================= DELETE =================
+function del(i) {
+  const s = schede.find(x => x.id === attiva);
+  s.blocchi.splice(i, 1);
+  renderScheda();
 }
 
 // ================= CLOUD =================
@@ -189,26 +148,8 @@ async function salvaCloud() {
     body: JSON.stringify(schede)
   });
 
-  alert("☁️ Salvato");
+  alert("Salvato");
 }
 
-// ================= LOOP =================
-function autosaveLoop() {
-  setInterval(() => {
-    autosave();
-  }, 3000);
-}
-
-// ================= GLOBAL =================
-window.nuovaScheda = nuovaScheda;
-window.apriSchede = apriSchede;
-window.apri = apri;
-window.copia = copia;
-window.elimina = elimina;
-window.aggiungiRiga = aggiungiRiga;
-window.upd = upd;
-window.renameScheda = renameScheda;
-window.salvaCloud = salvaCloud;
-
-// START
+// ================= START =================
 init();

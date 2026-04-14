@@ -1,51 +1,59 @@
 body {
   margin: 0;
-  font-family: Arial;
   background: #111;
   color: white;
+  font-family: Arial;
 }
 
-header {
+.topbar {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
   padding: 10px;
   background: #222;
 }
 
-button, select {
-  padding: 6px;
-}
-
-.card {
-  background: #1e1e1e;
+.toolbar {
+  display: flex;
+  gap: 10px;
   padding: 10px;
-  margin: 10px;
-  border-radius: 8px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
-  gap: 5px;
-}
-
-.grid input {
   background: #333;
-  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.header-grid {
+  display: grid;
+  grid-template-columns: 2fr repeat(5,1fr);
+  background: #444;
+  text-align: center;
+}
+
+.block {
+  border-bottom: 1px solid #222;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr repeat(5,1fr);
+}
+
+input {
+  background: #1a1a1a;
   border: none;
+  color: white;
 }
 
-.header {
-  font-weight: bold;
-}
-
-.spacer {
-  height: 20px;
-  background: #111; /* invisibile */
+.big {
+  grid-row: span 2;
 }
 
 .marker {
-  height: 4px;
-  border-radius: 2px;
+  height: 5px;
+}
+
+.spacer {
+  height: 15px;
+  background: #111;
 }
