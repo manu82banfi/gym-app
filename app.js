@@ -55,7 +55,9 @@ function renderScheda() {
           <th>REP RANGE</th>
           <th>KG</th>
           <th>REC.</th>
-          <th>PROGRESSIONE / NOTE</th>
+          <th>PROGRESSIONI</th>
+          <th>NOTE</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -74,12 +76,24 @@ function renderBlocco(b,i){
 
   if (b.type==="marker"){
     return `<tr>
-      <td colspan="6" class="marker" style="background:${b.color}"></td>
+      <td colspan="7" class="marker" style="background:#8f0663"></td>
+      <td class="actions">
+        <span onclick="moveUp(${i})">⬆</span>
+        <span onclick="moveDown(${i})">⬇</span>
+        <span onclick="del(${i})">✖</span>
+      </td>
     </tr>`;
   }
 
   if (b.type==="spacer"){
-    return `<tr><td colspan="6" class="spacer"></td></tr>`;
+    return `<tr>
+      <td colspan="7" class="spacer"></td>
+      <td class="actions">
+        <span onclick="moveUp(${i})">⬆</span>
+        <span onclick="moveDown(${i})">⬇</span>
+        <span onclick="del(${i})">✖</span>
+      </td>
+    </tr>`;
   }
 
   if (b.type==="exercise"){
@@ -95,7 +109,7 @@ function renderBlocco(b,i){
       }
 
       rows+=`
-        <td><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
+        <td class="center"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
       `;
 
       if(r===0){
@@ -114,26 +128,28 @@ function renderBlocco(b,i){
         </td>`;
       }
 
+      // PROGRESSIONI ORA SINGOLA
+      rows+=`
+        <td><input value="${b.prog || ""}" oninput="upd(${i},'prog',this.value)"></td>
+      `;
+
+      // NOTE ORA SINGOLA
+      rows+=`
+        <td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>
+      `;
+
       if(r===0){
-        rows+=`<td rowspan="${b.rows}">
-          <input value="${b.note}" oninput="upd(${i},'note',this.value)">
+        rows+=`<td rowspan="${b.rows}" class="actions">
+          <span onclick="moveUp(${i})">⬆</span>
+          <span onclick="moveDown(${i})">⬇</span>
+          <span onclick="del(${i})">✖</span>
         </td>`;
       }
 
       rows+=`</tr>`;
     }
 
-    return `
-    ${rows}
-    <tr class="controls">
-      <td colspan="6">
-        <div class="ctrl">
-          <button onclick="moveUp(${i})">⬆</button>
-          <button onclick="moveDown(${i})">⬇</button>
-          <button onclick="del(${i})">✖</button>
-        </div>
-      </td>
-    </tr>`;
+    return rows;
   }
 }
 
@@ -147,6 +163,7 @@ function addExercise(n){
     kg:[],
     rep:"",
     rec:"",
+    prog:"",
     note:""
   });
   renderScheda();
@@ -154,8 +171,7 @@ function addExercise(n){
 
 function addMarker(){
   getS().blocchi.push({
-    type:"marker",
-    color:markerColor.value
+    type:"marker"
   });
   renderScheda();
 }
@@ -241,7 +257,7 @@ async function salvaCloud(){
   alert("☁️ Salvato in cloud");
 }
 
-// PDF (BASE)
+// PDF
 function exportPDF(){
   window.print();
 }
