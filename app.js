@@ -11,12 +11,12 @@ function init() {
 
 // HOME
 function renderHome() {
-  toolbar(false);
+  toggleToolbar(false);
   app.innerHTML = "Crea o seleziona una scheda";
 }
 
 // TOOLBAR
-function toolbar(show) {
+function toggleToolbar(show) {
   document.getElementById("toolbar").classList.toggle("hidden", !show);
 }
 
@@ -40,7 +40,7 @@ function getS() {
 
 // RENDER
 function renderScheda() {
-  toolbar(true);
+  toggleToolbar(true);
 
   const s = getS();
 
@@ -102,11 +102,9 @@ function renderBlocco(b, i) {
         </td>`;
       }
 
-      rows += `
-        <td>
-          <input value="${b.serie[r] || ""}" oninput="updArr(${i},'serie',${r},this.value)">
-        </td>
-      `;
+      rows += `<td>
+        <input value="${b.serie[r] || ""}" oninput="updArr(${i},'serie',${r},this.value)">
+      </td>`;
 
       if (r === 0) {
         rows += `<td rowspan="${b.rows}">
@@ -114,11 +112,9 @@ function renderBlocco(b, i) {
         </td>`;
       }
 
-      rows += `
-        <td>
-          <input value="${b.kg[r] || ""}" oninput="updArr(${i},'kg',${r},this.value)">
-        </td>
-      `;
+      rows += `<td>
+        <input value="${b.kg[r] || ""}" oninput="updArr(${i},'kg',${r},this.value)">
+      </td>`;
 
       if (r === 0) {
         rows += `<td rowspan="${b.rows}">
@@ -179,7 +175,7 @@ function rename(v){
 
 // LISTA
 function elencoSchede(){
-  toolbar(false);
+  toggleToolbar(false);
 
   app.innerHTML = schede.map(s=>`
     <div class="card">
@@ -206,9 +202,11 @@ async function salvaCloud(){
     },
     body:JSON.stringify(schede)
   });
+
+  alert("☁️ Salvato in cloud");
 }
 
-// PDF
+// PDF (base migliorato)
 function exportPDF(){
   window.print();
 }

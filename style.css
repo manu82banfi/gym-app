@@ -1,10 +1,10 @@
 body{
   margin:0;
   background:#111;
-  color:white;
   font-family:Arial;
 }
 
+/* toolbar */
 .topbar, .toolbar{
   display:flex;
   gap:10px;
@@ -14,18 +14,30 @@ body{
 
 .hidden{display:none;}
 
+/* BLOCCO CENTRATO FISSO */
 .container{
-  max-width:900px;
+  width:900px;
   margin:20px auto;
 }
 
+/* TABELLA FISSA */
 table{
-  width:100%;
+  width:900px;
   border-collapse:collapse;
+  table-layout:fixed;
   background:#ddd;
   color:black;
 }
 
+/* COLONNE IDENTICHE ALLA TUA */
+th:nth-child(1), td:nth-child(1){ width:35%; text-align:left; }
+th:nth-child(2), td:nth-child(2){ width:8%; }
+th:nth-child(3), td:nth-child(3){ width:15%; }
+th:nth-child(4), td:nth-child(4){ width:10%; }
+th:nth-child(5), td:nth-child(5){ width:10%; }
+th:nth-child(6), td:nth-child(6){ width:22%; }
+
+/* celle */
 th, td{
   border:1px solid #333;
   padding:6px;
@@ -37,6 +49,7 @@ th{
   background:#bbb;
 }
 
+/* input */
 input{
   width:100%;
   border:none;
@@ -48,18 +61,21 @@ td:first-child input{
   text-align:left;
 }
 
+/* marker */
 .marker{
-  height:6px;
+  height:8px;
 }
 
+/* spacer */
 .spacer{
   height:20px;
   background:#ddd;
 }
 
+/* lista schede */
 .card{
-  background:#222;
-  color:white;
   margin:10px;
   padding:10px;
+  background:#222;
+  color:white;
 }
