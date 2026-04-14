@@ -1,25 +1,21 @@
 let schede = [];
 let attiva = null;
 
-// INIT
 function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
   renderHome();
 }
 
-// HOME
 function renderHome() {
   toolbar(false);
   app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
-// TOOLBAR
 function toolbar(show) {
   document.getElementById("toolbar").classList.toggle("hidden", !show);
 }
 
-// NUOVA SCHEDA
 function nuovaScheda() {
   const s = {
     id: Date.now(),
@@ -31,21 +27,17 @@ function nuovaScheda() {
   renderScheda();
 }
 
-// GET
 function getS() {
   return schede.find(s => s.id === attiva);
 }
 
-// RENDER
 function renderScheda() {
   toolbar(true);
   const s = getS();
 
   let html = `
   <div class="container">
-    <h2 contenteditable oninput="rename(this.innerText)">
-      ${s.nome}
-    </h2>
+    <h2 contenteditable oninput="rename(this.innerText)">${s.nome}</h2>
 
     <table>
       <thead>
@@ -57,7 +49,7 @@ function renderScheda() {
           <th>REC.</th>
           <th>PROGRESSIONI</th>
           <th>NOTE</th>
-          <th></th>
+          <th class="col-actions"></th>
         </tr>
       </thead>
       <tbody>
@@ -71,11 +63,10 @@ function renderScheda() {
   app.innerHTML = html;
 }
 
-// BLOCCO
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
-    return `<tr>
+    return `<tr class="row-marker">
       <td colspan="7" class="marker" style="background:${b.color}"></td>
       <td class="actions">
         <span onclick="moveUp(${i})">⬆</span>
@@ -155,7 +146,6 @@ function renderBlocco(b,i){
   }
 }
 
-// ADD
 function addExercise(n){
   getS().blocchi.push({
     type:"exercise",
@@ -184,11 +174,9 @@ function addSpacer(){
   renderScheda();
 }
 
-// UPDATE
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
-// MOVE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -203,67 +191,24 @@ function moveDown(i){
   renderScheda();
 }
 
-// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   renderScheda();
 }
 
-// RENAME
 function rename(v){
   getS().nome=v;
   saveLocal();
 }
 
-// LISTA
-function elencoSchede(){
-  toolbar(false);
-
-  app.innerHTML = schede.map(s=>`
-    <div class="card">
-      ${s.nome}<br>
-      <button onclick="apri(${s.id})">Apri</button>
-      <button onclick="copia(${s.id})">Copia</button>
-      <button onclick="eliminaScheda(${s.id})">Elimina</button>
-    </div>
-  `).join("");
-}
-
-function apri(id){ attiva=id; renderScheda(); }
-
-function copia(id){
-  const s=schede.find(x=>x.id===id);
-  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
-  elencoSchede();
-}
-
-function eliminaScheda(id){
-  schede=schede.filter(s=>s.id!==id);
-  elencoSchede();
-}
-
-// SAVE
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
 }
 
-// CLOUD
-async function salvaCloud(){
-  await fetch(BASE_URL,{
-    method:"PUT",
-    headers:{
-      "Content-Type":"application/json",
-      "X-Master-Key":API_KEY
-    },
-    body:JSON.stringify(schede)
-  });
-  alert("☁️ Salvato in cloud");
+function init(){
+  const local = localStorage.getItem("schede");
+  if(local) schede = JSON.parse(local);
+  renderHome();
 }
 
-// PDF
-function exportPDF(){
-  window.print();
-}
-
-// START
 init();

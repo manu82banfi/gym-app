@@ -21,17 +21,16 @@ header{
 
 .hidden{display:none;}
 
-/* CONTENUTO SCORREVOLE */
 main{
   margin-top:110px;
 }
 
 .container{
-  width:985px;
+  width:995px;
   margin:20px auto;
 }
 
-/* TESTI BIANCHI */
+/* TESTI */
 .home, h2{
   color:white;
 }
@@ -44,9 +43,10 @@ table{
   table-layout:fixed;
 }
 
+/* RIDUZIONE PADDING */
 th,td{
   border:1px solid #333;
-  padding:2px 6px;
+  padding:2px 4px;
   text-align:center;
   vertical-align:middle;
   height:32px;
@@ -54,7 +54,7 @@ th,td{
 
 th{
   background:#bbb;
-  font-size:12px;
+  font-size:11px;
 }
 
 input{
@@ -68,7 +68,6 @@ td:first-child input{
   text-align:left;
 }
 
-/* CENTRA SERIE */
 .center input{
   text-align:center;
 }
@@ -81,12 +80,20 @@ th:nth-child(4),td:nth-child(4){width:50px;}
 th:nth-child(5),td:nth-child(5){width:50px;}
 th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
-th:nth-child(8),td:nth-child(8){width:50px;}
+th:nth-child(8),td:nth-child(8){width:60px;}
 
-/* MARKER */
+/* MARKER FIX VERO 4px */
+.row-marker td{
+  padding:0 !important;
+  height:4px !important;
+  line-height:4px !important;
+  overflow:hidden;
+}
+
 .marker{
   height:4px;
   padding:0;
+  line-height:4px;
 }
 
 /* SPACER */
@@ -96,17 +103,24 @@ th:nth-child(8),td:nth-child(8){width:50px;}
   background:#ddd;
 }
 
-/* AZIONI */
+/* AZIONI ORIZZONTALI */
 .actions{
-  font-size:14px;
   display:flex;
+  flex-direction:row;
   justify-content:center;
-  gap:5px;
-  cursor:pointer;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  font-size:14px;
 }
 
 .actions span{
   cursor:pointer;
+}
+
+/* HEADER COLONNA AZIONI */
+.col-actions{
+  width:60px;
 }
 
 /* CARD */
