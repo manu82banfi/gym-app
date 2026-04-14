@@ -4,6 +4,7 @@ body{
   font-family:Arial;
 }
 
+/* HEADER */
 header{
   position:fixed;
   top:0;
@@ -20,23 +21,25 @@ header{
 
 main{ margin-top:110px; }
 
+/* CENTRATURA CORRETTA */
 .container{
-  width:995px;
-  margin:20px auto;
+  width:calc(100% - 20px);
+  max-width:995px;
+  margin:20px 10px 20px 10px;
 }
 
-/* TITOLO BIANCO */
+/* TESTI */
 h2,.home{ color:white; }
 
 table{
-  width:995px;
-  margin:0 auto;
+  width:100%;
   border-collapse:collapse;
   background:#ddd;
   color:black;
   table-layout:fixed;
 }
 
+/* CELLE COMPATTE */
 th,td{
   border:1px solid #333;
   padding:2px 6px;
@@ -45,10 +48,7 @@ th,td{
   vertical-align:middle;
 }
 
-th{
-  font-size:11px;
-  background:#bbb;
-}
+th{ font-size:11px; background:#bbb; }
 
 /* INPUT */
 input{
@@ -58,7 +58,6 @@ input{
   text-align:center;
 }
 
-/* SERIE SEMPRE CENTRATA */
 .serie input{
   text-align:center !important;
 }
@@ -73,12 +72,16 @@ th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
 th:nth-child(8),td:nth-child(8){width:60px;}
 
-/* MARKER VERAMENTE 6PX */
+/* MARKER FORZATO 6PX REALI */
 .marker{
   height:6px !important;
   padding:0 !important;
   line-height:6px !important;
   border:none !important;
+}
+
+.marker-row{
+  height:6px !important;
 }
 
 /* SPACER */
@@ -88,7 +91,7 @@ th:nth-child(8),td:nth-child(8){width:60px;}
   background:#ddd;
 }
 
-/* AZIONI SOLO SIMBOLI */
+/* AZIONI SENZA BOX */
 .actions{
   display:flex;
   justify-content:center;
@@ -104,8 +107,7 @@ th:nth-child(8),td:nth-child(8){width:60px;}
   border:none;
 }
 
-/* CENTRATURA PERFETTA TABELLA */
-table, .container{
-  margin-left:auto;
-  margin-right:auto;
+/* FIX CENTRATURA */
+table{
+  margin:0 auto;
 }

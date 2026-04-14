@@ -1,6 +1,15 @@
 let schede = [];
 let attiva = null;
 
+// GLOBAL (FIX BOTTONI HTML)
+window.nuovaScheda = nuovaScheda;
+window.elencoSchede = elencoSchede;
+window.salvaCloud = salvaCloud;
+window.exportPDF = exportPDF;
+window.apri = apri;
+window.copia = copia;
+window.eliminaScheda = eliminaScheda;
+
 function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
@@ -64,19 +73,8 @@ function renderScheda() {
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
-
-    const colors = {
-      green:"#00c853",
-      red:"#d50000",
-      orange:"#ff6d00",
-      violet:"#9e0377",
-      white:"#ffffff",
-      yellow:"#ffd600",
-      gambe:"#9e0377"
-    };
-
-    return `<tr>
-      <td colspan="7" class="marker" style="background:${colors[b.color] || "#9e0377"}"></td>
+    return `<tr class="marker-row">
+      <td colspan="7" class="marker" style="background:${b.color}"></td>
       <td class="actions">
         <span onclick="moveUp(${i})">⬆</span>
         <span onclick="moveDown(${i})">⬇</span>
@@ -128,13 +126,8 @@ function renderBlocco(b,i){
         </td>`;
       }
 
-      rows+=`
-        <td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>
-      `;
-
-      rows+=`
-        <td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>
-      `;
+      rows+=`<td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>`;
+      rows+=`<td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>`;
 
       if(r===0){
         rows+=`
@@ -152,6 +145,7 @@ function renderBlocco(b,i){
   }
 }
 
+// ADD
 function addExercise(n){
   getS().blocchi.push({
     type:"exercise",
@@ -177,9 +171,11 @@ function addSpacer(){
   renderScheda();
 }
 
+// UPDATE
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
+// MOVE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -194,18 +190,65 @@ function moveDown(i){
   renderScheda();
 }
 
+// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   renderScheda();
 }
 
+// RENAME
 function rename(v){
   getS().nome=v;
   saveLocal();
 }
 
+// LISTA
+function elencoSchede(){
+  toolbar(false);
+
+  app.innerHTML = schede.map(s=>`
+    <div class="card">
+      ${s.nome}<br>
+      <button onclick="apri(${s.id})">Apri</button>
+      <button onclick="copia(${s.id})">Copia</button>
+      <button onclick="eliminaScheda(${s.id})">Elimina</button>
+    </div>
+  `).join("");
+}
+
+function apri(id){ attiva=id; renderScheda(); }
+
+function copia(id){
+  const s=schede.find(x=>x.id===id);
+  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
+  elencoSchede();
+}
+
+function eliminaScheda(id){
+  schede=schede.filter(s=>s.id!==id);
+  elencoSchede();
+}
+
+// SAVE
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
+}
+
+// CLOUD
+async function salvaCloud(){
+  await fetch(BASE_URL,{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      "X-Master-Key":API_KEY
+    },
+    body:JSON.stringify(schede)
+  });
+  alert("☁️ Salvato in cloud");
+}
+
+function exportPDF(){
+  window.print();
 }
 
 init();
