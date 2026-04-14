@@ -2,7 +2,7 @@ let schede = [];
 let attiva = null;
 
 // INIT
-function init() {
+async function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
   renderHome();
@@ -74,31 +74,28 @@ function renderScheda() {
 // BLOCCO
 function renderBlocco(b,i){
 
-  // MARKER
   if (b.type==="marker"){
     return `<tr>
       <td colspan="7" class="marker" style="background:${b.color}"></td>
-      <td class="ctrl-cell">
-        <button onclick="moveUp(${i})">⬆</button>
-        <button onclick="moveDown(${i})">⬇</button>
-        <button onclick="del(${i})">✖</button>
+      <td class="actions">
+        <span onclick="moveUp(${i})">⬆</span>
+        <span onclick="moveDown(${i})">⬇</span>
+        <span onclick="del(${i})">✖</span>
       </td>
     </tr>`;
   }
 
-  // SPACER
   if (b.type==="spacer"){
     return `<tr>
       <td colspan="7" class="spacer"></td>
-      <td class="ctrl-cell">
-        <button onclick="moveUp(${i})">⬆</button>
-        <button onclick="moveDown(${i})">⬇</button>
-        <button onclick="del(${i})">✖</button>
+      <td class="actions">
+        <span onclick="moveUp(${i})">⬆</span>
+        <span onclick="moveDown(${i})">⬇</span>
+        <span onclick="del(${i})">✖</span>
       </td>
     </tr>`;
   }
 
-  // EXERCISE
   if (b.type==="exercise"){
     let rows="";
 
@@ -133,7 +130,7 @@ function renderBlocco(b,i){
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
-          <input value="${b.progressioni||""}" oninput="upd(${i},'progressioni',this.value)">
+          <input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)">
         </td>`;
       }
 
@@ -144,10 +141,10 @@ function renderBlocco(b,i){
       }
 
       if(r===0){
-        rows+=`<td rowspan="${b.rows}" class="ctrl-cell">
-          <button onclick="moveUp(${i})">⬆</button>
-          <button onclick="moveDown(${i})">⬇</button>
-          <button onclick="del(${i})">✖</button>
+        rows+=`<td rowspan="${b.rows}" class="actions">
+          <span onclick="moveUp(${i})">⬆</span>
+          <span onclick="moveDown(${i})">⬇</span>
+          <span onclick="del(${i})">✖</span>
         </td>`;
       }
 
@@ -168,7 +165,7 @@ function addExercise(n){
     kg:[],
     rep:"",
     rec:"",
-    progressioni:"",
+    prog:"",
     note:""
   });
   renderScheda();

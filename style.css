@@ -4,7 +4,7 @@ body{
   font-family:Arial;
 }
 
-/* HEADER FIXED */
+/* HEADER FISSO */
 header{
   position:fixed;
   top:0;
@@ -22,7 +22,7 @@ header{
 .hidden{display:none;}
 
 #app{
-  margin-top:120px;
+  margin-top:110px; /* spazio per header */
 }
 
 .container{
@@ -30,9 +30,13 @@ header{
   margin:20px auto;
 }
 
-/* TESTI VISIBILI */
-.home, h2{
+h2{
   color:white;
+}
+
+.home{
+  color:white;
+  text-align:center;
 }
 
 /* TABELLA */
@@ -46,13 +50,16 @@ table{
 
 th,td{
   border:1px solid #333;
-  padding:2px;
+  padding:2px 0;
   text-align:center;
   vertical-align:middle;
   height:28px;
 }
 
-th{background:#bbb;}
+th{
+  background:#bbb;
+  font-size:12px;
+}
 
 input{
   width:100%;
@@ -65,32 +72,43 @@ td:first-child input{
   text-align:left;
 }
 
-/* COLONNE PIXEL PERFETTE */
+/* COLONNE */
 th:nth-child(1),td:nth-child(1){width:350px;}
 th:nth-child(2),td:nth-child(2){width:50px;}
-th:nth-child(3),td:nth-child(3){width:135px;}
+th:nth-child(3),td:nth-child(3){width:80px;}
 th:nth-child(4),td:nth-child(4){width:50px;}
 th:nth-child(5),td:nth-child(5){width:50px;}
-th:nth-child(6),td:nth-child(6){width:100px;}
-th:nth-child(7),td:nth-child(7){width:200px;}
+th:nth-child(6),td:nth-child(6){width:195px;}
+th:nth-child(7),td:nth-child(7){width:160px;}
 th:nth-child(8),td:nth-child(8){width:50px;}
+
+/* SERIE centrata */
+td:nth-child(2) input{
+  text-align:center;
+}
 
 /* MARKER */
 .marker{
   height:4px;
+  padding:0;
 }
 
 /* SPACER */
 .spacer{
   height:15px;
+  padding:0;
   background:#ddd;
 }
 
-/* CONTROLLI */
-.ctrl-cell{
-  display:flex;
-  justify-content:center;
-  gap:3px;
+/* AZIONI */
+.actions{
+  font-size:14px;
+}
+
+.actions span{
+  cursor:pointer;
+  display:block;
+  line-height:16px;
 }
 
 /* CARD */
