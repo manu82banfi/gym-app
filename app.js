@@ -1,25 +1,21 @@
 let schede = [];
 let attiva = null;
 
-// INIT
 function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
   renderHome();
 }
 
-// HOME
 function renderHome() {
   toolbar(false);
   app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
-// TOOLBAR
 function toolbar(show) {
   document.getElementById("toolbar").classList.toggle("hidden", !show);
 }
 
-// NUOVA SCHEDA
 function nuovaScheda() {
   const s = {
     id: Date.now(),
@@ -31,21 +27,17 @@ function nuovaScheda() {
   renderScheda();
 }
 
-// GET
 function getS() {
   return schede.find(s => s.id === attiva);
 }
 
-// RENDER
 function renderScheda() {
   toolbar(true);
   const s = getS();
 
   let html = `
   <div class="container">
-    <h2 contenteditable oninput="rename(this.innerText)">
-      ${s.nome}
-    </h2>
+    <h2 contenteditable oninput="rename(this.innerText)">${s.nome}</h2>
 
     <table>
       <thead>
@@ -63,20 +55,28 @@ function renderScheda() {
       <tbody>
   `;
 
-  s.blocchi.forEach((b,i)=>{
-    html += renderBlocco(b,i);
-  });
+  s.blocchi.forEach((b,i)=> html += renderBlocco(b,i));
 
   html += `</tbody></table></div>`;
   app.innerHTML = html;
 }
 
-// BLOCCO
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
+
+    const colors = {
+      green:"#00c853",
+      red:"#d50000",
+      orange:"#ff6d00",
+      violet:"#9e0377",
+      white:"#ffffff",
+      yellow:"#ffd600",
+      gambe:"#9e0377"
+    };
+
     return `<tr>
-      <td colspan="7" class="marker" style="background:#8f0663"></td>
+      <td colspan="7" class="marker" style="background:${colors[b.color] || "#9e0377"}"></td>
       <td class="actions">
         <span onclick="moveUp(${i})">⬆</span>
         <span onclick="moveDown(${i})">⬇</span>
@@ -109,7 +109,7 @@ function renderBlocco(b,i){
       }
 
       rows+=`
-        <td class="center"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
+        <td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
       `;
 
       if(r===0){
@@ -128,18 +128,17 @@ function renderBlocco(b,i){
         </td>`;
       }
 
-      // PROGRESSIONI ORA SINGOLA
       rows+=`
-        <td><input value="${b.prog || ""}" oninput="upd(${i},'prog',this.value)"></td>
+        <td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>
       `;
 
-      // NOTE ORA SINGOLA
       rows+=`
         <td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>
       `;
 
       if(r===0){
-        rows+=`<td rowspan="${b.rows}" class="actions">
+        rows+=`
+        <td class="actions" rowspan="${b.rows}">
           <span onclick="moveUp(${i})">⬆</span>
           <span onclick="moveDown(${i})">⬇</span>
           <span onclick="del(${i})">✖</span>
@@ -153,7 +152,6 @@ function renderBlocco(b,i){
   }
 }
 
-// ADD
 function addExercise(n){
   getS().blocchi.push({
     type:"exercise",
@@ -170,9 +168,7 @@ function addExercise(n){
 }
 
 function addMarker(){
-  getS().blocchi.push({
-    type:"marker"
-  });
+  getS().blocchi.push({type:"marker", color:markerColor.value});
   renderScheda();
 }
 
@@ -181,11 +177,9 @@ function addSpacer(){
   renderScheda();
 }
 
-// UPDATE
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
-// MOVE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -200,67 +194,18 @@ function moveDown(i){
   renderScheda();
 }
 
-// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   renderScheda();
 }
 
-// RENAME
 function rename(v){
   getS().nome=v;
   saveLocal();
 }
 
-// LISTA
-function elencoSchede(){
-  toolbar(false);
-
-  app.innerHTML = schede.map(s=>`
-    <div class="card">
-      ${s.nome}<br>
-      <button onclick="apri(${s.id})">Apri</button>
-      <button onclick="copia(${s.id})">Copia</button>
-      <button onclick="eliminaScheda(${s.id})">Elimina</button>
-    </div>
-  `).join("");
-}
-
-function apri(id){ attiva=id; renderScheda(); }
-
-function copia(id){
-  const s=schede.find(x=>x.id===id);
-  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
-  elencoSchede();
-}
-
-function eliminaScheda(id){
-  schede=schede.filter(s=>s.id!==id);
-  elencoSchede();
-}
-
-// SAVE
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
 }
 
-// CLOUD
-async function salvaCloud(){
-  await fetch(BASE_URL,{
-    method:"PUT",
-    headers:{
-      "Content-Type":"application/json",
-      "X-Master-Key":API_KEY
-    },
-    body:JSON.stringify(schede)
-  });
-  alert("☁️ Salvato in cloud");
-}
-
-// PDF
-function exportPDF(){
-  window.print();
-}
-
-// START
 init();

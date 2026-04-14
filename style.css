@@ -4,7 +4,6 @@ body{
   font-family:Arial;
 }
 
-/* HEADER FISSO */
 header{
   position:fixed;
   top:0;
@@ -19,26 +18,19 @@ header{
   background:#222;
 }
 
-.hidden{display:none;}
-
-/* CONTENUTO */
-main{
-  margin-top:110px;
-}
+main{ margin-top:110px; }
 
 .container{
   width:995px;
   margin:20px auto;
 }
 
-/* TESTI */
-.home, h2{
-  color:white;
-}
+/* TITOLO BIANCO */
+h2,.home{ color:white; }
 
-/* TABELLA */
 table{
-  width:100%;
+  width:995px;
+  margin:0 auto;
   border-collapse:collapse;
   background:#ddd;
   color:black;
@@ -48,14 +40,14 @@ table{
 th,td{
   border:1px solid #333;
   padding:2px 6px;
+  height:32px;
   text-align:center;
   vertical-align:middle;
-  height:32px;
 }
 
 th{
+  font-size:11px;
   background:#bbb;
-  font-size:11px; /* RIDOTTO */
 }
 
 /* INPUT */
@@ -66,13 +58,9 @@ input{
   text-align:center;
 }
 
-td:first-child input{
-  text-align:left;
-}
-
 /* SERIE SEMPRE CENTRATA */
-.center input{
-  text-align:center;
+.serie input{
+  text-align:center !important;
 }
 
 /* COLONNE */
@@ -85,10 +73,12 @@ th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
 th:nth-child(8),td:nth-child(8){width:60px;}
 
-/* MARKER */
+/* MARKER VERAMENTE 6PX */
 .marker{
-  height:6px;
-  padding:0;
+  height:6px !important;
+  padding:0 !important;
+  line-height:6px !important;
+  border:none !important;
 }
 
 /* SPACER */
@@ -98,7 +88,7 @@ th:nth-child(8),td:nth-child(8){width:60px;}
   background:#ddd;
 }
 
-/* AZIONI ORIZZONTALI */
+/* AZIONI SOLO SIMBOLI */
 .actions{
   display:flex;
   justify-content:center;
@@ -109,12 +99,13 @@ th:nth-child(8),td:nth-child(8){width:60px;}
 
 .actions span{
   cursor:pointer;
+  user-select:none;
+  background:none;
+  border:none;
 }
 
-/* CARD */
-.card{
-  background:#222;
-  color:white;
-  margin:10px;
-  padding:10px;
+/* CENTRATURA PERFETTA TABELLA */
+table, .container{
+  margin-left:auto;
+  margin-right:auto;
 }
