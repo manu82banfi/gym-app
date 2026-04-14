@@ -5,18 +5,17 @@ let attiva = null;
 function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
-
   renderHome();
 }
 
 // HOME
 function renderHome() {
-  toggleToolbar(false);
-  app.innerHTML = "Crea o seleziona una scheda";
+  toolbar(false);
+  app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
 // TOOLBAR
-function toggleToolbar(show) {
+function toolbar(show) {
   document.getElementById("toolbar").classList.toggle("hidden", !show);
 }
 
@@ -27,7 +26,6 @@ function nuovaScheda() {
     nome: "SCHEDA",
     blocchi: []
   };
-
   schede.push(s);
   attiva = s.id;
   renderScheda();
@@ -40,126 +38,130 @@ function getS() {
 
 // RENDER
 function renderScheda() {
-  toggleToolbar(true);
-
+  toolbar(true);
   const s = getS();
 
   let html = `
-    <div class="container">
-      <h2 contenteditable oninput="rename(this.innerText)">
-        ${s.nome}
-      </h2>
+  <div class="container">
+    <h2 contenteditable oninput="rename(this.innerText)">
+      ${s.nome}
+    </h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ESERCIZIO</th>
-            <th>SERIE</th>
-            <th>REP RANGE</th>
-            <th>KG</th>
-            <th>REC.</th>
-            <th>PROGRESSIONE / NOTE</th>
-          </tr>
-        </thead>
-        <tbody>
+    <table>
+      <thead>
+        <tr>
+          <th>ESERCIZIO</th>
+          <th>SERIE</th>
+          <th>REP RANGE</th>
+          <th>KG</th>
+          <th>REC.</th>
+          <th>PROGRESSIONE / NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
   `;
 
-  s.blocchi.forEach((b, i) => {
-    html += renderBlocco(b, i);
+  s.blocchi.forEach((b,i)=>{
+    html += renderBlocco(b,i);
   });
 
-  html += `
-        </tbody>
-      </table>
-    </div>
-  `;
-
+  html += `</tbody></table></div>`;
   app.innerHTML = html;
 }
 
 // BLOCCO
-function renderBlocco(b, i) {
+function renderBlocco(b,i){
 
-  if (b.type === "marker") {
-    return `<tr><td colspan="6" class="marker" style="background:${b.color}"></td></tr>`;
+  if (b.type==="marker"){
+    return `<tr>
+      <td colspan="6" class="marker" style="background:${b.color}"></td>
+    </tr>`;
   }
 
-  if (b.type === "spacer") {
+  if (b.type==="spacer"){
     return `<tr><td colspan="6" class="spacer"></td></tr>`;
   }
 
-  if (b.type === "exercise") {
+  if (b.type==="exercise"){
+    let rows="";
 
-    let rows = "";
+    for(let r=0;r<b.rows;r++){
+      rows+=`<tr>`;
 
-    for (let r = 0; r < b.rows; r++) {
-
-      rows += `<tr>`;
-
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.nome}" oninput="upd(${i},'nome',this.value)">
         </td>`;
       }
 
-      rows += `<td>
-        <input value="${b.serie[r] || ""}" oninput="updArr(${i},'serie',${r},this.value)">
-      </td>`;
+      rows+=`
+        <td><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
+      `;
 
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.rep}" oninput="upd(${i},'rep',this.value)">
         </td>`;
       }
 
-      rows += `<td>
-        <input value="${b.kg[r] || ""}" oninput="updArr(${i},'kg',${r},this.value)">
-      </td>`;
+      rows+=`
+        <td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>
+      `;
 
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.rec}" oninput="upd(${i},'rec',this.value)">
         </td>`;
       }
 
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.note}" oninput="upd(${i},'note',this.value)">
         </td>`;
       }
 
-      rows += `</tr>`;
+      rows+=`</tr>`;
     }
 
-    return rows;
+    return `
+    ${rows}
+    <tr class="controls">
+      <td colspan="6">
+        <div class="ctrl">
+          <button onclick="moveUp(${i})">⬆</button>
+          <button onclick="moveDown(${i})">⬇</button>
+          <button onclick="del(${i})">✖</button>
+        </div>
+      </td>
+    </tr>`;
   }
 }
 
 // ADD
-function addExercise(n) {
+function addExercise(n){
   getS().blocchi.push({
-    type: "exercise",
-    rows: n,
-    nome: "",
-    serie: [],
-    kg: [],
-    rep: "",
-    rec: "",
-    note: ""
+    type:"exercise",
+    rows:n,
+    nome:"",
+    serie:[],
+    kg:[],
+    rep:"",
+    rec:"",
+    note:""
   });
   renderScheda();
 }
 
-function addMarker() {
+function addMarker(){
   getS().blocchi.push({
-    type: "marker",
-    color: markerColor.value
+    type:"marker",
+    color:markerColor.value
   });
   renderScheda();
 }
 
-function addSpacer() {
-  getS().blocchi.push({ type: "spacer" });
+function addSpacer(){
+  getS().blocchi.push({type:"spacer"});
   renderScheda();
 }
 
@@ -167,29 +169,63 @@ function addSpacer() {
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
+// MOVE
+function moveUp(i){
+  let arr=getS().blocchi;
+  if(i===0)return;
+  [arr[i],arr[i-1]]=[arr[i-1],arr[i]];
+  renderScheda();
+}
+
+function moveDown(i){
+  let arr=getS().blocchi;
+  if(i===arr.length-1)return;
+  [arr[i],arr[i+1]]=[arr[i+1],arr[i]];
+  renderScheda();
+}
+
+// DELETE
+function del(i){
+  getS().blocchi.splice(i,1);
+  renderScheda();
+}
+
 // RENAME
 function rename(v){
-  getS().nome = v;
+  getS().nome=v;
   saveLocal();
 }
 
 // LISTA
 function elencoSchede(){
-  toggleToolbar(false);
+  toolbar(false);
 
   app.innerHTML = schede.map(s=>`
     <div class="card">
       ${s.nome}<br>
       <button onclick="apri(${s.id})">Apri</button>
+      <button onclick="copia(${s.id})">Copia</button>
+      <button onclick="eliminaScheda(${s.id})">Elimina</button>
     </div>
   `).join("");
 }
 
 function apri(id){ attiva=id; renderScheda(); }
 
+function copia(id){
+  const s=schede.find(x=>x.id===id);
+  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
+  elencoSchede();
+}
+
+function eliminaScheda(id){
+  schede=schede.filter(s=>s.id!==id);
+  elencoSchede();
+}
+
 // SAVE
 function saveLocal(){
-  localStorage.setItem("schede", JSON.stringify(schede));
+  localStorage.setItem("schede",JSON.stringify(schede));
 }
 
 // CLOUD
@@ -202,11 +238,10 @@ async function salvaCloud(){
     },
     body:JSON.stringify(schede)
   });
-
   alert("☁️ Salvato in cloud");
 }
 
-// PDF (base migliorato)
+// PDF (BASE)
 function exportPDF(){
   window.print();
 }
