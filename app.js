@@ -1,33 +1,27 @@
 let schede = [];
 let schedaAttiva = null;
 
-// ======================
-// INIT
-// ======================
+// ================= INIT =================
 async function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
 
   const cloud = await caricaCloud();
-  if (cloud && cloud.length) schede = cloud;
+  if (cloud?.length) schede = cloud;
 
   if (!schede.length) nuovaScheda();
 
   schedaAttiva = schede[0].id;
   render();
-  autosync();
+  autosaveLoop();
 }
 
-// ======================
-// GET SCHEDA
-// ======================
+// ================= GET =================
 function getScheda() {
   return schede.find(s => s.id === schedaAttiva);
 }
 
-// ======================
-// RENDER
-// ======================
+// ================= RENDER =================
 function render() {
   const app = document.getElementById("app");
   const s = getScheda();
@@ -43,55 +37,61 @@ function render() {
     const div = document.createElement("div");
     div.className = "card";
 
-    // ❌ HEADER RIMOSSO COMPLETAMENTE (come richiesto)
+    // HEADER
+    if (r.type === "header") {
+      div.innerHTML = `
+        <div class="grid header">
+          <div>ESERCIZIO</div>
+          <div>SERIE</div>
+          <div>REP-RANGE</div>
+          <div>KG</div>
+          <div>REC.</div>
+          <div>NOTE / PROG.</div>
+        </div>
+      `;
+    }
 
+    // EXERCISE
     if (r.type === "exercise") {
       div.innerHTML = `
         <div class="grid">
-          <input value="${r.nome}" onchange="updEx(${i},this.value)">
-          <input value="${r.serie}" onchange="upd(${i},'serie',this.value)">
-          <input value="${r.repRange}" onchange="upd(${i},'repRange',this.value)">
-          <input value="${r.kg}" onchange="upd(${i},'kg',this.value)">
-          <input value="${r.rec}" onchange="upd(${i},'rec',this.value)">
-          <input value="${r.note}" onchange="upd(${i},'note',this.value)">
+          <input value="${r.nome}" oninput="upd(${i},'nome',this.value)">
+          <input value="${r.serie}" oninput="upd(${i},'serie',this.value)">
+          <input value="${r.repRange}" oninput="upd(${i},'repRange',this.value)">
+          <input value="${r.kg}" oninput="upd(${i},'kg',this.value)">
+          <input value="${r.rec}" oninput="upd(${i},'rec',this.value)">
+          <input value="${r.note}" oninput="upd(${i},'note',this.value)">
         </div>
       `;
     }
 
+    // SPACER (INVISIBILE)
     if (r.type === "spacer") {
-      div.innerHTML = `<div style="height:20px"></div>`;
+      div.innerHTML = `<div class="spacer"></div>`;
     }
 
+    // MARKER (SOLO COLORE)
     if (r.type === "marker") {
-      div.innerHTML = `
-        <div class="marker" style="background:${r.color}">
-          ${r.label}
-        </div>
-      `;
+      div.innerHTML = `<div class="marker" style="background:${r.color}"></div>`;
     }
 
     app.appendChild(div);
   });
 }
 
-// ======================
-// SCHEDA
-// ======================
+// ================= NUOVA SCHEDA =================
 function nuovaScheda() {
-  const s = {
+  schede.push({
     id: Date.now(),
     nome: "Nuova Scheda",
-    righe: []
-  };
+    righe: [{ type: "header" }]
+  });
 
-  schede.push(s);
-  schedaAttiva = s.id;
+  schedaAttiva = schede.at(-1).id;
   render();
 }
 
-// ======================
-// LISTA SCHEDE
-// ======================
+// ================= LISTA =================
 function apriSchede() {
   const app = document.getElementById("app");
 
@@ -116,43 +116,29 @@ function apri(id) {
 
 function elimina(id) {
   schede = schede.filter(s => s.id !== id);
-
   if (!schede.length) nuovaScheda();
-  schedaAttiva = schede[0].id;
-
   apriSchede();
 }
 
 function copia(id) {
   const s = schede.find(x => x.id === id);
-
   schede.push({
     ...s,
     id: Date.now(),
     nome: s.nome + " (copia)"
   });
-
   apriSchede();
 }
 
-// ======================
-// FIX: LETTURA CORRETTA SELECT
-// ======================
-function getTipoRiga() {
-  return document.getElementById("tipoRiga").value;
-}
-
-// ======================
-// AGGIUNTA RIGA (FIX BUG PRINCIPALE)
-// ======================
+// ================= AGGIUNGI RIGA =================
 function aggiungiRiga() {
   const s = getScheda();
-  const type = getTipoRiga(); // ✔ FIX: ora legge sempre valore aggiornato
+  const tipo = document.getElementById("tipoRiga").value;
 
-  if (type === "exercise") {
+  if (tipo === "exercise") {
     s.righe.push({
       type: "exercise",
-      nome: "Esercizio",
+      nome: "",
       serie: "",
       repRange: "",
       kg: "",
@@ -161,61 +147,38 @@ function aggiungiRiga() {
     });
   }
 
-  if (type === "spacer") {
+  if (tipo === "header") {
+    s.righe.push({ type: "header" });
+  }
+
+  if (tipo === "spacer") {
     s.righe.push({ type: "spacer" });
   }
 
-  if (type === "marker") {
-    const colors = {
-      bicipiti: "green",
-      tricipiti: "red",
-      addominali: "orange",
-      gambe: "violet",
-      dorso: "white",
-      petto: "lightblue",
-      spalle: "yellow"
-    };
-
-    const key = prompt("Muscolo (bicipiti, tricipiti, ecc)?");
-
-    s.righe.push({
-      type: "marker",
-      label: key,
-      color: colors[key] || "gray"
-    });
+  if (tipo === "marker") {
+    const color = document.getElementById("markerColor").value;
+    s.righe.push({ type: "marker", color });
   }
 
   render();
 }
 
-// ======================
-// UPDATE
-// ======================
+// ================= UPDATE =================
 function upd(i, field, val) {
   getScheda().righe[i][field] = val;
 }
 
-function updEx(i, val) {
-  getScheda().righe[i].nome = val;
-}
-
-// ======================
-// NOME SCHEDA
-// ======================
+// ================= NOME =================
 function renameScheda(v) {
   getScheda().nome = v;
 }
 
-// ======================
-// AUTO SAVE
-// ======================
+// ================= AUTOSAVE =================
 function autosave() {
   localStorage.setItem("schede", JSON.stringify(schede));
 }
 
-// ======================
-// CLOUD
-// ======================
+// ================= CLOUD =================
 async function salvaCloud() {
   await fetch(BASE_URL, {
     method: "PUT",
@@ -226,19 +189,17 @@ async function salvaCloud() {
     body: JSON.stringify(schede)
   });
 
-  alert("☁️ Salvato su cloud");
+  alert("☁️ Salvato");
 }
 
-// ======================
-// AUTO SYNC
-// ======================
-function autosync() {
+// ================= LOOP =================
+function autosaveLoop() {
   setInterval(() => {
     autosave();
-  }, 3000); // solo locale automatico (cloud manuale)
+  }, 3000);
 }
 
-// ======================
+// ================= GLOBAL =================
 window.nuovaScheda = nuovaScheda;
 window.apriSchede = apriSchede;
 window.apri = apri;
@@ -246,8 +207,8 @@ window.copia = copia;
 window.elimina = elimina;
 window.aggiungiRiga = aggiungiRiga;
 window.upd = upd;
-window.updEx = updEx;
 window.renameScheda = renameScheda;
 window.salvaCloud = salvaCloud;
 
+// START
 init();

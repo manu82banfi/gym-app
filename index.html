@@ -23,10 +23,21 @@
     <option value="exercise">Esercizio</option>
     <option value="spacer">Spazio</option>
     <option value="marker">Marker</option>
+    <option value="header">Header</option>
   </select>
 
-  <button onclick="aggiungiRiga()">Aggiungi riga</button>
-  <button onclick="salvaCloud()">Salva in Cloud</button>
+  <select id="markerColor" style="display:none">
+    <option value="green">Bicipiti</option>
+    <option value="red">Tricipiti</option>
+    <option value="orange">Addominali</option>
+    <option value="violet">Gambe</option>
+    <option value="white">Dorso</option>
+    <option value="lightblue">Petto</option>
+    <option value="yellow">Spalle</option>
+  </select>
+
+  <button onclick="aggiungiRiga()">Aggiungi</button>
+  <button onclick="salvaCloud()">Cloud</button>
 </header>
 
 <main id="app"></main>

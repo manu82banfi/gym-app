@@ -31,7 +31,6 @@ button, select {
 }
 
 .grid input {
-  width: 100%;
   background: #333;
   color: white;
   border: none;
@@ -41,8 +40,12 @@ button, select {
   font-weight: bold;
 }
 
+.spacer {
+  height: 20px;
+  background: #111; /* invisibile */
+}
+
 .marker {
-  padding: 5px;
-  border-radius: 5px;
-  font-weight: bold;
+  height: 4px;
+  border-radius: 2px;
 }
