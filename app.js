@@ -1,47 +1,51 @@
 let schede = [];
 let attiva = null;
 
-window.nuovaScheda = nuovaScheda;
-window.elencoSchede = elencoSchede;
-window.salvaCloud = salvaCloud;
-window.exportPDF = exportPDF;
-window.apri = apri;
-window.copia = copia;
-window.eliminaScheda = eliminaScheda;
-
+// INIT
 function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
   renderHome();
 }
 
+// HOME
 function renderHome() {
   toolbar(false);
   app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
+// TOOLBAR
 function toolbar(show) {
   document.getElementById("toolbar").classList.toggle("hidden", !show);
 }
 
+// NUOVA SCHEDA
 function nuovaScheda() {
-  const s = { id: Date.now(), nome: "SCHEDA", blocchi: [] };
+  const s = {
+    id: Date.now(),
+    nome: "SCHEDA",
+    blocchi: []
+  };
   schede.push(s);
   attiva = s.id;
   renderScheda();
 }
 
+// GET
 function getS() {
   return schede.find(s => s.id === attiva);
 }
 
+// RENDER
 function renderScheda() {
   toolbar(true);
   const s = getS();
 
   let html = `
   <div class="container">
-    <h2 contenteditable oninput="rename(this.innerText)">${s.nome}</h2>
+    <h2 contenteditable oninput="rename(this.innerText)">
+      ${s.nome}
+    </h2>
 
     <table>
       <thead>
@@ -67,72 +71,77 @@ function renderScheda() {
   app.innerHTML = html;
 }
 
+// BLOCCO
 function renderBlocco(b,i){
 
-  // 🔴 MARKER = riga FULL WIDTH vera (NO colonna azioni)
-  if (b.type === "marker") {
-    return `
-      <tr class="marker-row">
-        <td colspan="8" class="marker" style="background:${b.color}"></td>
-      </tr>
-    `;
+  if (b.type==="marker"){
+    return `<tr>
+      <td colspan="7" class="marker" style="background:${b.color}"></td>
+      <td class="actions">
+        <span onclick="moveUp(${i})">⬆</span>
+        <span onclick="moveDown(${i})">⬇</span>
+        <span onclick="del(${i})">✖</span>
+      </td>
+    </tr>`;
   }
 
-  if (b.type === "spacer") {
-    return `
-      <tr>
-        <td colspan="7" class="spacer"></td>
-        <td class="actions">
-          <span onclick="moveUp(${i})">⬆</span>
-          <span onclick="moveDown(${i})">⬇</span>
-          <span onclick="del(${i})">✖</span>
-        </td>
-      </tr>
-    `;
+  if (b.type==="spacer"){
+    return `<tr>
+      <td colspan="7" class="spacer"></td>
+      <td class="actions">
+        <span onclick="moveUp(${i})">⬆</span>
+        <span onclick="moveDown(${i})">⬇</span>
+        <span onclick="del(${i})">✖</span>
+      </td>
+    </tr>`;
   }
 
-  if (b.type === "exercise") {
+  if (b.type==="exercise"){
+    let rows="";
 
-    let rows = "";
+    for(let r=0;r<b.rows;r++){
+      rows+=`<tr>`;
 
-    for (let r = 0; r < b.rows; r++) {
-      rows += `<tr>`;
-
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.nome}" oninput="upd(${i},'nome',this.value)">
         </td>`;
       }
 
-      rows += `<td class="serie"><input value="${b.serie[r] || ""}" oninput="updArr(${i},'serie',${r},this.value)"></td>`;
+      rows+=`
+        <td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
+      `;
 
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.rep}" oninput="upd(${i},'rep',this.value)">
         </td>`;
       }
 
-      rows += `<td><input value="${b.kg[r] || ""}" oninput="updArr(${i},'kg',${r},this.value)"></td>`;
+      rows+=`
+        <td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>
+      `;
 
-      if (r === 0) {
-        rows += `<td rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.rec}" oninput="upd(${i},'rec',this.value)">
         </td>`;
       }
 
-      rows += `<td><input value="${b.prog || ""}" oninput="upd(${i},'prog',this.value)"></td>`;
-      rows += `<td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>`;
+      rows+=`
+        <td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>
+        <td><input value="${b.note||""}" oninput="upd(${i},'note',this.value)"></td>
+      `;
 
-      if (r === 0) {
-        rows += `
-        <td class="actions" rowspan="${b.rows}">
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}" class="actions">
           <span onclick="moveUp(${i})">⬆</span>
           <span onclick="moveDown(${i})">⬇</span>
           <span onclick="del(${i})">✖</span>
         </td>`;
       }
 
-      rows += `</tr>`;
+      rows+=`</tr>`;
     }
 
     return rows;
@@ -199,50 +208,9 @@ function rename(v){
   saveLocal();
 }
 
-// LISTA
-function elencoSchede(){
-  toolbar(false);
-
-  app.innerHTML = schede.map(s=>`
-    <div class="card">
-      <div class="card-title">${s.nome}</div>
-      <button onclick="apri(${s.id})">Apri</button>
-      <button onclick="copia(${s.id})">Copia</button>
-      <button onclick="eliminaScheda(${s.id})">Elimina</button>
-    </div>
-  `).join("");
-}
-
-function apri(id){ attiva=id; renderScheda(); }
-
-function copia(id){
-  const s=schede.find(x=>x.id===id);
-  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
-  elencoSchede();
-}
-
-function eliminaScheda(id){
-  schede=schede.filter(s=>s.id!==id);
-  elencoSchede();
-}
-
+// SAVE LOCAL
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
-}
-
-function salvaCloud(){
-  fetch(BASE_URL,{
-    method:"PUT",
-    headers:{
-      "Content-Type":"application/json",
-      "X-Master-Key":API_KEY
-    },
-    body:JSON.stringify(schede)
-  });
-}
-
-function exportPDF(){
-  window.print();
 }
 
 init();

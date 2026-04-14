@@ -4,6 +4,7 @@ body{
   font-family:Arial;
 }
 
+/* HEADER FISSO */
 header{
   position:fixed;
   top:0;
@@ -18,42 +19,43 @@ header{
   background:#222;
 }
 
+.hidden{display:none;}
+
+/* CONTENUTO */
 main{
   margin-top:110px;
 }
 
-/* 🔥 CENTRATURA VERA (NO 100% TABLE) */
 .container{
-  width:985px;
+  width:995px;
   margin:20px auto;
 }
 
 /* TESTI */
-h2,.home{
+.home, h2{
   color:white;
 }
 
-/* TABLE FIX */
+/* TABELLA */
 table{
-  width:985px;
-  margin:0 auto;
+  width:100%;
   border-collapse:collapse;
   background:#ddd;
+  color:black;
   table-layout:fixed;
 }
 
-/* CELLE */
 th,td{
   border:1px solid #333;
-  padding:2px 6px;
-  height:32px;
+  padding:2px 4px;
   text-align:center;
   vertical-align:middle;
 }
 
+/* HEADER PIÙ PICCOLO */
 th{
-  font-size:11px;
   background:#bbb;
+  font-size:11px;
 }
 
 /* INPUT */
@@ -64,8 +66,9 @@ input{
   text-align:center;
 }
 
+/* SERIE SEMPRE CENTRATA */
 .serie input{
-  text-align:center !important;
+  text-align:center;
 }
 
 /* COLONNE */
@@ -76,25 +79,12 @@ th:nth-child(4),td:nth-child(4){width:50px;}
 th:nth-child(5),td:nth-child(5){width:50px;}
 th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
-th:nth-child(8),td:nth-child(8){width:50px;}
+th:nth-child(8),td:nth-child(8){width:60px;}
 
-/* 🔴 FIX DEFINITIVO MARKER */
-.marker-row{
-  height:6px !important;
-}
-
-.marker-row td{
-  height:6px !important;
-  padding:0 !important;
-  border:none !important;
-  line-height:6px !important;
-}
-
+/* MARKER */
 .marker{
-  height:6px !important;
-  padding:0 !important;
-  border:none !important;
-  display:block;
+  height:4px;
+  padding:0;
 }
 
 /* SPACER */
@@ -102,27 +92,22 @@ th:nth-child(8),td:nth-child(8){width:50px;}
   height:15px;
   padding:0;
   background:#ddd;
-  border:none;
 }
 
-/* 🔥 ICONE SENZA BOX */
+/* AZIONI (ICONE ORIZZONTALI) */
 .actions{
   display:flex;
+  flex-direction:row;
   justify-content:center;
   align-items:center;
   gap:6px;
-  height:100%;
+  white-space:nowrap;
+  font-size:14px;
 }
 
 .actions span{
   cursor:pointer;
   user-select:none;
-  background:none;
-  border:none;
-  padding:0;
-  margin:0;
-  line-height:1;
-  font-size:14px;
 }
 
 /* CARD */
