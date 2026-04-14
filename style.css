@@ -18,24 +18,31 @@ header{
   background:#222;
 }
 
-main{ margin-top:110px; }
+main{
+  margin-top:110px;
+}
 
+/* 🔥 CENTRATURA VERA (NO 100% TABLE) */
 .container{
-  width:calc(100% - 20px);
-  max-width:995px;
+  width:985px;
   margin:20px auto;
 }
 
-h2,.home{ color:white; }
+/* TESTI */
+h2,.home{
+  color:white;
+}
 
-/* TABELLA */
+/* TABLE FIX */
 table{
-  width:100%;
+  width:985px;
+  margin:0 auto;
   border-collapse:collapse;
   background:#ddd;
   table-layout:fixed;
 }
 
+/* CELLE */
 th,td{
   border:1px solid #333;
   padding:2px 6px;
@@ -44,8 +51,12 @@ th,td{
   vertical-align:middle;
 }
 
-th{ font-size:11px; background:#bbb; }
+th{
+  font-size:11px;
+  background:#bbb;
+}
 
+/* INPUT */
 input{
   width:100%;
   border:none;
@@ -65,20 +76,25 @@ th:nth-child(4),td:nth-child(4){width:50px;}
 th:nth-child(5),td:nth-child(5){width:50px;}
 th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
-th:nth-child(8),td:nth-child(8){width:60px;}
+th:nth-child(8),td:nth-child(8){width:50px;}
 
-/* 🔥 FIX MARKER DEFINITIVO */
+/* 🔴 FIX DEFINITIVO MARKER */
+.marker-row{
+  height:6px !important;
+}
+
 .marker-row td{
   height:6px !important;
   padding:0 !important;
-  line-height:6px !important;
   border:none !important;
+  line-height:6px !important;
 }
 
 .marker{
   height:6px !important;
   padding:0 !important;
   border:none !important;
+  display:block;
 }
 
 /* SPACER */
@@ -86,30 +102,33 @@ th:nth-child(8),td:nth-child(8){width:60px;}
   height:15px;
   padding:0;
   background:#ddd;
+  border:none;
 }
 
-/* AZIONI */
+/* 🔥 ICONE SENZA BOX */
 .actions{
   display:flex;
   justify-content:center;
   align-items:center;
   gap:6px;
+  height:100%;
 }
 
 .actions span{
   cursor:pointer;
   user-select:none;
+  background:none;
+  border:none;
+  padding:0;
+  margin:0;
+  line-height:1;
+  font-size:14px;
 }
 
-/* CARD ELENCO */
+/* CARD */
 .card{
   background:#222;
   color:white;
   margin:10px;
   padding:10px;
-}
-
-.card-title{
-  color:white;
-  margin-bottom:5px;
 }
