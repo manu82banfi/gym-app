@@ -25,16 +25,14 @@ main{
 }
 
 .container{
-  width:985px;
+  width:995px;
   margin:20px auto;
 }
 
-/* TESTI */
 .home, h2{
   color:white;
 }
 
-/* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
@@ -49,19 +47,16 @@ th,td{
   vertical-align:middle;
 }
 
-th{
-  font-size:11px;
-}
-
-/* SERIE CENTRATA SEMPRE */
-.serie input{
-  text-align:center;
-}
+th{font-size:11px;}
 
 input{
   width:100%;
   border:none;
   background:transparent;
+  text-align:center;
+}
+
+.serie input{
   text-align:center;
 }
 
@@ -75,20 +70,16 @@ th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
 th:nth-child(8),td:nth-child(8){width:60px;}
 
-/* MARKER */
 .marker{
   height:4px;
   padding:0;
 }
 
-/* SPACER */
 .spacer{
   height:15px;
   padding:0;
-  background:#ddd;
 }
 
-/* AZIONI ORIZZONTALI */
 .actions{
   display:flex;
   flex-direction:row;
@@ -100,5 +91,4 @@ th:nth-child(8),td:nth-child(8){width:60px;}
 
 .actions span{
   cursor:pointer;
-  user-select:none;
 }
