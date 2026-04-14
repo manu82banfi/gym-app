@@ -55,7 +55,9 @@ function renderScheda() {
           <th>REP RANGE</th>
           <th>KG</th>
           <th>REC.</th>
-          <th>PROGRESSIONE / NOTE</th>
+          <th>PROGRESSIONI</th>
+          <th>NOTE</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -72,16 +74,31 @@ function renderScheda() {
 // BLOCCO
 function renderBlocco(b,i){
 
+  // MARKER
   if (b.type==="marker"){
     return `<tr>
-      <td colspan="6" class="marker" style="background:${b.color}"></td>
+      <td colspan="7" class="marker" style="background:${b.color}"></td>
+      <td class="ctrl-cell">
+        <button onclick="moveUp(${i})">⬆</button>
+        <button onclick="moveDown(${i})">⬇</button>
+        <button onclick="del(${i})">✖</button>
+      </td>
     </tr>`;
   }
 
+  // SPACER
   if (b.type==="spacer"){
-    return `<tr><td colspan="6" class="spacer"></td></tr>`;
+    return `<tr>
+      <td colspan="7" class="spacer"></td>
+      <td class="ctrl-cell">
+        <button onclick="moveUp(${i})">⬆</button>
+        <button onclick="moveDown(${i})">⬇</button>
+        <button onclick="del(${i})">✖</button>
+      </td>
+    </tr>`;
   }
 
+  // EXERCISE
   if (b.type==="exercise"){
     let rows="";
 
@@ -116,24 +133,28 @@ function renderBlocco(b,i){
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
+          <input value="${b.progressioni||""}" oninput="upd(${i},'progressioni',this.value)">
+        </td>`;
+      }
+
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.note}" oninput="upd(${i},'note',this.value)">
+        </td>`;
+      }
+
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}" class="ctrl-cell">
+          <button onclick="moveUp(${i})">⬆</button>
+          <button onclick="moveDown(${i})">⬇</button>
+          <button onclick="del(${i})">✖</button>
         </td>`;
       }
 
       rows+=`</tr>`;
     }
 
-    return `
-    ${rows}
-    <tr class="controls">
-      <td colspan="6">
-        <div class="ctrl">
-          <button onclick="moveUp(${i})">⬆</button>
-          <button onclick="moveDown(${i})">⬇</button>
-          <button onclick="del(${i})">✖</button>
-        </div>
-      </td>
-    </tr>`;
+    return rows;
   }
 }
 
@@ -147,6 +168,7 @@ function addExercise(n){
     kg:[],
     rep:"",
     rec:"",
+    progressioni:"",
     note:""
   });
   renderScheda();
@@ -241,7 +263,7 @@ async function salvaCloud(){
   alert("☁️ Salvato in cloud");
 }
 
-// PDF (BASE)
+// PDF
 function exportPDF(){
   window.print();
 }
