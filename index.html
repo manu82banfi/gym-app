@@ -10,31 +10,29 @@
 <body>
 
 <header>
-  <!-- RIGA 1 -->
   <div class="topbar">
     <button onclick="nuovaScheda()">Nuova scheda</button>
-    <button onclick="apriSchede()">Elenco schede</button>
+    <button onclick="elencoSchede()">Elenco schede</button>
     <button onclick="salvaCloud()">Salva in Cloud</button>
     <button onclick="exportPDF()">Esporta PDF</button>
   </div>
 
-  <!-- RIGA 2 (DINAMICA) -->
   <div id="toolbar" class="toolbar hidden">
     <select id="markerColor">
+      <option value="green">Verde</option>
       <option value="red">Rosso</option>
       <option value="orange">Arancio</option>
-      <option value="green">Verde</option>
-      <option value="white">Bianco</option>
       <option value="violet">Viola chiaro</option>
+      <option value="white">Bianco</option>
       <option value="yellow">Giallo</option>
     </select>
 
     <button onclick="addMarker()">Marker</button>
     <button onclick="addSpacer()">Spazio</button>
-    <button onclick="addExercise(1)">Esercizio 1 riga</button>
-    <button onclick="addExercise(2)">Esercizio 2 righe</button>
-    <button onclick="addExercise(3)">Esercizio 3 righe</button>
-    <button onclick="addExercise(4)">Esercizio 4 righe</button>
+    <button onclick="addExercise(1)">Esercizio 1</button>
+    <button onclick="addExercise(2)">Esercizio 2</button>
+    <button onclick="addExercise(3)">Esercizio 3</button>
+    <button onclick="addExercise(4)">Esercizio 4</button>
   </div>
 </header>
 

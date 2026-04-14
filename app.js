@@ -1,155 +1,212 @@
 let schede = [];
 let attiva = null;
+let dragIndex = null;
 
-// ================= INIT =================
+// INIT
 async function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
 
-  const cloud = await caricaCloud();
-  if (cloud?.length) schede = cloud;
-
-  renderHome();
+  if (!schede.length) renderHome();
+  else renderHome();
 }
 
-// ================= HOME =================
+// HOME
 function renderHome() {
-  document.getElementById("toolbar").classList.add("hidden");
-  document.getElementById("app").innerHTML = `
-    <div class="home">Seleziona o crea una scheda</div>
-  `;
+  toolbar(false);
+  app.innerHTML = "Crea o seleziona una scheda";
 }
 
-// ================= NUOVA SCHEDA =================
+// TOOLBAR
+function toolbar(show) {
+  document.getElementById("toolbar").classList.toggle("hidden", !show);
+}
+
+// NUOVA SCHEDA
 function nuovaScheda() {
   const s = {
     id: Date.now(),
-    nome: "Nuova Scheda",
+    nome: "SCHEDA",
     blocchi: []
   };
 
   schede.push(s);
   attiva = s.id;
-
   renderScheda();
 }
 
-// ================= RENDER SCHEDA =================
-function renderScheda() {
-  document.getElementById("toolbar").classList.remove("hidden");
+// GET
+function getS() {
+  return schede.find(s => s.id === attiva);
+}
 
-  const s = schede.find(x => x.id === attiva);
+// RENDER
+function renderScheda() {
+  toolbar(true);
+
+  const s = getS();
 
   let html = `
-    <div class="header-grid">
-      <div>ESERCIZIO</div>
-      <div>SERIE</div>
-      <div>REP</div>
-      <div>KG</div>
-      <div>REC</div>
-      <div>NOTE</div>
-    </div>
+    <div class="container">
+      <h2 contenteditable oninput="rename(this.innerText)">
+        ${s.nome}
+      </h2>
+
+      <div class="header">
+        <div>ESERCIZIO</div>
+        <div>SERIE</div>
+        <div>REP RANGE</div>
+        <div>KG</div>
+        <div>REC.</div>
+        <div>NOTE</div>
+      </div>
   `;
 
   s.blocchi.forEach((b, i) => {
-    if (b.type === "exercise") {
-      html += renderExercise(b, i);
-    }
-
-    if (b.type === "marker") {
-      html += `<div class="marker" style="background:${b.color}"></div>`;
-    }
-
-    if (b.type === "spacer") {
-      html += `<div class="spacer"></div>`;
-    }
+    html += renderBlocco(b, i);
   });
 
-  document.getElementById("app").innerHTML = html;
+  html += `</div>`;
+  app.innerHTML = html;
 }
 
-// ================= EXERCISE =================
-function renderExercise(b, index) {
-  let rows = "";
+// BLOCCO
+function renderBlocco(b, i) {
 
-  for (let i = 0; i < b.rows; i++) {
-    rows += `
+  if (b.type === "marker")
+    return `<div class="marker" style="background:${b.color}"></div>`;
+
+  if (b.type === "spacer")
+    return `<div class="spacer"></div>`;
+
+  if (b.type === "exercise") {
+    let rows = "";
+
+    for (let r = 0; r < b.rows; r++) {
+      rows += `
       <div class="row">
-        ${i === 0 ? `<input value="${b.nome}" class="big">` : `<div></div>`}
-        <input value="${b.serie[i] || ""}">
-        ${i === 0 ? `<input value="${b.rep}" class="big">` : `<div></div>`}
-        <input value="${b.kg[i] || ""}">
-        ${i === 0 ? `<input value="${b.rec}" class="big">` : `<div></div>`}
-        ${i === 0 ? `<input value="${b.note}" class="big">` : `<div></div>`}
-      </div>
-    `;
-  }
+        ${r === 0 ? `<input value="${b.nome}" oninput="upd(${i},'nome',this.value)">` : `<div></div>`}
+        <input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)">
+        ${r === 0 ? `<input value="${b.rep}" oninput="upd(${i},'rep',this.value)">` : `<div></div>`}
+        <input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)">
+        ${r === 0 ? `<input value="${b.rec}" oninput="upd(${i},'rec',this.value)">` : `<div></div>`}
+        ${r === 0 ? `<input value="${b.note}" oninput="upd(${i},'note',this.value)">` : `<div></div>`}
+      </div>`;
+    }
 
-  return `
-    <div class="block" draggable="true">
+    return `
+    <div class="block" draggable="true"
+      ondragstart="dragStart(${i})"
+      ondragover="event.preventDefault()"
+      ondrop="drop(${i})">
+
       ${rows}
-      <button onclick="del(${index})">X</button>
-    </div>
-  `;
+      <button class="delete" onclick="del(${i})">✖</button>
+    </div>`;
+  }
 }
 
-// ================= ADD =================
+// ADD
 function addExercise(n) {
-  const s = schede.find(x => x.id === attiva);
-
-  s.blocchi.push({
-    type: "exercise",
-    rows: n,
-    nome: "",
-    serie: [],
-    kg: [],
-    rep: "",
-    rec: "",
-    note: ""
+  getS().blocchi.push({
+    type:"exercise",
+    rows:n,
+    nome:"",
+    serie:[],
+    kg:[],
+    rep:"",
+    rec:"",
+    note:""
   });
-
   renderScheda();
 }
 
 function addMarker() {
-  const color = document.getElementById("markerColor").value;
-
-  schede.find(x => x.id === attiva).blocchi.push({
-    type: "marker",
-    color
+  getS().blocchi.push({
+    type:"marker",
+    color:markerColor.value
   });
-
   renderScheda();
 }
 
 function addSpacer() {
-  schede.find(x => x.id === attiva).blocchi.push({
-    type: "spacer"
-  });
-
+  getS().blocchi.push({type:"spacer"});
   renderScheda();
 }
 
-// ================= DELETE =================
-function del(i) {
-  const s = schede.find(x => x.id === attiva);
-  s.blocchi.splice(i, 1);
+// UPDATE
+function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
+function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
+
+// DELETE
+function del(i){
+  getS().blocchi.splice(i,1);
   renderScheda();
 }
 
-// ================= CLOUD =================
-async function salvaCloud() {
-  await fetch(BASE_URL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Master-Key": API_KEY
+// DRAG
+function dragStart(i){ dragIndex=i; }
+function drop(i){
+  const arr=getS().blocchi;
+  const item=arr.splice(dragIndex,1)[0];
+  arr.splice(i,0,item);
+  renderScheda();
+}
+
+// RENAME
+function rename(v){
+  getS().nome=v;
+  saveLocal();
+}
+
+// LISTA
+function elencoSchede(){
+  toolbar(false);
+
+  app.innerHTML = schede.map(s=>`
+    <div class="card">
+      ${s.nome}
+      <br>
+      <button onclick="apri(${s.id})">Apri</button>
+      <button onclick="copia(${s.id})">Copia</button>
+      <button onclick="eliminaScheda(${s.id})">Elimina</button>
+    </div>
+  `).join("");
+}
+
+function apri(id){ attiva=id; renderScheda(); }
+function copia(id){
+  const s=schede.find(x=>x.id===id);
+  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
+  elencoSchede();
+}
+function eliminaScheda(id){
+  schede=schede.filter(s=>s.id!==id);
+  elencoSchede();
+}
+
+// SAVE
+function saveLocal(){
+  localStorage.setItem("schede",JSON.stringify(schede));
+}
+
+// CLOUD
+async function salvaCloud(){
+  await fetch(BASE_URL,{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      "X-Master-Key":API_KEY
     },
-    body: JSON.stringify(schede)
+    body:JSON.stringify(schede)
   });
-
-  alert("Salvato");
+  alert("Salvato cloud");
 }
 
-// ================= START =================
+// PDF
+function exportPDF(){
+  window.print();
+}
+
+// START
 init();
