@@ -55,9 +55,7 @@ function renderScheda() {
           <th>REP RANGE</th>
           <th>KG</th>
           <th>REC.</th>
-          <th>PROGRESSIONI</th>
-          <th>NOTE</th>
-          <th></th>
+          <th>PROGRESSIONE / NOTE</th>
         </tr>
       </thead>
       <tbody>
@@ -74,91 +72,68 @@ function renderScheda() {
 // BLOCCO
 function renderBlocco(b,i){
 
-  // MARKER
   if (b.type==="marker"){
-    return `
-      <tr class="marker-row">
-        <td colspan="8" class="marker" style="background:${b.color}"></td>
-        <td class="actions">
-          <span onclick="moveUp(${i})">⬆</span>
-          <span onclick="moveDown(${i})">⬇</span>
-          <span onclick="del(${i})">✖</span>
-        </td>
-      </tr>
-    `;
+    return `<tr>
+      <td colspan="6" class="marker" style="background:${b.color}"></td>
+    </tr>`;
   }
 
-  // SPACER
   if (b.type==="spacer"){
-    return `
-      <tr class="spacer-row">
-        <td colspan="8" class="spacer"></td>
-        <td class="actions">
-          <span onclick="moveUp(${i})">⬆</span>
-          <span onclick="moveDown(${i})">⬇</span>
-          <span onclick="del(${i})">✖</span>
-        </td>
-      </tr>
-    `;
+    return `<tr><td colspan="6" class="spacer"></td></tr>`;
   }
 
-  // EXERCISE
   if (b.type==="exercise"){
     let rows="";
 
     for(let r=0;r<b.rows;r++){
-      rows += `<tr>`;
+      rows+=`<tr>`;
 
       if(r===0){
-        rows += `
-        <td rowspan="${b.rows}">
+        rows+=`<td rowspan="${b.rows}">
           <input value="${b.nome}" oninput="upd(${i},'nome',this.value)">
         </td>`;
       }
 
-      rows += `
-        <td class="center">
-          <input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)">
-        </td>
-        <td>
-          <input value="${b.rep}" oninput="upd(${i},'rep',this.value)">
-        </td>
-        <td>
-          <input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)">
-        </td>
-        <td>
-          <input value="${b.rec}" oninput="upd(${i},'rec',this.value)">
-        </td>
+      rows+=`
+        <td><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
       `;
 
-      // PROGRESSIONI (SINGOLA)
-      rows += `
-        <td>
-          <input value="${b.prog || ""}" oninput="upd(${i},'prog',this.value)">
-        </td>
-      `;
-
-      // NOTE (SINGOLA)
-      rows += `
-        <td>
-          <input value="${b.note}" oninput="upd(${i},'note',this.value)">
-        </td>
-      `;
-
-      // ACTIONS SOLO PRIMA RIGA
       if(r===0){
-        rows += `
-        <td rowspan="${b.rows}" class="actions">
-          <span onclick="moveUp(${i})">⬆</span>
-          <span onclick="moveDown(${i})">⬇</span>
-          <span onclick="del(${i})">✖</span>
+        rows+=`<td rowspan="${b.rows}">
+          <input value="${b.rep}" oninput="upd(${i},'rep',this.value)">
         </td>`;
       }
 
-      rows += `</tr>`;
+      rows+=`
+        <td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>
+      `;
+
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
+          <input value="${b.rec}" oninput="upd(${i},'rec',this.value)">
+        </td>`;
+      }
+
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
+          <input value="${b.note}" oninput="upd(${i},'note',this.value)">
+        </td>`;
+      }
+
+      rows+=`</tr>`;
     }
 
-    return rows;
+    return `
+    ${rows}
+    <tr class="controls">
+      <td colspan="6">
+        <div class="ctrl">
+          <button onclick="moveUp(${i})">⬆</button>
+          <button onclick="moveDown(${i})">⬇</button>
+          <button onclick="del(${i})">✖</button>
+        </div>
+      </td>
+    </tr>`;
   }
 }
 
@@ -172,7 +147,6 @@ function addExercise(n){
     kg:[],
     rep:"",
     rec:"",
-    prog:"",
     note:""
   });
   renderScheda();
@@ -222,9 +196,54 @@ function rename(v){
   saveLocal();
 }
 
-// SAVE LOCAL
+// LISTA
+function elencoSchede(){
+  toolbar(false);
+
+  app.innerHTML = schede.map(s=>`
+    <div class="card">
+      ${s.nome}<br>
+      <button onclick="apri(${s.id})">Apri</button>
+      <button onclick="copia(${s.id})">Copia</button>
+      <button onclick="eliminaScheda(${s.id})">Elimina</button>
+    </div>
+  `).join("");
+}
+
+function apri(id){ attiva=id; renderScheda(); }
+
+function copia(id){
+  const s=schede.find(x=>x.id===id);
+  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
+  elencoSchede();
+}
+
+function eliminaScheda(id){
+  schede=schede.filter(s=>s.id!==id);
+  elencoSchede();
+}
+
+// SAVE
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
+}
+
+// CLOUD
+async function salvaCloud(){
+  await fetch(BASE_URL,{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      "X-Master-Key":API_KEY
+    },
+    body:JSON.stringify(schede)
+  });
+  alert("☁️ Salvato in cloud");
+}
+
+// PDF (BASE)
+function exportPDF(){
+  window.print();
 }
 
 // START

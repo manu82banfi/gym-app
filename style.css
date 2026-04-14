@@ -4,14 +4,6 @@ body{
   font-family:Arial;
 }
 
-/* HEADER FISSO */
-header{
-  position:fixed;
-  top:0;
-  width:100%;
-  z-index:1000;
-}
-
 .topbar,.toolbar{
   display:flex;
   gap:10px;
@@ -21,21 +13,11 @@ header{
 
 .hidden{display:none;}
 
-main{
-  margin-top:110px;
-}
-
 .container{
-  width:995px; /* leggermente aumentata */
+  width:900px; /* FIXED */
   margin:20px auto;
 }
 
-/* TESTI */
-.home, h2{
-  color:white;
-}
-
-/* TABLE */
 table{
   width:100%;
   border-collapse:collapse;
@@ -46,18 +28,14 @@ table{
 
 th,td{
   border:1px solid #333;
-  padding:2px 6px;
+  padding:6px;
   text-align:center;
   vertical-align:middle;
+  height:32px;
 }
 
-/* HEADER PIÙ PICCOLO */
-th{
-  background:#bbb;
-  font-size:11px;
-}
+th{background:#bbb;}
 
-/* INPUT */
 input{
   width:100%;
   border:none;
@@ -69,51 +47,29 @@ td:first-child input{
   text-align:left;
 }
 
-/* SERIE SEMPRE CENTRATA */
-.center input{
-  text-align:center;
-}
+/* COLONNE FISSE */
+th:nth-child(1),td:nth-child(1){width:35%;}
+th:nth-child(2),td:nth-child(2){width:8%;}
+th:nth-child(3),td:nth-child(3){width:15%;}
+th:nth-child(4),td:nth-child(4){width:10%;}
+th:nth-child(5),td:nth-child(5){width:10%;}
+th:nth-child(6),td:nth-child(6){width:22%;}
 
-/* COLONNE (NUOVE MISURE) */
-th:nth-child(1),td:nth-child(1){width:350px;}
-th:nth-child(2),td:nth-child(2){width:50px;}
-th:nth-child(3),td:nth-child(3){width:80px;}
-th:nth-child(4),td:nth-child(4){width:50px;}
-th:nth-child(5),td:nth-child(5){width:50px;}
-th:nth-child(6),td:nth-child(6){width:195px;}
-th:nth-child(7),td:nth-child(7){width:160px;}
-th:nth-child(8),td:nth-child(8){width:60px;} /* azioni più larga */
-
-/* MARKER */
 .marker{
-  height:6px;
-  padding:0;
-  border:none;
-  background:#8f0663;
+  height:8px;
 }
 
-/* SPACER */
 .spacer{
-  height:15px;
-  padding:0;
-  border:none;
+  height:20px;
   background:#ddd;
 }
 
-/* AZIONI ORIZZONTALI */
-.actions{
+.ctrl{
   display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:6px;
-  font-size:14px;
+  justify-content:flex-end;
+  gap:5px;
 }
 
-.actions span{
-  cursor:pointer;
-}
-
-/* CARD */
 .card{
   background:#222;
   color:white;
