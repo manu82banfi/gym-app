@@ -1,7 +1,6 @@
 let schede = [];
 let attiva = null;
 
-// GLOBAL (FIX BOTTONI HTML)
 window.nuovaScheda = nuovaScheda;
 window.elencoSchede = elencoSchede;
 window.salvaCloud = salvaCloud;
@@ -26,11 +25,7 @@ function toolbar(show) {
 }
 
 function nuovaScheda() {
-  const s = {
-    id: Date.now(),
-    nome: "SCHEDA",
-    blocchi: []
-  };
+  const s = { id: Date.now(), nome: "SCHEDA", blocchi: [] };
   schede.push(s);
   attiva = s.id;
   renderScheda();
@@ -73,7 +68,8 @@ function renderScheda() {
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
-    return `<tr class="marker-row">
+    return `
+    <tr class="marker-row">
       <td colspan="7" class="marker" style="background:${b.color}"></td>
       <td class="actions">
         <span onclick="moveUp(${i})">⬆</span>
@@ -84,7 +80,8 @@ function renderBlocco(b,i){
   }
 
   if (b.type==="spacer"){
-    return `<tr>
+    return `
+    <tr>
       <td colspan="7" class="spacer"></td>
       <td class="actions">
         <span onclick="moveUp(${i})">⬆</span>
@@ -106,9 +103,7 @@ function renderBlocco(b,i){
         </td>`;
       }
 
-      rows+=`
-        <td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
-      `;
+      rows+=`<td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>`;
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
@@ -116,9 +111,7 @@ function renderBlocco(b,i){
         </td>`;
       }
 
-      rows+=`
-        <td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>
-      `;
+      rows+=`<td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>`;
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
@@ -145,7 +138,6 @@ function renderBlocco(b,i){
   }
 }
 
-// ADD
 function addExercise(n){
   getS().blocchi.push({
     type:"exercise",
@@ -171,11 +163,9 @@ function addSpacer(){
   renderScheda();
 }
 
-// UPDATE
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
-// MOVE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -190,25 +180,22 @@ function moveDown(i){
   renderScheda();
 }
 
-// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   renderScheda();
 }
 
-// RENAME
 function rename(v){
   getS().nome=v;
   saveLocal();
 }
 
-// LISTA
 function elencoSchede(){
   toolbar(false);
 
   app.innerHTML = schede.map(s=>`
     <div class="card">
-      ${s.nome}<br>
+      <div class="card-title">${s.nome}</div>
       <button onclick="apri(${s.id})">Apri</button>
       <button onclick="copia(${s.id})">Copia</button>
       <button onclick="eliminaScheda(${s.id})">Elimina</button>
@@ -229,14 +216,12 @@ function eliminaScheda(id){
   elencoSchede();
 }
 
-// SAVE
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
 }
 
-// CLOUD
-async function salvaCloud(){
-  await fetch(BASE_URL,{
+function salvaCloud(){
+  fetch(BASE_URL,{
     method:"PUT",
     headers:{
       "Content-Type":"application/json",
@@ -244,11 +229,8 @@ async function salvaCloud(){
     },
     body:JSON.stringify(schede)
   });
-  alert("☁️ Salvato in cloud");
 }
 
-function exportPDF(){
-  window.print();
-}
+function exportPDF(){ window.print(); }
 
 init();

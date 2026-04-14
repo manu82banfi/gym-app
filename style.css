@@ -4,7 +4,6 @@ body{
   font-family:Arial;
 }
 
-/* HEADER */
 header{
   position:fixed;
   top:0;
@@ -21,25 +20,22 @@ header{
 
 main{ margin-top:110px; }
 
-/* CENTRATURA CORRETTA */
 .container{
   width:calc(100% - 20px);
   max-width:995px;
-  margin:20px 10px 20px 10px;
+  margin:20px auto;
 }
 
-/* TESTI */
 h2,.home{ color:white; }
 
+/* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
   background:#ddd;
-  color:black;
   table-layout:fixed;
 }
 
-/* CELLE COMPATTE */
 th,td{
   border:1px solid #333;
   padding:2px 6px;
@@ -50,7 +46,6 @@ th,td{
 
 th{ font-size:11px; background:#bbb; }
 
-/* INPUT */
 input{
   width:100%;
   border:none;
@@ -72,16 +67,18 @@ th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
 th:nth-child(8),td:nth-child(8){width:60px;}
 
-/* MARKER FORZATO 6PX REALI */
-.marker{
+/* 🔥 FIX MARKER DEFINITIVO */
+.marker-row td{
   height:6px !important;
   padding:0 !important;
   line-height:6px !important;
   border:none !important;
 }
 
-.marker-row{
+.marker{
   height:6px !important;
+  padding:0 !important;
+  border:none !important;
 }
 
 /* SPACER */
@@ -91,23 +88,28 @@ th:nth-child(8),td:nth-child(8){width:60px;}
   background:#ddd;
 }
 
-/* AZIONI SENZA BOX */
+/* AZIONI */
 .actions{
   display:flex;
   justify-content:center;
   align-items:center;
   gap:6px;
-  font-size:14px;
 }
 
 .actions span{
   cursor:pointer;
   user-select:none;
-  background:none;
-  border:none;
 }
 
-/* FIX CENTRATURA */
-table{
-  margin:0 auto;
+/* CARD ELENCO */
+.card{
+  background:#222;
+  color:white;
+  margin:10px;
+  padding:10px;
+}
+
+.card-title{
+  color:white;
+  margin-bottom:5px;
 }
