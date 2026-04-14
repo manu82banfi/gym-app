@@ -19,51 +19,47 @@ body{
   margin:20px auto;
 }
 
-.header{
-  display:grid;
-  grid-template-columns:2fr repeat(5,1fr);
-  background:#555;
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#ddd;
+  color:black;
+}
+
+th, td{
+  border:1px solid #333;
+  padding:6px;
   text-align:center;
+  vertical-align:middle;
 }
 
-.block{
-  position:relative;
-  border-bottom:1px solid #222;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:2fr repeat(5,1fr);
+th{
+  background:#bbb;
 }
 
 input{
-  background:#1a1a1a;
+  width:100%;
   border:none;
-  color:white;
-  padding:4px;
+  background:transparent;
+  text-align:center;
+}
+
+td:first-child input{
+  text-align:left;
 }
 
 .marker{
-  height:5px;
+  height:6px;
 }
 
 .spacer{
   height:20px;
-  background:#111;
-}
-
-.delete{
-  position:absolute;
-  right:5px;
-  top:5px;
-  background:red;
-  border:none;
-  color:white;
-  cursor:pointer;
+  background:#ddd;
 }
 
 .card{
+  background:#222;
+  color:white;
   margin:10px;
   padding:10px;
-  background:#222;
 }
