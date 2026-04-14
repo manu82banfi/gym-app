@@ -59,7 +59,9 @@ function renderScheda() {
       <tbody>
   `;
 
-  s.blocchi.forEach((b,i)=> html += renderBlocco(b,i));
+  s.blocchi.forEach((b,i)=>{
+    html += renderBlocco(b,i);
+  });
 
   html += `</tbody></table></div>`;
   app.innerHTML = html;
@@ -67,63 +69,62 @@ function renderScheda() {
 
 function renderBlocco(b,i){
 
-  if (b.type==="marker"){
+  // 🔴 MARKER = riga FULL WIDTH vera (NO colonna azioni)
+  if (b.type === "marker") {
     return `
-    <tr class="marker-row">
-      <td colspan="7" class="marker" style="background:${b.color}"></td>
-      <td class="actions">
-        <span onclick="moveUp(${i})">⬆</span>
-        <span onclick="moveDown(${i})">⬇</span>
-        <span onclick="del(${i})">✖</span>
-      </td>
-    </tr>`;
+      <tr class="marker-row">
+        <td colspan="8" class="marker" style="background:${b.color}"></td>
+      </tr>
+    `;
   }
 
-  if (b.type==="spacer"){
+  if (b.type === "spacer") {
     return `
-    <tr>
-      <td colspan="7" class="spacer"></td>
-      <td class="actions">
-        <span onclick="moveUp(${i})">⬆</span>
-        <span onclick="moveDown(${i})">⬇</span>
-        <span onclick="del(${i})">✖</span>
-      </td>
-    </tr>`;
+      <tr>
+        <td colspan="7" class="spacer"></td>
+        <td class="actions">
+          <span onclick="moveUp(${i})">⬆</span>
+          <span onclick="moveDown(${i})">⬇</span>
+          <span onclick="del(${i})">✖</span>
+        </td>
+      </tr>
+    `;
   }
 
-  if (b.type==="exercise"){
-    let rows="";
+  if (b.type === "exercise") {
 
-    for(let r=0;r<b.rows;r++){
-      rows+=`<tr>`;
+    let rows = "";
 
-      if(r===0){
-        rows+=`<td rowspan="${b.rows}">
+    for (let r = 0; r < b.rows; r++) {
+      rows += `<tr>`;
+
+      if (r === 0) {
+        rows += `<td rowspan="${b.rows}">
           <input value="${b.nome}" oninput="upd(${i},'nome',this.value)">
         </td>`;
       }
 
-      rows+=`<td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>`;
+      rows += `<td class="serie"><input value="${b.serie[r] || ""}" oninput="updArr(${i},'serie',${r},this.value)"></td>`;
 
-      if(r===0){
-        rows+=`<td rowspan="${b.rows}">
+      if (r === 0) {
+        rows += `<td rowspan="${b.rows}">
           <input value="${b.rep}" oninput="upd(${i},'rep',this.value)">
         </td>`;
       }
 
-      rows+=`<td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>`;
+      rows += `<td><input value="${b.kg[r] || ""}" oninput="updArr(${i},'kg',${r},this.value)"></td>`;
 
-      if(r===0){
-        rows+=`<td rowspan="${b.rows}">
+      if (r === 0) {
+        rows += `<td rowspan="${b.rows}">
           <input value="${b.rec}" oninput="upd(${i},'rec',this.value)">
         </td>`;
       }
 
-      rows+=`<td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>`;
-      rows+=`<td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>`;
+      rows += `<td><input value="${b.prog || ""}" oninput="upd(${i},'prog',this.value)"></td>`;
+      rows += `<td><input value="${b.note}" oninput="upd(${i},'note',this.value)"></td>`;
 
-      if(r===0){
-        rows+=`
+      if (r === 0) {
+        rows += `
         <td class="actions" rowspan="${b.rows}">
           <span onclick="moveUp(${i})">⬆</span>
           <span onclick="moveDown(${i})">⬇</span>
@@ -131,13 +132,14 @@ function renderBlocco(b,i){
         </td>`;
       }
 
-      rows+=`</tr>`;
+      rows += `</tr>`;
     }
 
     return rows;
   }
 }
 
+// ADD
 function addExercise(n){
   getS().blocchi.push({
     type:"exercise",
@@ -154,7 +156,10 @@ function addExercise(n){
 }
 
 function addMarker(){
-  getS().blocchi.push({type:"marker", color:markerColor.value});
+  getS().blocchi.push({
+    type:"marker",
+    color:markerColor.value
+  });
   renderScheda();
 }
 
@@ -163,9 +168,11 @@ function addSpacer(){
   renderScheda();
 }
 
+// UPDATE
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
+// MOVE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -180,16 +187,19 @@ function moveDown(i){
   renderScheda();
 }
 
+// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   renderScheda();
 }
 
+// RENAME
 function rename(v){
   getS().nome=v;
   saveLocal();
 }
 
+// LISTA
 function elencoSchede(){
   toolbar(false);
 
@@ -231,6 +241,8 @@ function salvaCloud(){
   });
 }
 
-function exportPDF(){ window.print(); }
+function exportPDF(){
+  window.print();
+}
 
 init();
