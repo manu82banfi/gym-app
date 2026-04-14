@@ -2,7 +2,7 @@ let schede = [];
 let attiva = null;
 
 // INIT
-async function init() {
+function init() {
   const local = localStorage.getItem("schede");
   if (local) schede = JSON.parse(local);
   renderHome();
@@ -109,7 +109,7 @@ function renderBlocco(b,i){
       }
 
       rows+=`
-        <td><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
+        <td class="center"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
       `;
 
       if(r===0){
@@ -130,7 +130,7 @@ function renderBlocco(b,i){
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
-          <input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)">
+          <input value="${b.prog || ""}" oninput="upd(${i},'prog',this.value)">
         </td>`;
       }
 

@@ -21,8 +21,9 @@ header{
 
 .hidden{display:none;}
 
-#app{
-  margin-top:110px; /* spazio per header */
+/* CONTENUTO SCORREVOLE */
+main{
+  margin-top:110px;
 }
 
 .container{
@@ -30,16 +31,11 @@ header{
   margin:20px auto;
 }
 
-h2{
+/* TESTI BIANCHI */
+.home, h2{
   color:white;
 }
 
-.home{
-  color:white;
-  text-align:center;
-}
-
-/* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
@@ -50,10 +46,10 @@ table{
 
 th,td{
   border:1px solid #333;
-  padding:2px 0;
+  padding:2px 6px;
   text-align:center;
   vertical-align:middle;
-  height:28px;
+  height:32px;
 }
 
 th{
@@ -72,6 +68,11 @@ td:first-child input{
   text-align:left;
 }
 
+/* CENTRA SERIE */
+.center input{
+  text-align:center;
+}
+
 /* COLONNE */
 th:nth-child(1),td:nth-child(1){width:350px;}
 th:nth-child(2),td:nth-child(2){width:50px;}
@@ -81,11 +82,6 @@ th:nth-child(5),td:nth-child(5){width:50px;}
 th:nth-child(6),td:nth-child(6){width:195px;}
 th:nth-child(7),td:nth-child(7){width:160px;}
 th:nth-child(8),td:nth-child(8){width:50px;}
-
-/* SERIE centrata */
-td:nth-child(2) input{
-  text-align:center;
-}
 
 /* MARKER */
 .marker{
@@ -103,12 +99,14 @@ td:nth-child(2) input{
 /* AZIONI */
 .actions{
   font-size:14px;
+  display:flex;
+  justify-content:center;
+  gap:5px;
+  cursor:pointer;
 }
 
 .actions span{
   cursor:pointer;
-  display:block;
-  line-height:16px;
 }
 
 /* CARD */
