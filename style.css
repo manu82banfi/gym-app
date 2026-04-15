@@ -1,10 +1,10 @@
 body{
   margin:0;
-  background:#111;
+  background:#0b1220; /* blu scuro */
   font-family:Arial;
 }
 
-/* HEADER PIÙ MODERNO */
+/* HEADER */
 header{
   position:fixed;
   top:0;
@@ -16,20 +16,21 @@ header{
   display:flex;
   gap:10px;
   padding:10px;
-  background:#1b1b1b;
+  background:#0f1a2e;
+  border-bottom:1px solid #1c2b45;
 }
 
 button{
-  background:#2a2a2a;
-  color:white;
-  border:1px solid #333;
+  background:#16263f;
+  color:#dbe9ff;
+  border:1px solid #223a5c;
   padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
 }
 
 button:hover{
-  background:#333;
+  background:#1d3557;
 }
 
 .hidden{display:none;}
@@ -40,41 +41,41 @@ main{
 
 /* CONTAINER */
 .container{
-  width:995px;
+  width:985px;
   margin:20px auto;
 }
 
-/* HOME + TITOLI */
+/* TESTI */
 .home, h2{
-  color:white;
+  color:#e6f0ff;
 }
 
-/* TABELLA PIÙ “LEGGERA” */
+/* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
-  background:#e0e0e0;
+  background:#e6edf7; /* blu chiarissimo */
   table-layout:fixed;
   border-radius:8px;
   overflow:hidden;
 }
 
-/* PIÙ ARIA */
+/* CELLE */
 th,td{
-  border:1px solid #2b2b2b;
+  border:1px solid #2a3b55;
   padding:6px 4px;
   text-align:center;
   vertical-align:middle;
 }
 
-/* HEADER PIÙ CLEAN */
+/* HEADER */
 th{
-  background:#c9c9c9;
+  background:#b8c7dd;
   font-size:11px;
   letter-spacing:0.5px;
 }
 
-/* INPUT PIÙ PULITI */
+/* INPUT */
 input{
   width:100%;
   border:none;
@@ -84,12 +85,12 @@ input{
   font-size:13px;
 }
 
-/* HOVER RIGHE */
+/* hover righe */
 .row-hover:hover{
-  background:#d6d6d6;
+  background:#d6e4ff;
 }
 
-/* SERIE CENTRATA */
+/* serie centrata */
 .serie input{
   text-align:center;
 }
@@ -100,14 +101,14 @@ input{
   padding:0;
 }
 
-/* SPACER SCURO */
+/* SPACER */
 .spacer{
   height:15px;
   padding:0;
-  background:#111;
+  background:#0b1220;
 }
 
-/* AZIONI PIÙ MINIMAL */
+/* AZIONI */
 .actions{
   display:flex;
   justify-content:center;
@@ -126,16 +127,31 @@ input{
   opacity:1;
 }
 
-/* CARD LISTA PIÙ MODERNA */
+/* CARD LISTA */
 .card{
-  background:#1f1f1f;
-  color:white;
+  background:#10233f;
+  color:#e6f0ff;
   margin:10px;
   padding:12px;
   border-radius:8px;
+  border:1px solid #1f3557;
 }
 
 .card-title{
   font-weight:bold;
   margin-bottom:8px;
+}
+
+/* LARGHEZZE COLONNE ESATTE */
+th:nth-child(1), td:nth-child(1){ width:350px; }  /* ESERCIZIO */
+th:nth-child(2), td:nth-child(2){ width:50px; }   /* SERIE */
+th:nth-child(3), td:nth-child(3){ width:80px; }   /* REP */
+th:nth-child(4), td:nth-child(4){ width:50px; }   /* KG */
+th:nth-child(5), td:nth-child(5){ width:50px; }   /* REC */
+th:nth-child(6), td:nth-child(6){ width:195px; }  /* PROG */
+th:nth-child(7), td:nth-child(7){ width:160px; }  /* NOTE */
+th:nth-child(8), td:nth-child(8){ width:60px; }   /* AZIONI */
+
+table{
+  table-layout:fixed;
 }
