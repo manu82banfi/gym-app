@@ -1,6 +1,6 @@
 body{
   margin:0;
-  background:#0b1220; /* blu scuro */
+  background:#0b1220;
   font-family:Arial;
 }
 
@@ -39,10 +39,12 @@ main{
   margin-top:110px;
 }
 
-/* CONTAINER */
+/* 🔥 FULL WIDTH DINAMICO */
 .container{
-  width:985px;
+  width:100%;
+  max-width:1400px;
   margin:20px auto;
+  padding:0 10px;
 }
 
 /* TESTI */
@@ -50,17 +52,16 @@ main{
   color:#e6f0ff;
 }
 
-/* TABELLA */
+/* TABLE */
 table{
   width:100%;
   border-collapse:collapse;
-  background:#e6edf7; /* blu chiarissimo */
+  background:#e6edf7;
   table-layout:fixed;
   border-radius:8px;
   overflow:hidden;
 }
 
-/* CELLE */
 th,td{
   border:1px solid #2a3b55;
   padding:6px 4px;
@@ -68,11 +69,9 @@ th,td{
   vertical-align:middle;
 }
 
-/* HEADER */
 th{
   background:#b8c7dd;
   font-size:11px;
-  letter-spacing:0.5px;
 }
 
 /* INPUT */
@@ -85,37 +84,36 @@ input{
   font-size:13px;
 }
 
-/* hover righe */
+/* hover */
 .row-hover:hover{
   background:#d6e4ff;
 }
 
-/* serie centrata */
+/* serie */
 .serie input{
   text-align:center;
 }
 
-/* MARKER */
+/* marker */
 .marker{
   height:4px;
   padding:0;
 }
 
-/* SPACER */
+/* spacer */
 .spacer{
   height:15px;
   padding:0;
   background:#0b1220;
 }
 
-/* AZIONI */
+/* actions */
 .actions{
   display:flex;
   justify-content:center;
   align-items:center;
   gap:6px;
   white-space:nowrap;
-  font-size:14px;
 }
 
 .actions span{
@@ -127,7 +125,7 @@ input{
   opacity:1;
 }
 
-/* CARD LISTA */
+/* card */
 .card{
   background:#10233f;
   color:#e6f0ff;
@@ -140,18 +138,4 @@ input{
 .card-title{
   font-weight:bold;
   margin-bottom:8px;
-}
-
-/* LARGHEZZE COLONNE ESATTE */
-th:nth-child(1), td:nth-child(1){ width:350px; }  /* ESERCIZIO */
-th:nth-child(2), td:nth-child(2){ width:50px; }   /* SERIE */
-th:nth-child(3), td:nth-child(3){ width:80px; }   /* REP */
-th:nth-child(4), td:nth-child(4){ width:50px; }   /* KG */
-th:nth-child(5), td:nth-child(5){ width:50px; }   /* REC */
-th:nth-child(6), td:nth-child(6){ width:195px; }  /* PROG */
-th:nth-child(7), td:nth-child(7){ width:160px; }  /* NOTE */
-th:nth-child(8), td:nth-child(8){ width:60px; }   /* AZIONI */
-
-table{
-  table-layout:fixed;
 }

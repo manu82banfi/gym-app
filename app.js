@@ -45,14 +45,6 @@ function getS() {
   return schede.find(s => s.id === attiva);
 }
 
-// UX: focus automatico primo input esercizio
-function focusFirstInput() {
-  setTimeout(() => {
-    const el = document.querySelector("tbody input");
-    if (el) el.focus();
-  }, 50);
-}
-
 // RENDER
 function renderScheda() {
   toolbar(true);
@@ -84,8 +76,6 @@ function renderScheda() {
 
   html += `</tbody></table></div>`;
   app.innerHTML = html;
-
-  focusFirstInput();
 }
 
 // BLOCCO
@@ -121,17 +111,12 @@ function renderBlocco(b,i){
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
-          <input value="${b.nome}"
-          oninput="upd(${i},'nome',this.value)">
+          <input value="${b.nome}" oninput="upd(${i},'nome',this.value)">
         </td>`;
       }
 
       rows+=`
-        <td class="serie">
-          <input value="${b.serie[r]||""}"
-          onkeydown="serieKey(event,${i},${r})"
-          oninput="updArr(${i},'serie',${r},this.value)">
-        </td>
+        <td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
       `;
 
       if(r===0){
@@ -159,18 +144,6 @@ function renderBlocco(b,i){
     }
 
     return rows;
-  }
-}
-
-// UX: ENTER = nuova riga serie
-function serieKey(e,i,r){
-  if(e.key==="Enter"){
-    e.preventDefault();
-    const s=getS().blocchi[i];
-    s.serie.push("");
-    s.kg.push("");
-    saveLocal();
-    renderScheda();
   }
 }
 
@@ -210,7 +183,7 @@ function addSpacer(){
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
-// MOVE
+// MOVE / DELETE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -227,7 +200,6 @@ function moveDown(i){
   renderScheda();
 }
 
-// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   saveLocal();
@@ -275,6 +247,27 @@ function eliminaScheda(id){
 // SAVE LOCAL
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
+}
+
+// 🔥 FIX CLOUD ROBUSTO
+async function salvaCloud(){
+  try{
+    const res = await fetch(BASE_URL,{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json",
+        "X-Master-Key":API_KEY
+      },
+      body:JSON.stringify(schede)
+    });
+
+    if(!res.ok) throw new Error("Cloud error");
+
+    alert("☁️ Salvato in cloud");
+  }catch(err){
+    console.error(err);
+    alert("Errore salvataggio cloud");
+  }
 }
 
 init();
