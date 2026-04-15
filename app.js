@@ -2,9 +2,19 @@ let schede = [];
 let attiva = null;
 
 // INIT
-function init() {
-  const local = localStorage.getItem("schede");
-  if (local) schede = JSON.parse(local);
+async function init() {
+
+  // 🔥 prima prova cloud
+  const cloud = await caricaCloud();
+
+  if (cloud && cloud.length) {
+    schede = cloud;
+    saveLocal(); // sync locale
+  } else {
+    const local = localStorage.getItem("schede");
+    if (local) schede = JSON.parse(local);
+  }
+
   renderHome();
 }
 
@@ -28,6 +38,7 @@ function nuovaScheda() {
   };
   schede.push(s);
   attiva = s.id;
+  saveLocal();
   renderScheda();
 }
 
@@ -61,7 +72,7 @@ function renderScheda() {
       <tbody>
   `;
 
-  s.blocchi.forEach((b,i)=>{
+  schede.find(x=>x.id===attiva).blocchi.forEach((b,i)=>{
     html += renderBlocco(b,i);
   });
 
@@ -69,7 +80,7 @@ function renderScheda() {
   app.innerHTML = html;
 }
 
-// BLOCCO
+// BLOCCO (UGUALE A PRIMA)
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
@@ -159,19 +170,22 @@ function addExercise(n){
     prog:"",
     note:""
   });
+  saveLocal();
   renderScheda();
 }
 
 function addMarker(){
   getS().blocchi.push({
     type:"marker",
-    color:markerColor.value
+    color:markerColor.value === "violet" ? "#8f0663" : markerColor.value
   });
+  saveLocal();
   renderScheda();
 }
 
 function addSpacer(){
   getS().blocchi.push({type:"spacer"});
+  saveLocal();
   renderScheda();
 }
 
@@ -184,6 +198,7 @@ function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
   [arr[i],arr[i-1]]=[arr[i-1],arr[i]];
+  saveLocal();
   renderScheda();
 }
 
@@ -191,12 +206,14 @@ function moveDown(i){
   let arr=getS().blocchi;
   if(i===arr.length-1)return;
   [arr[i],arr[i+1]]=[arr[i+1],arr[i]];
+  saveLocal();
   renderScheda();
 }
 
 // DELETE
 function del(i){
   getS().blocchi.splice(i,1);
+  saveLocal();
   renderScheda();
 }
 
@@ -228,11 +245,13 @@ function apri(id){
 function copia(id){
   const s=schede.find(x=>x.id===id);
   schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
+  saveLocal();
   elencoSchede();
 }
 
 function eliminaScheda(id){
   schede=schede.filter(s=>s.id!==id);
+  saveLocal();
   elencoSchede();
 }
 
@@ -241,7 +260,7 @@ function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
 }
 
-// CLOUD (FIX GARANTITO)
+// CLOUD FIX
 async function salvaCloud(){
   try{
     await fetch(BASE_URL,{
@@ -252,8 +271,13 @@ async function salvaCloud(){
       },
       body:JSON.stringify(schede)
     });
+
+    // 🔥 subito ricarica per allineare
+    schede = await caricaCloud();
+    saveLocal();
+
     alert("☁️ Salvato in cloud");
-  }catch(e){
+  }catch{
     alert("Errore cloud");
   }
 }
@@ -263,4 +287,5 @@ function exportPDF(){
   window.print();
 }
 
+// START
 init();
