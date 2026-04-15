@@ -4,6 +4,7 @@ body{
   font-family:Arial;
 }
 
+/* HEADER PIÙ MODERNO */
 header{
   position:fixed;
   top:0;
@@ -15,7 +16,20 @@ header{
   display:flex;
   gap:10px;
   padding:10px;
-  background:#222;
+  background:#1b1b1b;
+}
+
+button{
+  background:#2a2a2a;
+  color:white;
+  border:1px solid #333;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#333;
 }
 
 .hidden{display:none;}
@@ -24,55 +38,61 @@ main{
   margin-top:110px;
 }
 
+/* CONTAINER */
 .container{
   width:995px;
   margin:20px auto;
 }
 
+/* HOME + TITOLI */
 .home, h2{
   color:white;
 }
 
-/* TABELLA */
+/* TABELLA PIÙ “LEGGERA” */
 table{
   width:100%;
   border-collapse:collapse;
-  background:#ddd;
+  background:#e0e0e0;
   table-layout:fixed;
+  border-radius:8px;
+  overflow:hidden;
 }
 
+/* PIÙ ARIA */
 th,td{
-  border:1px solid #333;
-  padding:2px 4px;
+  border:1px solid #2b2b2b;
+  padding:6px 4px;
   text-align:center;
   vertical-align:middle;
 }
 
+/* HEADER PIÙ CLEAN */
 th{
+  background:#c9c9c9;
   font-size:11px;
-  background:#bbb;
+  letter-spacing:0.5px;
 }
 
+/* INPUT PIÙ PULITI */
 input{
   width:100%;
   border:none;
   background:transparent;
   text-align:center;
+  outline:none;
+  font-size:13px;
 }
 
+/* HOVER RIGHE */
+.row-hover:hover{
+  background:#d6d6d6;
+}
+
+/* SERIE CENTRATA */
 .serie input{
   text-align:center;
 }
-
-/* COLONNE */
-th:nth-child(1),td:nth-child(1){width:350px;}
-th:nth-child(2),td:nth-child(2){width:50px;}
-th:nth-child(3),td:nth-child(3){width:80px;}
-th:nth-child(4),td:nth-child(4){width:50px;}
-th:nth-child(5),td:nth-child(5){width:50px;}
-th:nth-child(6),td:nth-child(6){width:195px;}
-th:nth-child(7),td:nth-child(7){width:160px;}
-th:nth-child(8),td:nth-child(8){width:60px;}
 
 /* MARKER */
 .marker{
@@ -80,31 +100,42 @@ th:nth-child(8),td:nth-child(8){width:60px;}
   padding:0;
 }
 
-/* 🔥 FIX 1: SPACER SCURO */
+/* SPACER SCURO */
 .spacer{
   height:15px;
   padding:0;
   background:#111;
 }
 
-/* AZIONI */
+/* AZIONI PIÙ MINIMAL */
 .actions{
   display:flex;
-  flex-direction:row;
   justify-content:center;
   align-items:center;
   gap:6px;
   white-space:nowrap;
+  font-size:14px;
 }
 
 .actions span{
   cursor:pointer;
+  opacity:0.8;
 }
 
-/* 🔥 FIX 2: TESTO SCHEDE BIANCO */
+.actions span:hover{
+  opacity:1;
+}
+
+/* CARD LISTA PIÙ MODERNA */
 .card{
-  background:#222;
+  background:#1f1f1f;
   color:white;
   margin:10px;
-  padding:10px;
+  padding:12px;
+  border-radius:8px;
+}
+
+.card-title{
+  font-weight:bold;
+  margin-bottom:8px;
 }

@@ -3,13 +3,11 @@ let attiva = null;
 
 // INIT
 async function init() {
-
-  // 🔥 prima prova cloud
   const cloud = await caricaCloud();
 
   if (cloud && cloud.length) {
     schede = cloud;
-    saveLocal(); // sync locale
+    saveLocal();
   } else {
     const local = localStorage.getItem("schede");
     if (local) schede = JSON.parse(local);
@@ -47,6 +45,14 @@ function getS() {
   return schede.find(s => s.id === attiva);
 }
 
+// UX: focus automatico primo input esercizio
+function focusFirstInput() {
+  setTimeout(() => {
+    const el = document.querySelector("tbody input");
+    if (el) el.focus();
+  }, 50);
+}
+
 // RENDER
 function renderScheda() {
   toolbar(true);
@@ -61,10 +67,10 @@ function renderScheda() {
         <tr>
           <th>ESERCIZIO</th>
           <th>SERIE</th>
-          <th>REP RANGE</th>
+          <th>REP</th>
           <th>KG</th>
-          <th>REC.</th>
-          <th>PROGRESSIONI</th>
+          <th>REC</th>
+          <th>PROG</th>
           <th>NOTE</th>
           <th></th>
         </tr>
@@ -72,24 +78,26 @@ function renderScheda() {
       <tbody>
   `;
 
-  schede.find(x=>x.id===attiva).blocchi.forEach((b,i)=>{
+  s.blocchi.forEach((b,i)=>{
     html += renderBlocco(b,i);
   });
 
   html += `</tbody></table></div>`;
   app.innerHTML = html;
+
+  focusFirstInput();
 }
 
-// BLOCCO (UGUALE A PRIMA)
+// BLOCCO
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
     return `<tr>
       <td colspan="7" class="marker" style="background:${b.color}"></td>
       <td class="actions">
-        <span onclick="moveUp(${i})">⬆</span>
-        <span onclick="moveDown(${i})">⬇</span>
-        <span onclick="del(${i})">✖</span>
+        <span onclick="moveUp(${i})">↑</span>
+        <span onclick="moveDown(${i})">↓</span>
+        <span onclick="del(${i})">✕</span>
       </td>
     </tr>`;
   }
@@ -98,9 +106,9 @@ function renderBlocco(b,i){
     return `<tr>
       <td colspan="7" class="spacer"></td>
       <td class="actions">
-        <span onclick="moveUp(${i})">⬆</span>
-        <span onclick="moveDown(${i})">⬇</span>
-        <span onclick="del(${i})">✖</span>
+        <span onclick="moveUp(${i})">↑</span>
+        <span onclick="moveDown(${i})">↓</span>
+        <span onclick="del(${i})">✕</span>
       </td>
     </tr>`;
   }
@@ -109,16 +117,21 @@ function renderBlocco(b,i){
     let rows="";
 
     for(let r=0;r<b.rows;r++){
-      rows+=`<tr>`;
+      rows+=`<tr class="row-hover">`;
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}">
-          <input value="${b.nome}" oninput="upd(${i},'nome',this.value)">
+          <input value="${b.nome}"
+          oninput="upd(${i},'nome',this.value)">
         </td>`;
       }
 
       rows+=`
-        <td class="serie"><input value="${b.serie[r]||""}" oninput="updArr(${i},'serie',${r},this.value)"></td>
+        <td class="serie">
+          <input value="${b.serie[r]||""}"
+          onkeydown="serieKey(event,${i},${r})"
+          oninput="updArr(${i},'serie',${r},this.value)">
+        </td>
       `;
 
       if(r===0){
@@ -129,24 +142,16 @@ function renderBlocco(b,i){
 
       rows+=`
         <td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>
-      `;
-
-      if(r===0){
-        rows+=`<td rowspan="${b.rows}">
-          <input value="${b.rec}" oninput="upd(${i},'rec',this.value)">
-        </td>`;
-      }
-
-      rows+=`
+        <td><input value="${b.rec}" oninput="upd(${i},'rec',this.value)"></td>
         <td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>
         <td><input value="${b.note||""}" oninput="upd(${i},'note',this.value)"></td>
       `;
 
       if(r===0){
         rows+=`<td rowspan="${b.rows}" class="actions">
-          <span onclick="moveUp(${i})">⬆</span>
-          <span onclick="moveDown(${i})">⬇</span>
-          <span onclick="del(${i})">✖</span>
+          <span onclick="moveUp(${i})">↑</span>
+          <span onclick="moveDown(${i})">↓</span>
+          <span onclick="del(${i})">✕</span>
         </td>`;
       }
 
@@ -154,6 +159,18 @@ function renderBlocco(b,i){
     }
 
     return rows;
+  }
+}
+
+// UX: ENTER = nuova riga serie
+function serieKey(e,i,r){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    const s=getS().blocchi[i];
+    s.serie.push("");
+    s.kg.push("");
+    saveLocal();
+    renderScheda();
   }
 }
 
@@ -229,7 +246,7 @@ function elencoSchede(){
 
   app.innerHTML = schede.map(s=>`
     <div class="card">
-      ${s.nome}<br>
+      <div class="card-title">${s.nome}</div>
       <button onclick="apri(${s.id})">Apri</button>
       <button onclick="copia(${s.id})">Copia</button>
       <button onclick="eliminaScheda(${s.id})">Elimina</button>
@@ -260,32 +277,4 @@ function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
 }
 
-// CLOUD FIX
-async function salvaCloud(){
-  try{
-    await fetch(BASE_URL,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json",
-        "X-Master-Key":API_KEY
-      },
-      body:JSON.stringify(schede)
-    });
-
-    // 🔥 subito ricarica per allineare
-    schede = await caricaCloud();
-    saveLocal();
-
-    alert("☁️ Salvato in cloud");
-  }catch{
-    alert("Errore cloud");
-  }
-}
-
-// PDF
-function exportPDF(){
-  window.print();
-}
-
-// START
 init();
