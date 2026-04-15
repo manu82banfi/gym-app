@@ -165,7 +165,7 @@ function addExercise(n){
 function addMarker(){
   getS().blocchi.push({
     type:"marker",
-    color:markerColor.value === "violet" ? "#8f0663" : markerColor.value
+    color:markerColor.value
   });
   renderScheda();
 }
