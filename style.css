@@ -1,6 +1,6 @@
 body{
   margin:0;
-  background:#0b1220;
+  background:#0b1220; /* colore sfondo app */
   font-family:Arial;
 }
 
@@ -16,24 +16,21 @@ header{
   display:flex;
   gap:10px;
   padding:10px;
-  background:#0f1a2e;
+  background:#0f1a2e; /* colore barra */
   border-bottom:1px solid #1c2b45;
 }
 
-/* MODALITÀ */
-.mode-switch div{
-  cursor:pointer;
-  font-size:12px;
-}
-
-/* BOTTONI */
 button{
-  background:#16263f;
+  background:#16263f; /* colore bottoni */
   color:#dbe9ff;
   border:1px solid #223a5c;
   padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
+}
+
+button:hover{
+  background:#1d3557;
 }
 
 .hidden{display:none;}
@@ -45,7 +42,13 @@ main{
 /* CONTAINER */
 .container{
   width:985px;
-  margin:20px auto 20px 20px; /* margine sx */
+  margin:20px auto;
+  margin-left:20px; /* 🔧 MARGINE SX (modifica qui) */
+}
+
+/* TESTI */
+.home, h2{
+  color:#e6f0ff;
 }
 
 /* TABELLA */
@@ -54,34 +57,102 @@ table{
   border-collapse:collapse;
   background:#e6edf7;
   table-layout:fixed;
+  border-radius:8px;
+  overflow:hidden;
 }
 
+/* CELLE */
 th,td{
   border:1px solid #2a3b55;
   padding:6px 4px;
+  text-align:center;
+  vertical-align:middle;
+}
+
+/* HEADER */
+th{
+  background:#b8c7dd;
+  font-size:11px;
+  letter-spacing:0.5px;
+}
+
+/* INPUT */
+input{
+  width:100%;
+  border:none;
+  background:transparent;
+  text-align:center;
+  outline:none;
+  font-size:13px;
+}
+
+/* hover righe */
+.row-hover:hover{
+  background:#d6e4ff;
+}
+
+/* serie centrata */
+.serie input{
   text-align:center;
 }
 
 /* MARKER */
 .marker{
-  height:8px;
+  height:4px; /* 🔧 altezza marker */
+  padding:0;
 }
 
 /* SPACER */
 .spacer{
   height:15px;
+  padding:0;
   background:#0b1220;
 }
 
-/* DROPDOWN */
-.dropdown-content{
-  position:absolute;
-  background:#16263f;
+/* AZIONI */
+.actions{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  font-size:14px;
 }
 
-/* RIGA INFO */
-.info-row{
-  text-align:center;
+.actions span{
+  cursor:pointer;
+  opacity:0.8;
+}
+
+.actions span:hover{
+  opacity:1;
+}
+
+/* CARD LISTA */
+.card{
+  background:#10233f;
+  color:#e6f0ff;
+  margin:10px;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #1f3557;
+}
+
+.card-title{
   font-weight:bold;
-  color:#fff;
+  margin-bottom:8px;
+}
+
+/* LARGHEZZE COLONNE */
+th:nth-child(1), td:nth-child(1){ width:350px; }
+th:nth-child(2), td:nth-child(2){ width:50px; }
+th:nth-child(3), td:nth-child(3){ width:80px; }
+th:nth-child(4), td:nth-child(4){ width:50px; }
+th:nth-child(5), td:nth-child(5){ width:50px; }
+th:nth-child(6), td:nth-child(6){ width:195px; }
+th:nth-child(7), td:nth-child(7){ width:160px; }
+th:nth-child(8), td:nth-child(8){ width:60px; }
+
+table{
+  table-layout:fixed;
 }
