@@ -38,6 +38,16 @@ function setMode(mode) {
   currentMode = mode;
   updateModeUI();
   
+  // Aggiorna stato checkbox in base alla modalità
+  const checkDX = document.getElementById('checkDX');
+  const checkSX = document.getElementById('checkSX');
+  
+  if (checkDX && checkSX) {
+    // In modalità allenamento, disabilita i checkbox
+    checkDX.disabled = (currentMode === 'train' || currentMode === 'read');
+    checkSX.disabled = (currentMode === 'train' || currentMode === 'read');
+  }
+  
   if (attiva !== null) {
     renderScheda();
   }
@@ -52,7 +62,7 @@ function updateModeUI() {
   
   // Abilita/disabilita pulsanti in base alla modalità
   const buttons = document.querySelectorAll('.topbar button:not(.mode-option)');
-  const toolbarButtons = document.querySelectorAll('.toolbar button, .toolbar .dropdown, .toolbar .toggle-container, .toolbar .checkbox-group');
+  const toolbarButtons = document.querySelectorAll('.toolbar button, .toolbar .dropdown, .toolbar .toggle-container');
   
   if (currentMode === 'read') {
     // Solo Elenco schede è attivo
@@ -106,28 +116,35 @@ function focusFirstInput() {
 function renderScheda() {
   toolbar(true);
   const s = getS();
+  
+  // VERIFICA CHE LA SCHEDA ESISTA
+  if (!s) {
+    renderHome();
+    return;
+  }
+  
   const isEditMode = currentMode === 'edit';
   const isTrainMode = currentMode === 'train';
   const canEdit = isEditMode || isTrainMode;
 
   // Costruisci etichette superiori
   let labelsHtml = '<div class="labels-container">';
-  labelsHtml += '<div>';
+  
+  // Jammer e DX/SX sulla stessa linea
   if (showJammer) {
     const jammerText = document.getElementById('jammerToggle')?.textContent || 'No Jammer';
     labelsHtml += `<span class="jammer-label">${jammerText}</span>`;
   }
-  labelsHtml += '</div>';
   
-  labelsHtml += '<div>';
+  // DX e SX appaiono dopo Jammer
   if (showDX) labelsHtml += '<span class="side-label">DX</span>';
   if (showSX) labelsHtml += '<span class="side-label">SX</span>';
-  labelsHtml += '</div>';
+  
   labelsHtml += '</div>';
 
   let html = `
   <div class="container">
-    <h2 contenteditable="${isEditMode}" oninput="rename(this.innerText)">${s.nome}</h2>
+    <h2 contenteditable="${isEditMode}" oninput="rename(this.innerText)">${s.nome || 'SCHEDA'}</h2>
     ${labelsHtml}
     <table>
       <thead>
@@ -154,6 +171,9 @@ function renderScheda() {
 
   // Aggiorna stato pulsante jammer
   updateJammerButton();
+  
+  // Aggiorna stato checkbox
+  updateCheckboxState();
   
   focusFirstInput();
 }
@@ -364,28 +384,61 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX
+// UPDATE LABELS DX/SX - MODIFICATO: solo uno selezionabile
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
-  showDX = document.getElementById('checkDX').checked;
-  showSX = document.getElementById('checkSX').checked;
+  const checkDX = document.getElementById('checkDX');
+  const checkSX = document.getElementById('checkSX');
+  
+  // Se viene selezionato DX, deseleziona SX e viceversa
+  if (checkDX.checked) {
+    checkSX.checked = false;
+    showDX = true;
+    showSX = false;
+  } else if (checkSX.checked) {
+    checkDX.checked = false;
+    showDX = false;
+    showSX = true;
+  } else {
+    showDX = false;
+    showSX = false;
+  }
   
   if (attiva) renderScheda();
+}
+
+// Aggiorna stato checkbox in base alla modalità
+function updateCheckboxState() {
+  const checkDX = document.getElementById('checkDX');
+  const checkSX = document.getElementById('checkSX');
+  
+  if (checkDX && checkSX) {
+    checkDX.checked = showDX;
+    checkSX.checked = showSX;
+    checkDX.disabled = (currentMode === 'train' || currentMode === 'read');
+    checkSX.disabled = (currentMode === 'train' || currentMode === 'read');
+  }
 }
 
 // FUNZIONI UPDATE
 function upd(i, f, v){ 
   if (currentMode === 'read') return;
-  getS().blocchi[i][f] = v; 
-  saveLocal(); 
+  const s = getS();
+  if (s && s.blocchi[i]) {
+    s.blocchi[i][f] = v; 
+    saveLocal(); 
+  }
 }
 
 function updArr(i, f, r, v){ 
   if (currentMode === 'read') return;
-  if (!getS().blocchi[i][f]) getS().blocchi[i][f] = [];
-  getS().blocchi[i][f][r] = v; 
-  saveLocal(); 
+  const s = getS();
+  if (s && s.blocchi[i]) {
+    if (!s.blocchi[i][f]) s.blocchi[i][f] = [];
+    s.blocchi[i][f][r] = v; 
+    saveLocal(); 
+  }
 }
 
 // MOVIMENTO
@@ -418,8 +471,11 @@ function del(i){
 // RINOMINA
 function rename(v){
   if (currentMode !== 'edit') return;
-  getS().nome = v;
-  saveLocal();
+  const s = getS();
+  if (s) {
+    s.nome = v;
+    saveLocal();
+  }
 }
 
 // ELENCO SCHEDE
@@ -431,7 +487,7 @@ function elencoSchede(){
       <h2 style="color:var(--text-light)">Le tue schede</h2>
       ${schede.map(s=>`
         <div class="card">
-          <div class="card-title">${s.nome}</div>
+          <div class="card-title">${s.nome || 'SCHEDA'}</div>
           <button onclick="apri(${s.id})">Apri</button>
           ${currentMode === 'edit' ? `
             <button onclick="copia(${s.id})">Copia</button>
@@ -453,7 +509,7 @@ function copia(id){
   const s = schede.find(x => x.id === id);
   const nuova = JSON.parse(JSON.stringify(s));
   nuova.id = Date.now();
-  nuova.nome = s.nome + " (copia)";
+  nuova.nome = (s.nome || 'SCHEDA') + " (copia)";
   schede.push(nuova);
   saveLocal();
   elencoSchede();
@@ -491,7 +547,7 @@ async function salvaCloud() {
   }
 }
 
-// EXPORT PDF
+// EXPORT PDF - MODIFICATO PER CREARE VERO PDF
 function exportPDF() {
   if (!attiva) {
     alert('Apri prima una scheda');
@@ -499,28 +555,108 @@ function exportPDF() {
   }
   
   const s = getS();
-  let content = `SCHEDA: ${s.nome}\n`;
-  content += '=' .repeat(50) + '\n\n';
+  
+  // Crea il contenuto HTML per il PDF
+  let htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>${s.nome}</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .marker { height: 4px; padding: 0; }
+        .spacer { height: 15px; background: #f0f0f0; }
+      </style>
+    </head>
+    <body>
+      <h1>${s.nome}</h1>
+  `;
+  
+  // Aggiungi etichette Jammer/DX/SX
+  if (showJammer || showDX || showSX) {
+    htmlContent += '<div style="margin: 10px 0;">';
+    if (showJammer) {
+      const jammerText = document.getElementById('jammerToggle')?.textContent || 'No Jammer';
+      htmlContent += `<strong style="color: #FFD700;">${jammerText}</strong> `;
+    }
+    if (showDX) htmlContent += '<strong style="color: #87CEEB;">DX</strong> ';
+    if (showSX) htmlContent += '<strong style="color: #87CEEB;">SX</strong>';
+    htmlContent += '</div>';
+  }
+  
+  htmlContent += `
+      <table>
+        <thead>
+          <tr>
+            <th>ESERCIZIO</th>
+            <th>SERIE</th>
+            <th>REP</th>
+            <th>KG</th>
+            <th>REC</th>
+            <th>PROG</th>
+            <th>NOTE</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
   
   s.blocchi.forEach(b => {
-    if (b.type === 'exercise') {
-      content += `ESERCIZIO: ${b.nome}\n`;
-      content += `Serie: ${b.serie.join(', ')} | Rep: ${b.rep} | Rec: ${b.rec}\n`;
-      content += `KG: ${b.kg.join(', ')}\n`;
-      if (b.prog) content += `Progressione: ${b.prog}\n`;
-      if (b.note) content += `Note: ${b.note}\n`;
-      content += '-'.repeat(30) + '\n';
+    if (b.type === 'marker') {
+      htmlContent += `<tr><td colspan="7" class="marker" style="background:${b.color}"></td></tr>`;
+    } else if (b.type === 'spacer') {
+      htmlContent += `<tr><td colspan="7" class="spacer"></td></tr>`;
+    } else if (b.type === 'exercise') {
+      for(let r = 0; r < b.rows; r++) {
+        htmlContent += '<tr>';
+        
+        if(r === 0) {
+          htmlContent += `<td rowspan="${b.rows}">${b.nome || ''}</td>`;
+        }
+        
+        htmlContent += `<td>${b.serie?.[r] || ''}</td>`;
+        
+        if(r === 0) {
+          htmlContent += `<td rowspan="${b.rows}">${b.rep || ''}</td>`;
+        }
+        
+        htmlContent += `<td>${b.kg?.[r] || ''}</td>`;
+        
+        if(r === 0) {
+          htmlContent += `<td rowspan="${b.rows}">${b.rec || ''}</td>`;
+        }
+        
+        htmlContent += `
+          <td>${b.prog || ''}</td>
+          <td>${b.note || ''}</td>
+        `;
+        
+        htmlContent += '</tr>';
+      }
     }
   });
   
-  // Crea blob e scarica
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${s.nome}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
+  htmlContent += `
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `;
+  
+  // Crea il PDF usando la stampa
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+  
+  // Aspetta che il contenuto sia caricato e poi stampa
+  printWindow.onload = function() {
+    printWindow.print();
+    // printWindow.close(); // Opzionale: chiudi dopo la stampa
+  };
 }
 
 // SAVE LOCAL
