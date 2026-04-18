@@ -6,12 +6,23 @@
 <title>Gym App</title>
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
+
+<!-- LIBRERIA PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
 
 <header>
   <div class="topbar">
+
+    <!-- MODALITÀ -->
+    <div class="mode-switch">
+      <div onclick="setMode('lettura')">Lettura</div>
+      <div onclick="setMode('modifica')">Modifica</div>
+      <div onclick="setMode('allenamento')">Allenamento</div>
+    </div>
+
     <button onclick="nuovaScheda()">Nuova scheda</button>
     <button onclick="elencoSchede()">Elenco schede</button>
     <button onclick="salvaCloud()">Salva in Cloud</button>
@@ -19,21 +30,33 @@
   </div>
 
   <div id="toolbar" class="toolbar hidden">
-    <select id="markerColor">
-      <option value="green">Bicipiti</option>
-      <option value="red">Tricipiti</option>
-      <option value="#fa8405">Addominali</option>
-      <option value="#8f0663">Gambe</option>
-      <option value="white">Dorso</option>
-      <option value="yellow">Spalle</option>
-    </select>
 
-    <button onclick="addMarker()">Marker</button>
+    <!-- MARKER NUOVO -->
+    <div class="dropdown">
+      <button onclick="toggleMarkerMenu()">Marker</button>
+      <div id="markerMenu" class="dropdown-content hidden">
+        <div onclick="addMarker('green')">Bicipiti</div>
+        <div onclick="addMarker('red')">Tricipiti</div>
+        <div onclick="addMarker('#fa8405')">Addome</div>
+        <div onclick="addMarker('#8f0663')">Gambe</div>
+        <div onclick="addMarker('white')">Dorso</div>
+        <div onclick="addMarker('yellow')">Spalle</div>
+      </div>
+    </div>
+
     <button onclick="addSpacer()">Spazio</button>
     <button onclick="addExercise(1)">Esercizio 1</button>
     <button onclick="addExercise(2)">Esercizio 2</button>
     <button onclick="addExercise(3)">Esercizio 3</button>
     <button onclick="addExercise(4)">Esercizio 4</button>
+
+    <!-- JAMMER -->
+    <button onclick="toggleJammer()">Jammer</button>
+
+    <!-- DX SX -->
+    <button onclick="toggleSide('DX')">DX</button>
+    <button onclick="toggleSide('SX')">SX</button>
+
   </div>
 </header>
 
@@ -41,14 +64,14 @@
 
 <script src="cloud.js"></script>
 <script src="app.js"></script>
+
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(() => console.log("SW registrato"))
-      .catch(err => console.log("Errore SW:", err));
+    navigator.serviceWorker.register("./service-worker.js");
   });
 }
 </script>
+
 </body>
 </html>

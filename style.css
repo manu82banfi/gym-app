@@ -1,6 +1,6 @@
 body{
   margin:0;
-  background:#0b1220; /* blu scuro */
+  background:#0b1220;
   font-family:Arial;
 }
 
@@ -20,6 +20,13 @@ header{
   border-bottom:1px solid #1c2b45;
 }
 
+/* MODALITÀ */
+.mode-switch div{
+  cursor:pointer;
+  font-size:12px;
+}
+
+/* BOTTONI */
 button{
   background:#16263f;
   color:#dbe9ff;
@@ -27,10 +34,6 @@ button{
   padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
-}
-
-button:hover{
-  background:#1d3557;
 }
 
 .hidden{display:none;}
@@ -42,116 +45,43 @@ main{
 /* CONTAINER */
 .container{
   width:985px;
-  margin:20px auto;
-}
-
-/* TESTI */
-.home, h2{
-  color:#e6f0ff;
+  margin:20px auto 20px 20px; /* margine sx */
 }
 
 /* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
-  background:#e6edf7; /* blu chiarissimo */
+  background:#e6edf7;
   table-layout:fixed;
-  border-radius:8px;
-  overflow:hidden;
 }
 
-/* CELLE */
 th,td{
   border:1px solid #2a3b55;
   padding:6px 4px;
-  text-align:center;
-  vertical-align:middle;
-}
-
-/* HEADER */
-th{
-  background:#b8c7dd;
-  font-size:11px;
-  letter-spacing:0.5px;
-}
-
-/* INPUT */
-input{
-  width:100%;
-  border:none;
-  background:transparent;
-  text-align:center;
-  outline:none;
-  font-size:13px;
-}
-
-/* hover righe */
-.row-hover:hover{
-  background:#d6e4ff;
-}
-
-/* serie centrata */
-.serie input{
   text-align:center;
 }
 
 /* MARKER */
 .marker{
-  height:4px;
-  padding:0;
+  height:8px;
 }
 
 /* SPACER */
 .spacer{
   height:15px;
-  padding:0;
   background:#0b1220;
 }
 
-/* AZIONI */
-.actions{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:6px;
-  white-space:nowrap;
-  font-size:14px;
+/* DROPDOWN */
+.dropdown-content{
+  position:absolute;
+  background:#16263f;
 }
 
-.actions span{
-  cursor:pointer;
-  opacity:0.8;
-}
-
-.actions span:hover{
-  opacity:1;
-}
-
-/* CARD LISTA */
-.card{
-  background:#10233f;
-  color:#e6f0ff;
-  margin:10px;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #1f3557;
-}
-
-.card-title{
+/* RIGA INFO */
+.info-row{
+  text-align:center;
   font-weight:bold;
-  margin-bottom:8px;
-}
-
-/* LARGHEZZE COLONNE ESATTE */
-th:nth-child(1), td:nth-child(1){ width:350px; }  /* ESERCIZIO */
-th:nth-child(2), td:nth-child(2){ width:50px; }   /* SERIE */
-th:nth-child(3), td:nth-child(3){ width:80px; }   /* REP */
-th:nth-child(4), td:nth-child(4){ width:50px; }   /* KG */
-th:nth-child(5), td:nth-child(5){ width:50px; }   /* REC */
-th:nth-child(6), td:nth-child(6){ width:195px; }  /* PROG */
-th:nth-child(7), td:nth-child(7){ width:160px; }  /* NOTE */
-th:nth-child(8), td:nth-child(8){ width:60px; }   /* AZIONI */
-
-table{
-  table-layout:fixed;
+  color:#fff;
 }
