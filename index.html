@@ -12,28 +12,55 @@
 
 <header>
   <div class="topbar">
+    <!-- Pulsanti principali -->
     <button onclick="nuovaScheda()">Nuova scheda</button>
     <button onclick="elencoSchede()">Elenco schede</button>
     <button onclick="salvaCloud()">Salva in Cloud</button>
     <button onclick="exportPDF()">Esporta PDF</button>
+    
+    <!-- Modalità (3 piccole scritte verticali) -->
+    <div class="mode-selector">
+      <span onclick="setMode('read')" id="mode-read" class="mode-option">👁 Lettura</span>
+      <span onclick="setMode('edit')" id="mode-edit" class="mode-option active">✏️ Modifica</span>
+      <span onclick="setMode('train')" id="mode-train" class="mode-option">💪 Allenamento</span>
+    </div>
   </div>
 
   <div id="toolbar" class="toolbar hidden">
-    <select id="markerColor">
-      <option value="green">Bicipiti</option>
-      <option value="red">Tricipiti</option>
-      <option value="#fa8405">Addominali</option>
-      <option value="#8f0663">Gambe</option>
-      <option value="white">Dorso</option>
-      <option value="yellow">Spalle</option>
-    </select>
-
-    <button onclick="addMarker()">Marker</button>
+    <!-- Marker con dropdown integrato -->
+    <div class="dropdown">
+      <button onclick="toggleMarkerDropdown()" class="dropbtn">Marker ▼</button>
+      <div id="markerDropdown" class="dropdown-content hidden">
+        <div onclick="addMarkerFromDropdown('green', 'Bicipiti')" style="background:#4CAF50">Bicipiti</div>
+        <div onclick="addMarkerFromDropdown('red', 'Tricipiti')" style="background:#f44336">Tricipiti</div>
+        <div onclick="addMarkerFromDropdown('#fa8405', 'Addominali')" style="background:#fa8405">Addominali</div>
+        <div onclick="addMarkerFromDropdown('#8f0663', 'Gambe')" style="background:#8f0663">Gambe</div>
+        <div onclick="addMarkerFromDropdown('white', 'Dorso')" style="background:#cccccc; color:#000">Dorso</div>
+        <div onclick="addMarkerFromDropdown('yellow', 'Spalle')" style="background:#FFEB3B; color:#000">Spalle</div>
+      </div>
+    </div>
+    
     <button onclick="addSpacer()">Spazio</button>
     <button onclick="addExercise(1)">Esercizio 1</button>
     <button onclick="addExercise(2)">Esercizio 2</button>
     <button onclick="addExercise(3)">Esercizio 3</button>
     <button onclick="addExercise(4)">Esercizio 4</button>
+    
+    <!-- Selettore Jammer -->
+    <div class="toggle-container">
+      <span class="toggle-label">Jammer:</span>
+      <button id="jammerToggle" onclick="toggleJammer()" class="toggle-btn off">No Jammer</button>
+    </div>
+    
+    <!-- Checkbox DX/SX -->
+    <div class="checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" id="checkDX" onchange="updateSideLabels()"> DX
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="checkSX" onchange="updateSideLabels()"> SX
+      </label>
+    </div>
   </div>
 </header>
 

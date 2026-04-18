@@ -1,10 +1,23 @@
-body{
-  margin:0;
-  background:#0b1220; /* blu scuro */
-  font-family:Arial;
+/* COLORI PRINCIPALI - MODIFICA QUI PER CAMBIARE TEMA */
+:root {
+  --bg-dark: #0b1220;      /* sfondo principale */
+  --bg-header: #0f1a2e;    /* sfondo header */
+  --bg-button: #16263f;    /* sfondo pulsanti */
+  --bg-button-hover: #1d3557; /* hover pulsanti */
+  --border-color: #1c2b45; /* bordi */
+  --text-light: #e6f0ff;   /* testo chiaro */
+  --table-bg: #e6edf7;     /* sfondo tabella */
+  --table-header: #b8c7dd; /* intestazione tabella */
+  --card-bg: #10233f;      /* sfondo card */
 }
 
-/* HEADER */
+body{
+  margin:0;
+  background: var(--bg-dark);
+  font-family: Arial, sans-serif;
+}
+
+/* HEADER FISSO */
 header{
   position:fixed;
   top:0;
@@ -12,67 +25,201 @@ header{
   z-index:1000;
 }
 
-.topbar,.toolbar{
+.topbar, .toolbar{
   display:flex;
   gap:10px;
   padding:10px;
-  background:#0f1a2e;
-  border-bottom:1px solid #1c2b45;
+  background: var(--bg-header);
+  border-bottom:1px solid var(--border-color);
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 button{
-  background:#16263f;
-  color:#dbe9ff;
-  border:1px solid #223a5c;
+  background: var(--bg-button);
+  color: var(--text-light);
+  border:1px solid var(--border-color);
   padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
+  font-size:13px;
+  transition: all 0.2s;
 }
 
 button:hover{
-  background:#1d3557;
+  background: var(--bg-button-hover);
 }
 
-.hidden{display:none;}
+.hidden{ display:none; }
 
+/* MARGINE SINISTRO TABELLA - MODIFICA QUI PER CAMBIARE */
 main{
   margin-top:110px;
+  padding-left: 20px; /* MARGINE SX - MODIFICA QUESTO VALORE */
 }
 
-/* CONTAINER */
+/* CONTAINER TABELLA */
 .container{
   width:985px;
-  margin:20px auto;
+  margin:20px 0; /* modificato per lavorare con padding-left */
+}
+
+/* SELEZIONE MODALITÀ */
+.mode-selector{
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-left: auto;
+  border-left: 1px solid var(--border-color);
+  padding-left: 15px;
+}
+
+.mode-option{
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+  color: #8899bb;
+  border-radius: 4px;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.mode-option:hover{
+  background: var(--bg-button);
+}
+
+.mode-option.active{
+  background: #2a4a7a;
+  color: white;
+  font-weight: bold;
+}
+
+/* DROPDOWN MARKER */
+.dropdown{
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content{
+  position: absolute;
+  background: var(--bg-header);
+  min-width: 120px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+  z-index: 1001;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.dropdown-content div{
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.dropdown-content div:hover{
+  filter: brightness(1.2);
+}
+
+/* TOGGLE JAMMER */
+.toggle-container{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.toggle-label{
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.toggle-btn{
+  min-width: 80px;
+}
+
+.toggle-btn.on{
+  background: #4CAF50;
+  color: white;
+}
+
+.toggle-btn.off{
+  background: #666;
+  color: white;
+}
+
+/* CHECKBOX DX/SX */
+.checkbox-group{
+  display: flex;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.checkbox-label{
+  color: var(--text-light);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+/* ETICHETTE SOPRA TABELLA */
+.labels-container{
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: bold;
+  min-height: 25px;
+}
+
+.jammer-label{
+  color: #FFD700;
+}
+
+.side-label{
+  color: #87CEEB;
+  margin-left: 15px;
 }
 
 /* TESTI */
 .home, h2{
-  color:#e6f0ff;
+  color: var(--text-light);
 }
 
 /* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
-  background:#e6edf7; /* blu chiarissimo */
+  background: var(--table-bg);
   table-layout:fixed;
   border-radius:8px;
   overflow:hidden;
 }
 
-/* CELLE */
-th,td{
+th, td{
   border:1px solid #2a3b55;
   padding:6px 4px;
   text-align:center;
   vertical-align:middle;
 }
 
-/* HEADER */
 th{
-  background:#b8c7dd;
+  background: var(--table-header);
   font-size:11px;
   letter-spacing:0.5px;
+}
+
+/* ALLINEAMENTO SINISTRO PER COLONNE SPECIFICHE */
+th:nth-child(1), td:nth-child(1), /* ESERCIZIO */
+th:nth-child(6), td:nth-child(6), /* PROG */
+th:nth-child(7), td:nth-child(7)  /* NOTE */ {
+  text-align: left;
+  padding-left: 8px;
 }
 
 /* INPUT */
@@ -85,14 +232,23 @@ input{
   font-size:13px;
 }
 
-/* hover righe */
-.row-hover:hover{
-  background:#d6e4ff;
+/* Allineamento sinistro input in colonne specifiche */
+td:nth-child(1) input,
+td:nth-child(6) input,
+td:nth-child(7) input {
+  text-align: left;
 }
 
-/* serie centrata */
-.serie input{
-  text-align:center;
+/* INPUT DISABILITATI */
+input:disabled{
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #f0f0f0;
+}
+
+/* HOVER RIGHE */
+.row-hover:hover{
+  background:#d6e4ff;
 }
 
 /* MARKER */
@@ -105,7 +261,7 @@ input{
 .spacer{
   height:15px;
   padding:0;
-  background:#0b1220;
+  background: var(--bg-dark);
 }
 
 /* AZIONI */
@@ -129,8 +285,8 @@ input{
 
 /* CARD LISTA */
 .card{
-  background:#10233f;
-  color:#e6f0ff;
+  background: var(--card-bg);
+  color: var(--text-light);
   margin:10px;
   padding:12px;
   border-radius:8px;
@@ -142,30 +298,16 @@ input{
   margin-bottom:8px;
 }
 
-/* LARGHEZZE COLONNE ESATTE */
-th:nth-child(1), td:nth-child(1){ width:350px; }  /* ESERCIZIO */
-th:nth-child(2), td:nth-child(2){ width:50px; }   /* SERIE */
-th:nth-child(3), td:nth-child(3){ width:80px; }   /* REP */
-th:nth-child(4), td:nth-child(4){ width:50px; }   /* KG */
-th:nth-child(5), td:nth-child(5){ width:50px; }   /* REC */
-th:nth-child(6), td:nth-child(6){ width:195px; }  /* PROG */
-th:nth-child(7), td:nth-child(7){ width:160px; }  /* NOTE */
-th:nth-child(8), td:nth-child(8){ width:60px; }   /* AZIONI */
+/* LARGHEZZE COLONNE */
+th:nth-child(1), td:nth-child(1){ width:300px; } /* ESERCIZIO */
+th:nth-child(2), td:nth-child(2){ width:50px; }  /* SERIE */
+th:nth-child(3), td:nth-child(3){ width:80px; }  /* REP */
+th:nth-child(4), td:nth-child(4){ width:50px; }  /* KG */
+th:nth-child(5), td:nth-child(5){ width:50px; }  /* REC */
+th:nth-child(6), td:nth-child(6){ width:150px; } /* PROG */
+th:nth-child(7), td:nth-child(7){ width:150px; } /* NOTE */
+th:nth-child(8), td:nth-child(8){ width:60px; }  /* AZIONI */
 
 table{
   table-layout:fixed;
-}
-
-/* ALLINEAMENTO SINISTRA COLONNE */
-th:nth-child(1), td:nth-child(1),
-th:nth-child(6), td:nth-child(6),
-th:nth-child(7), td:nth-child(7){
-  text-align:left;
-}
-
-/* INPUT allineati a sinistra nelle colonne giuste */
-td:nth-child(1) input,
-td:nth-child(6) input,
-td:nth-child(7) input{
-  text-align:left;
 }

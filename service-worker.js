@@ -10,10 +10,8 @@ const FILES = [
   "icon.png"
 ];
 
-// INSTALL
 self.addEventListener("install", (event) => {
-  self.skipWaiting(); // forza attivazione immediata
-
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(FILES);
@@ -21,29 +19,25 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// ATTIVAZIONE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            return caches.delete(key); // elimina vecchie cache
+            return caches.delete(key);
           }
         })
       );
     })
   );
-
-  self.clients.claim(); // prende controllo subito
+  self.clients.claim();
 });
 
-// FETCH
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
       .then((res) => {
-        // aggiorna cache con versione nuova
         const clone = res.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, clone);
