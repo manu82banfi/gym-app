@@ -19,16 +19,21 @@
   </div>
 
   <div id="toolbar" class="toolbar hidden">
+    <select id="markerColor">
+      <option value="green">Bicipiti</option>
+      <option value="red">Tricipiti</option>
+      <option value="#fa8405">Addominali</option>
+      <option value="#8f0663">Gambe</option>
+      <option value="white">Dorso</option>
+      <option value="yellow">Spalle</option>
+    </select>
 
-    <!-- 🔧 NUOVO MARKER -->
-    <button onclick="toggleMarkerMenu()">Marker</button>
-
+    <button onclick="addMarker()">Marker</button>
     <button onclick="addSpacer()">Spazio</button>
     <button onclick="addExercise(1)">Esercizio 1</button>
     <button onclick="addExercise(2)">Esercizio 2</button>
     <button onclick="addExercise(3)">Esercizio 3</button>
     <button onclick="addExercise(4)">Esercizio 4</button>
-
   </div>
 </header>
 
@@ -36,7 +41,6 @@
 
 <script src="cloud.js"></script>
 <script src="app.js"></script>
-
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

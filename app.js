@@ -1,22 +1,7 @@
 let schede = [];
 let attiva = null;
 
-/* ======================
-   🔧 COLORI MARKER
-   modifica qui facilmente
-====================== */
-const MARKERS = [
-  {nome:"Bicipiti", colore:"green"},
-  {nome:"Tricipiti", colore:"red"},
-  {nome:"Addominali", colore:"#fa8405"},
-  {nome:"Gambe", colore:"#8f0663"},
-  {nome:"Dorso", colore:"white"},
-  {nome:"Spalle", colore:"yellow"}
-];
-
-/* ======================
-   INIT
-====================== */
+// INIT
 async function init() {
   const cloud = await caricaCloud();
 
@@ -31,24 +16,18 @@ async function init() {
   renderHome();
 }
 
-/* ======================
-   HOME
-====================== */
+// HOME
 function renderHome() {
   toolbar(false);
   app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
-/* ======================
-   TOOLBAR
-====================== */
+// TOOLBAR
 function toolbar(show) {
   document.getElementById("toolbar").classList.toggle("hidden", !show);
 }
 
-/* ======================
-   NUOVA SCHEDA
-====================== */
+// NUOVA SCHEDA
 function nuovaScheda() {
   const s = {
     id: Date.now(),
@@ -61,59 +40,20 @@ function nuovaScheda() {
   renderScheda();
 }
 
+// GET
 function getS() {
   return schede.find(s => s.id === attiva);
 }
 
-/* ======================
-   MARKER MENU
-====================== */
-function toggleMarkerMenu(){
-
-  let menu = document.getElementById("markerMenu");
-
-  if(menu){
-    menu.remove();
-    return;
-  }
-
-  menu = document.createElement("div");
-  menu.id = "markerMenu";
-
-  menu.style.position = "fixed";
-  menu.style.top = "60px";
-  menu.style.left = "10px";
-  menu.style.background = "#16263f";
-  menu.style.border = "1px solid #223a5c";
-  menu.style.borderRadius = "6px";
-  menu.style.padding = "5px";
-  menu.style.zIndex = "2000";
-
-  MARKERS.forEach(m=>{
-    const btn = document.createElement("div");
-
-    btn.innerText = m.nome;
-    btn.style.padding = "6px";
-    btn.style.cursor = "pointer";
-    btn.style.color = "#dbe9ff";
-
-    btn.onclick = ()=>{
-      addMarker(m.colore);
-      menu.remove();
-    };
-
-    btn.onmouseover = ()=> btn.style.background="#1d3557";
-    btn.onmouseout = ()=> btn.style.background="transparent";
-
-    menu.appendChild(btn);
-  });
-
-  document.body.appendChild(menu);
+// UX: focus automatico primo input esercizio
+function focusFirstInput() {
+  setTimeout(() => {
+    const el = document.querySelector("tbody input");
+    if (el) el.focus();
+  }, 50);
 }
 
-/* ======================
-   RENDER SCHEDA
-====================== */
+// RENDER
 function renderScheda() {
   toolbar(true);
   const s = getS();
@@ -148,9 +88,7 @@ function renderScheda() {
   focusFirstInput();
 }
 
-/* ======================
-   BLOCCO
-====================== */
+// BLOCCO
 function renderBlocco(b,i){
 
   if (b.type==="marker"){
@@ -224,9 +162,19 @@ function renderBlocco(b,i){
   }
 }
 
-/* ======================
-   ADD
-====================== */
+// UX: ENTER = nuova riga serie
+function serieKey(e,i,r){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    const s=getS().blocchi[i];
+    s.serie.push("");
+    s.kg.push("");
+    saveLocal();
+    renderScheda();
+  }
+}
+
+// ADD
 function addExercise(n){
   getS().blocchi.push({
     type:"exercise",
@@ -243,11 +191,10 @@ function addExercise(n){
   renderScheda();
 }
 
-/* 🔧 marker aggiornato */
-function addMarker(colore){
+function addMarker(){
   getS().blocchi.push({
     type:"marker",
-    color:colore
+    color:markerColor.value === "violet" ? "#8f0663" : markerColor.value
   });
   saveLocal();
   renderScheda();
@@ -259,15 +206,11 @@ function addSpacer(){
   renderScheda();
 }
 
-/* ======================
-   UPDATE
-====================== */
+// UPDATE
 function upd(i,f,v){ getS().blocchi[i][f]=v; saveLocal(); }
 function updArr(i,f,r,v){ getS().blocchi[i][f][r]=v; saveLocal(); }
 
-/* ======================
-   MOVE / DELETE
-====================== */
+// MOVE
 function moveUp(i){
   let arr=getS().blocchi;
   if(i===0)return;
@@ -284,20 +227,52 @@ function moveDown(i){
   renderScheda();
 }
 
+// DELETE
 function del(i){
   getS().blocchi.splice(i,1);
   saveLocal();
   renderScheda();
 }
 
-/* ======================
-   ALTRO
-====================== */
+// RENAME
 function rename(v){
   getS().nome=v;
   saveLocal();
 }
 
+// LISTA
+function elencoSchede(){
+  toolbar(false);
+
+  app.innerHTML = schede.map(s=>`
+    <div class="card">
+      <div class="card-title">${s.nome}</div>
+      <button onclick="apri(${s.id})">Apri</button>
+      <button onclick="copia(${s.id})">Copia</button>
+      <button onclick="eliminaScheda(${s.id})">Elimina</button>
+    </div>
+  `).join("");
+}
+
+function apri(id){
+  attiva=id;
+  renderScheda();
+}
+
+function copia(id){
+  const s=schede.find(x=>x.id===id);
+  schede.push(JSON.parse(JSON.stringify({...s,id:Date.now()})));
+  saveLocal();
+  elencoSchede();
+}
+
+function eliminaScheda(id){
+  schede=schede.filter(s=>s.id!==id);
+  saveLocal();
+  elencoSchede();
+}
+
+// SAVE LOCAL
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
 }
