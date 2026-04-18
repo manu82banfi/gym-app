@@ -45,7 +45,7 @@ function getS() {
   return schede.find(s => s.id === attiva);
 }
 
-// UX: focus automatico primo input esercizio
+// UX
 function focusFirstInput() {
   setTimeout(() => {
     const el = document.querySelector("tbody input");
@@ -141,8 +141,21 @@ function renderBlocco(b,i){
       }
 
       rows+=`
-        <td><input value="${b.kg[r]||""}" oninput="updArr(${i},'kg',${r},this.value)"></td>
-        <td><input value="${b.rec}" oninput="upd(${i},'rec',this.value)"></td>
+        <td>
+          <input value="${b.kg[r]||""}"
+          oninput="updArr(${i},'kg',${r},this.value)">
+        </td>
+      `;
+
+      // REC UNIFICATO (FIX)
+      if(r===0){
+        rows+=`<td rowspan="${b.rows}">
+          <input value="${b.rec}"
+          oninput="upd(${i},'rec',this.value)">
+        </td>`;
+      }
+
+      rows+=`
         <td><input value="${b.prog||""}" oninput="upd(${i},'prog',this.value)"></td>
         <td><input value="${b.note||""}" oninput="upd(${i},'note',this.value)"></td>
       `;
@@ -162,7 +175,7 @@ function renderBlocco(b,i){
   }
 }
 
-// UX: ENTER = nuova riga serie
+// ENTER serie
 function serieKey(e,i,r){
   if(e.key==="Enter"){
     e.preventDefault();
@@ -275,6 +288,17 @@ function eliminaScheda(id){
 // SAVE LOCAL
 function saveLocal(){
   localStorage.setItem("schede",JSON.stringify(schede));
+}
+
+// FIX PULSANTE CLOUD
+async function salvaCloud(){
+  await salvaCloudCloud(schede);
+  alert("Schede salvate nel cloud");
+}
+
+// FIX PDF
+function exportPDF(){
+  window.print();
 }
 
 init();

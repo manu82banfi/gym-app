@@ -16,11 +16,10 @@ header{
   display:flex;
   gap:10px;
   padding:10px;
-  background:#0f1a2e; /* colore barra */
+  background:#0f1a2e;
   border-bottom:1px solid #1c2b45;
 }
 
-/* BOTTONI */
 button{
   background:#16263f;
   color:#dbe9ff;
@@ -36,16 +35,14 @@ button:hover{
 
 .hidden{display:none;}
 
-/* DISTANZA HEADER */
 main{
   margin-top:110px;
 }
 
-/* CONTAINER TABELLA */
+/* CONTAINER */
 .container{
   width:985px;
   margin:20px auto;
-  margin-left:20px; /* margine sx */
 }
 
 /* TESTI */
@@ -71,7 +68,7 @@ th,td{
   vertical-align:middle;
 }
 
-/* HEADER TABELLA */
+/* HEADER */
 th{
   background:#b8c7dd;
   font-size:11px;
@@ -88,30 +85,30 @@ input{
   font-size:13px;
 }
 
-/* HOVER RIGHE */
+/* hover righe */
 .row-hover:hover{
   background:#d6e4ff;
 }
 
-/* SERIE CENTRATA */
+/* serie centrata */
 .serie input{
   text-align:center;
 }
 
-/* MARKER (linea colorata) */
+/* MARKER */
 .marker{
   height:4px;
   padding:0;
 }
 
-/* SPACER (spazio vuoto) */
+/* SPACER */
 .spacer{
   height:15px;
   padding:0;
   background:#0b1220;
 }
 
-/* AZIONI (icone) */
+/* AZIONI */
 .actions{
   display:flex;
   justify-content:center;
@@ -130,7 +127,7 @@ input{
   opacity:1;
 }
 
-/* CARD LISTA SCHEDE */
+/* CARD LISTA */
 .card{
   background:#10233f;
   color:#e6f0ff;
@@ -145,7 +142,7 @@ input{
   margin-bottom:8px;
 }
 
-/* LARGHEZZE COLONNE */
+/* LARGHEZZE COLONNE ESATTE */
 th:nth-child(1), td:nth-child(1){ width:350px; }  /* ESERCIZIO */
 th:nth-child(2), td:nth-child(2){ width:50px; }   /* SERIE */
 th:nth-child(3), td:nth-child(3){ width:80px; }   /* REP */
@@ -155,7 +152,20 @@ th:nth-child(6), td:nth-child(6){ width:195px; }  /* PROG */
 th:nth-child(7), td:nth-child(7){ width:160px; }  /* NOTE */
 th:nth-child(8), td:nth-child(8){ width:60px; }   /* AZIONI */
 
-/* BLOCCO TABELLA */
 table{
   table-layout:fixed;
+}
+
+/* ALLINEAMENTO SINISTRA COLONNE */
+th:nth-child(1), td:nth-child(1),
+th:nth-child(6), td:nth-child(6),
+th:nth-child(7), td:nth-child(7){
+  text-align:left;
+}
+
+/* INPUT allineati a sinistra nelle colonne giuste */
+td:nth-child(1) input,
+td:nth-child(6) input,
+td:nth-child(7) input{
+  text-align:left;
 }
