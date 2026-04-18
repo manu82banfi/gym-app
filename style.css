@@ -16,10 +16,11 @@ header{
   display:flex;
   gap:10px;
   padding:10px;
-  background:#0f1a2e;
+  background:#0f1a2e; /* colore barra */
   border-bottom:1px solid #1c2b45;
 }
 
+/* BOTTONI */
 button{
   background:#16263f;
   color:#dbe9ff;
@@ -35,14 +36,16 @@ button:hover{
 
 .hidden{display:none;}
 
+/* DISTANZA HEADER */
 main{
   margin-top:110px;
 }
 
-/* CONTAINER */
+/* CONTAINER TABELLA */
 .container{
   width:985px;
   margin:20px auto;
+  margin-left:20px; /* margine sx */
 }
 
 /* TESTI */
@@ -68,7 +71,7 @@ th,td{
   vertical-align:middle;
 }
 
-/* HEADER */
+/* HEADER TABELLA */
 th{
   background:#b8c7dd;
   font-size:11px;
@@ -85,30 +88,30 @@ input{
   font-size:13px;
 }
 
-/* hover righe */
+/* HOVER RIGHE */
 .row-hover:hover{
   background:#d6e4ff;
 }
 
-/* serie centrata */
+/* SERIE CENTRATA */
 .serie input{
   text-align:center;
 }
 
-/* MARKER */
+/* MARKER (linea colorata) */
 .marker{
   height:4px;
   padding:0;
 }
 
-/* SPACER */
+/* SPACER (spazio vuoto) */
 .spacer{
   height:15px;
   padding:0;
   background:#0b1220;
 }
 
-/* AZIONI */
+/* AZIONI (icone) */
 .actions{
   display:flex;
   justify-content:center;
@@ -127,7 +130,7 @@ input{
   opacity:1;
 }
 
-/* CARD LISTA */
+/* CARD LISTA SCHEDE */
 .card{
   background:#10233f;
   color:#e6f0ff;
@@ -142,7 +145,7 @@ input{
   margin-bottom:8px;
 }
 
-/* LARGHEZZE COLONNE ESATTE */
+/* LARGHEZZE COLONNE */
 th:nth-child(1), td:nth-child(1){ width:350px; }  /* ESERCIZIO */
 th:nth-child(2), td:nth-child(2){ width:50px; }   /* SERIE */
 th:nth-child(3), td:nth-child(3){ width:80px; }   /* REP */
@@ -152,6 +155,7 @@ th:nth-child(6), td:nth-child(6){ width:195px; }  /* PROG */
 th:nth-child(7), td:nth-child(7){ width:160px; }  /* NOTE */
 th:nth-child(8), td:nth-child(8){ width:60px; }   /* AZIONI */
 
+/* BLOCCO TABELLA */
 table{
   table-layout:fixed;
 }
