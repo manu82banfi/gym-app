@@ -25,7 +25,7 @@ async function init() {
 // HOME
 function renderHome() {
   toolbar(false);
-  app.innerHTML = "<div class='home' style='padding:20px;'>Seleziona o crea una scheda</div>";
+  app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
 // TOOLBAR VISIBILITÀ
@@ -62,7 +62,6 @@ function updateModeUI() {
   
   // Abilita/disabilita pulsanti in base alla modalità
   const buttons = document.querySelectorAll('.topbar button:not(.mode-option)');
-  const toolbarButtons = document.querySelectorAll('.toolbar button, .toolbar .dropdown, .toolbar .toggle-container');
   
   if (currentMode === 'read') {
     // Solo Elenco schede è attivo
@@ -142,6 +141,7 @@ function renderScheda() {
   
   labelsHtml += '</div>';
 
+  // Il titolo è ora ben visibile grazie al margin-top aumentato nel CSS
   let html = `
   <div class="container">
     <h2 contenteditable="${isEditMode}" oninput="rename(this.innerText)">${s.nome || 'SCHEDA'}</h2>
@@ -384,7 +384,7 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX - MODIFICATO: solo uno selezionabile
+// UPDATE LABELS DX/SX - solo uno selezionabile
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
@@ -547,7 +547,7 @@ async function salvaCloud() {
   }
 }
 
-// EXPORT PDF - MODIFICATO PER CREARE VERO PDF
+// EXPORT PDF
 function exportPDF() {
   if (!attiva) {
     alert('Apri prima una scheda');
@@ -655,7 +655,6 @@ function exportPDF() {
   // Aspetta che il contenuto sia caricato e poi stampa
   printWindow.onload = function() {
     printWindow.print();
-    // printWindow.close(); // Opzionale: chiudi dopo la stampa
   };
 }
 
