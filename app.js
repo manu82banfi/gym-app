@@ -38,12 +38,10 @@ function setMode(mode) {
   currentMode = mode;
   updateModeUI();
   
-  // Aggiorna stato checkbox in base alla modalità
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
   
   if (checkDX && checkSX) {
-    // In modalità allenamento, disabilita i checkbox
     checkDX.disabled = (currentMode === 'train' || currentMode === 'read');
     checkSX.disabled = (currentMode === 'train' || currentMode === 'read');
   }
@@ -54,28 +52,23 @@ function setMode(mode) {
 }
 
 function updateModeUI() {
-  // Aggiorna UI modalità
   document.querySelectorAll('.mode-option').forEach(el => {
     el.classList.remove('active');
   });
   document.getElementById(`mode-${currentMode}`).classList.add('active');
   
-  // Abilita/disabilita pulsanti in base alla modalità
   const buttons = document.querySelectorAll('.topbar button:not(.mode-option)');
   
   if (currentMode === 'read') {
-    // Solo Elenco schede è attivo
     buttons.forEach(btn => {
       const text = btn.textContent;
       btn.disabled = text !== 'Elenco schede';
     });
     toolbar(false);
   } else if (currentMode === 'edit') {
-    // Tutto attivo
     buttons.forEach(btn => btn.disabled = false);
     if (attiva) toolbar(true);
   } else if (currentMode === 'train') {
-    // Solo alcune funzioni
     buttons.forEach(btn => btn.disabled = false);
     if (attiva) toolbar(true);
   }
@@ -116,7 +109,6 @@ function renderScheda() {
   toolbar(true);
   const s = getS();
   
-  // VERIFICA CHE LA SCHEDA ESISTA
   if (!s) {
     renderHome();
     return;
@@ -126,22 +118,38 @@ function renderScheda() {
   const isTrainMode = currentMode === 'train';
   const canEdit = isEditMode || isTrainMode;
 
-  // Costruisci etichette superiori
+  // Pulisci i dati prima di renderizzare (rimuovi undefined/null)
+  s.blocchi = s.blocchi.filter(b => b !== null && b !== undefined);
+  
+  // Assicurati che tutti gli esercizi abbiano le proprietà corrette
+  s.blocchi.forEach(b => {
+    if (b.type === 'exercise') {
+      if (!b.nome) b.nome = '';
+      if (!b.serie) b.serie = [];
+      if (!b.kg) b.kg = [];
+      if (!b.rep) b.rep = '';
+      if (!b.rec) b.rec = '';
+      if (!b.prog) b.prog = '';
+      if (!b.note) b.note = '';
+      
+      // Assicurati che serie e kg abbiano la lunghezza corretta
+      while (b.serie.length < b.rows) b.serie.push('');
+      while (b.kg.length < b.rows) b.kg.push('');
+    }
+  });
+
   let labelsHtml = '<div class="labels-container">';
   
-  // Jammer e DX/SX sulla stessa linea
   if (showJammer) {
     const jammerText = document.getElementById('jammerToggle')?.textContent || 'No Jammer';
     labelsHtml += `<span class="jammer-label">${jammerText}</span>`;
   }
   
-  // DX e SX appaiono dopo Jammer
   if (showDX) labelsHtml += '<span class="side-label">DX</span>';
   if (showSX) labelsHtml += '<span class="side-label">SX</span>';
   
   labelsHtml += '</div>';
 
-  // Il titolo è ora ben visibile grazie al margin-top aumentato nel CSS
   let html = `
   <div class="container">
     <h2 contenteditable="${isEditMode}" oninput="rename(this.innerText)">${s.nome || 'SCHEDA'}</h2>
@@ -162,17 +170,14 @@ function renderScheda() {
       <tbody>
   `;
 
-  s.blocchi.forEach((b,i)=>{
+  s.blocchi.forEach((b, i) => {
     html += renderBlocco(b, i, isEditMode, isTrainMode);
   });
 
   html += `</tbody></table></div>`;
   app.innerHTML = html;
 
-  // Aggiorna stato pulsante jammer
   updateJammerButton();
-  
-  // Aggiorna stato checkbox
   updateCheckboxState();
   
   focusFirstInput();
@@ -183,7 +188,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   const canEdit = isEditMode || isTrainMode;
   const showActions = isEditMode;
 
-  if (b.type === "marker"){
+  if (b.type === "marker") {
     return `<tr>
       <td colspan="7" class="marker" style="background:${b.color}"></td>
       ${showActions ? `<td class="actions">
@@ -194,7 +199,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
     </tr>`;
   }
 
-  if (b.type === "spacer"){
+  if (b.type === "spacer") {
     return `<tr>
       <td colspan="7" class="spacer"></td>
       ${showActions ? `<td class="actions">
@@ -205,20 +210,24 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
     </tr>`;
   }
 
-  if (b.type === "exercise"){
+  if (b.type === "exercise") {
     let rows = "";
     
-    // Assicurati che serie e kg siano array
+    // Assicurati che gli array esistano
     if (!b.serie) b.serie = [];
     if (!b.kg) b.kg = [];
+    
+    // Padding degli array alla lunghezza corretta
+    while (b.serie.length < b.rows) b.serie.push('');
+    while (b.kg.length < b.rows) b.kg.push('');
 
-    for(let r = 0; r < b.rows; r++){
+    for (let r = 0; r < b.rows; r++) {
       rows += `<tr class="row-hover">`;
 
       // Colonna ESERCIZIO (rowspan)
-      if(r === 0){
+      if (r === 0) {
         rows += `<td rowspan="${b.rows}">
-          <input value="${b.nome || ''}"
+          <input value="${escapeHtml(b.nome || '')}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="upd(${i},'nome',this.value)">
         </td>`;
@@ -227,7 +236,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       // Colonna SERIE
       rows += `
         <td class="serie">
-          <input value="${b.serie[r] || ''}"
+          <input value="${escapeHtml(b.serie[r] || '')}"
           ${!canEdit ? 'disabled' : ''}
           onkeydown="serieKey(event,${i},${r})"
           oninput="updArr(${i},'serie',${r},this.value)">
@@ -235,9 +244,9 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       `;
 
       // Colonna REP (rowspan)
-      if(r === 0){
+      if (r === 0) {
         rows += `<td rowspan="${b.rows}">
-          <input value="${b.rep || ''}"
+          <input value="${escapeHtml(b.rep || '')}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="upd(${i},'rep',this.value)">
         </td>`;
@@ -245,34 +254,34 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
 
       // Colonna KG
       rows += `
-        <td><input value="${b.kg[r] || ''}"
+        <td><input value="${escapeHtml(b.kg[r] || '')}"
         ${!canEdit ? 'disabled' : ''}
         oninput="updArr(${i},'kg',${r},this.value)"></td>
       `;
 
       // Colonna REC (rowspan)
-      if(r === 0){
+      if (r === 0) {
         rows += `<td rowspan="${b.rows}">
-          <input value="${b.rec || ''}"
+          <input value="${escapeHtml(b.rec || '')}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="upd(${i},'rec',this.value)">
         </td>`;
       }
 
-      // Colonne PROG e NOTE (editabili in tutte le modalità tranne read)
+      // Colonne PROG e NOTE - PROTETTE DA MODIFICHE INDESIDERATE
       rows += `
-        <td><input value="${b.prog || ''}"
+        <td><input value="${escapeHtml(b.prog || '')}"
         ${currentMode === 'read' ? 'disabled' : ''}
         oninput="upd(${i},'prog',this.value)"></td>
-        <td><input value="${b.note || ''}"
+        <td><input value="${escapeHtml(b.note || '')}"
         ${currentMode === 'read' ? 'disabled' : ''}
         oninput="upd(${i},'note',this.value)"></td>
       `;
 
       // Colonna AZIONI
-      if(r === 0){
+      if (r === 0) {
         rows += `<td rowspan="${b.rows}" class="actions">`;
-        if(showActions){
+        if (showActions) {
           rows += `
             <span onclick="moveUp(${i})">↑</span>
             <span onclick="moveDown(${i})">↓</span>
@@ -289,22 +298,34 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   }
 }
 
+// Funzione per evitare problemi con caratteri speciali HTML
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // UX: ENTER = nuova riga serie
-function serieKey(e, i, r){
-  if(e.key === "Enter" && currentMode === 'edit'){
+function serieKey(e, i, r) {
+  if (e.key === "Enter" && currentMode === 'edit') {
     e.preventDefault();
-    const s = getS().blocchi[i];
-    if (!s.serie) s.serie = [];
-    if (!s.kg) s.kg = [];
-    s.serie.push("");
-    s.kg.push("");
+    const blocco = getS().blocchi[i];
+    
+    if (!blocco.serie) blocco.serie = [];
+    if (!blocco.kg) blocco.kg = [];
+    
+    blocco.serie.push("");
+    blocco.kg.push("");
+    blocco.rows = blocco.serie.length;
+    
     saveLocal();
     renderScheda();
   }
 }
 
-// AGGIUNTA ESERCIZI
-function addExercise(n){
+// AGGIUNTA ESERCIZI - CORRETTA
+function addExercise(n) {
   if (currentMode !== 'edit') return;
   
   const nuovo = {
@@ -330,7 +351,6 @@ function toggleMarkerDropdown() {
   const dropdown = document.getElementById('markerDropdown');
   dropdown.classList.toggle('hidden');
   
-  // Chiudi dropdown quando clicchi fuori
   if (!dropdown.classList.contains('hidden')) {
     setTimeout(() => {
       document.addEventListener('click', function closeDropdown(e) {
@@ -359,7 +379,7 @@ function addMarkerFromDropdown(color, muscolo) {
 }
 
 // AGGIUNGI SPAZIO
-function addSpacer(){
+function addSpacer() {
   if (currentMode !== 'edit') return;
   
   getS().blocchi.push({type: "spacer"});
@@ -384,14 +404,13 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX - solo uno selezionabile
+// UPDATE LABELS DX/SX
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
   
-  // Se viene selezionato DX, deseleziona SX e viceversa
   if (checkDX.checked) {
     checkSX.checked = false;
     showDX = true;
@@ -408,7 +427,6 @@ function updateSideLabels() {
   if (attiva) renderScheda();
 }
 
-// Aggiorna stato checkbox in base alla modalità
 function updateCheckboxState() {
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
@@ -421,55 +439,66 @@ function updateCheckboxState() {
   }
 }
 
-// FUNZIONI UPDATE
-function upd(i, f, v){ 
+// FUNZIONI UPDATE - CORRETTE
+function upd(i, f, v) { 
   if (currentMode === 'read') return;
   const s = getS();
   if (s && s.blocchi[i]) {
     s.blocchi[i][f] = v; 
-    saveLocal(); 
+    saveLocal();
   }
 }
 
-function updArr(i, f, r, v){ 
+function updArr(i, f, r, v) { 
   if (currentMode === 'read') return;
   const s = getS();
   if (s && s.blocchi[i]) {
     if (!s.blocchi[i][f]) s.blocchi[i][f] = [];
-    s.blocchi[i][f][r] = v; 
-    saveLocal(); 
+    s.blocchi[i][f][r] = v;
+    saveLocal();
   }
 }
 
-// MOVIMENTO
-function moveUp(i){
+// MOVIMENTO - CORRETTO
+function moveUp(i) {
   if (currentMode !== 'edit') return;
-  let arr = getS().blocchi;
-  if(i === 0) return;
+  const s = getS();
+  if (!s) return;
+  
+  let arr = s.blocchi;
+  if (i === 0) return;
+  
   [arr[i], arr[i-1]] = [arr[i-1], arr[i]];
   saveLocal();
   renderScheda();
 }
 
-function moveDown(i){
+function moveDown(i) {
   if (currentMode !== 'edit') return;
-  let arr = getS().blocchi;
-  if(i === arr.length-1) return;
+  const s = getS();
+  if (!s) return;
+  
+  let arr = s.blocchi;
+  if (i === arr.length - 1) return;
+  
   [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
   saveLocal();
   renderScheda();
 }
 
 // ELIMINA
-function del(i){
+function del(i) {
   if (currentMode !== 'edit') return;
-  getS().blocchi.splice(i, 1);
+  const s = getS();
+  if (!s) return;
+  
+  s.blocchi.splice(i, 1);
   saveLocal();
   renderScheda();
 }
 
 // RINOMINA
-function rename(v){
+function rename(v) {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (s) {
@@ -479,15 +508,15 @@ function rename(v){
 }
 
 // ELENCO SCHEDE
-function elencoSchede(){
+function elencoSchede() {
   toolbar(false);
 
   app.innerHTML = `
     <div style="padding:20px;">
       <h2 style="color:var(--text-light)">Le tue schede</h2>
-      ${schede.map(s=>`
+      ${schede.map(s => `
         <div class="card">
-          <div class="card-title">${s.nome || 'SCHEDA'}</div>
+          <div class="card-title">${escapeHtml(s.nome || 'SCHEDA')}</div>
           <button onclick="apri(${s.id})">Apri</button>
           ${currentMode === 'edit' ? `
             <button onclick="copia(${s.id})">Copia</button>
@@ -499,12 +528,12 @@ function elencoSchede(){
   `;
 }
 
-function apri(id){
+function apri(id) {
   attiva = id;
   renderScheda();
 }
 
-function copia(id){
+function copia(id) {
   if (currentMode !== 'edit') return;
   const s = schede.find(x => x.id === id);
   const nuova = JSON.parse(JSON.stringify(s));
@@ -515,10 +544,11 @@ function copia(id){
   elencoSchede();
 }
 
-function eliminaScheda(id){
+function eliminaScheda(id) {
   if (currentMode !== 'edit') return;
   if (!confirm('Eliminare questa scheda?')) return;
   schede = schede.filter(s => s.id !== id);
+  if (attiva === id) attiva = null;
   saveLocal();
   elencoSchede();
 }
@@ -556,13 +586,12 @@ function exportPDF() {
   
   const s = getS();
   
-  // Crea il contenuto HTML per il PDF
   let htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>${s.nome}</title>
+      <title>${escapeHtml(s.nome)}</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: #333; }
@@ -574,10 +603,9 @@ function exportPDF() {
       </style>
     </head>
     <body>
-      <h1>${s.nome}</h1>
+      <h1>${escapeHtml(s.nome)}</h1>
   `;
   
-  // Aggiungi etichette Jammer/DX/SX
   if (showJammer || showDX || showSX) {
     htmlContent += '<div style="margin: 10px 0;">';
     if (showJammer) {
@@ -611,28 +639,28 @@ function exportPDF() {
     } else if (b.type === 'spacer') {
       htmlContent += `<tr><td colspan="7" class="spacer"></td></tr>`;
     } else if (b.type === 'exercise') {
-      for(let r = 0; r < b.rows; r++) {
+      for (let r = 0; r < b.rows; r++) {
         htmlContent += '<tr>';
         
-        if(r === 0) {
-          htmlContent += `<td rowspan="${b.rows}">${b.nome || ''}</td>`;
+        if (r === 0) {
+          htmlContent += `<td rowspan="${b.rows}">${escapeHtml(b.nome || '')}</td>`;
         }
         
-        htmlContent += `<td>${b.serie?.[r] || ''}</td>`;
+        htmlContent += `<td>${escapeHtml(b.serie?.[r] || '')}</td>`;
         
-        if(r === 0) {
-          htmlContent += `<td rowspan="${b.rows}">${b.rep || ''}</td>`;
+        if (r === 0) {
+          htmlContent += `<td rowspan="${b.rows}">${escapeHtml(b.rep || '')}</td>`;
         }
         
-        htmlContent += `<td>${b.kg?.[r] || ''}</td>`;
+        htmlContent += `<td>${escapeHtml(b.kg?.[r] || '')}</td>`;
         
-        if(r === 0) {
-          htmlContent += `<td rowspan="${b.rows}">${b.rec || ''}</td>`;
+        if (r === 0) {
+          htmlContent += `<td rowspan="${b.rows}">${escapeHtml(b.rec || '')}</td>`;
         }
         
         htmlContent += `
-          <td>${b.prog || ''}</td>
-          <td>${b.note || ''}</td>
+          <td>${escapeHtml(b.prog || '')}</td>
+          <td>${escapeHtml(b.note || '')}</td>
         `;
         
         htmlContent += '</tr>';
@@ -647,19 +675,17 @@ function exportPDF() {
     </html>
   `;
   
-  // Crea il PDF usando la stampa
   const printWindow = window.open('', '_blank');
   printWindow.document.write(htmlContent);
   printWindow.document.close();
   
-  // Aspetta che il contenuto sia caricato e poi stampa
   printWindow.onload = function() {
     printWindow.print();
   };
 }
 
 // SAVE LOCAL
-function saveLocal(){
+function saveLocal() {
   localStorage.setItem("schede", JSON.stringify(schede));
 }
 
