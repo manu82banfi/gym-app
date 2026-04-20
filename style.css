@@ -54,14 +54,14 @@ button:hover{
 
 /* MARGINE SINISTRO TABELLA - MODIFICA QUI PER CAMBIARE */
 main{
-  margin-top: 120px; /* AUMENTATO per dare spazio al titolo */
+  margin-top: 120px;
   padding-left: 20px; /* MARGINE SX - MODIFICA QUESTO VALORE */
 }
 
 /* CONTAINER TABELLA */
 .container{
   width:985px;
-  margin:20px 0; /* modificato per lavorare con padding-left */
+  margin:20px 0;
 }
 
 /* TITOLO SCHEDA */
@@ -235,7 +235,6 @@ table{
 th, td{
   border:1px solid #2a3b55;
   padding:6px 4px;
-  text-align:center;
   vertical-align:middle;
 }
 
@@ -245,86 +244,90 @@ th{
   letter-spacing:0.5px;
 }
 
-/* ALLINEAMENTI SPECIFICI PER COLONNE */
-/* ESERCIZIO - allineamento a sinistra */
+/* ALLINEAMENTI SPECIFICI PER COLONNE - CELLE */
+/* ESERCIZIO - sinistra */
 th:nth-child(1), td:nth-child(1) {
-  text-align: left;
-  padding-left: 8px;
+  text-align: left !important;
 }
 
-/* SERIE - allineamento centrato (default) */
+/* SERIE - centro */
 th:nth-child(2), td:nth-child(2) {
-  text-align: center;
+  text-align: center !important;
 }
 
-/* REP - allineamento centrato (default) */
+/* REP - centro */
 th:nth-child(3), td:nth-child(3) {
-  text-align: center;
+  text-align: center !important;
 }
 
-/* KG - allineamento centrato (default) */
+/* KG - centro */
 th:nth-child(4), td:nth-child(4) {
-  text-align: center;
+  text-align: center !important;
 }
 
-/* REC - allineamento centrato (default) */
+/* REC - centro */
 th:nth-child(5), td:nth-child(5) {
-  text-align: center;
+  text-align: center !important;
 }
 
-/* PROG - allineamento a sinistra */
+/* PROG - sinistra */
 th:nth-child(6), td:nth-child(6) {
-  text-align: left;
-  padding-left: 8px;
+  text-align: left !important;
 }
 
-/* NOTE - allineamento a destra */
+/* NOTE - destra */
 th:nth-child(7), td:nth-child(7) {
-  text-align: right;
-  padding-right: 8px;
+  text-align: right !important;
 }
 
-/* AZIONI - allineamento centrato */
+/* AZIONI - centro */
 th:nth-child(8), td:nth-child(8) {
-  text-align: center;
+  text-align: center !important;
 }
 
-/* INPUT */
+/* INPUT - FORZATURA ALLINEAMENTI */
+/* Esercizio */
+td:nth-child(1) input {
+  text-align: left !important;
+}
+
+/* Serie */
+td:nth-child(2) input {
+  text-align: center !important;
+}
+
+/* Rep */
+td:nth-child(3) input {
+  text-align: center !important;
+}
+
+/* Kg */
+td:nth-child(4) input {
+  text-align: center !important;
+}
+
+/* Rec */
+td:nth-child(5) input {
+  text-align: center !important;
+}
+
+/* Prog */
+td:nth-child(6) input {
+  text-align: left !important;
+}
+
+/* Note */
+td:nth-child(7) input {
+  text-align: right !important;
+}
+
+/* INPUT base */
 input{
   width:100%;
   border:none;
   background:transparent;
   outline:none;
   font-size:13px;
-}
-
-/* Allineamento input in base alla colonna */
-td:nth-child(1) input {
-  text-align: left;
-}
-
-td:nth-child(2) input {
-  text-align: center;
-}
-
-td:nth-child(3) input {
-  text-align: center;
-}
-
-td:nth-child(4) input {
-  text-align: center;
-}
-
-td:nth-child(5) input {
-  text-align: center;
-}
-
-td:nth-child(6) input {
-  text-align: left;
-}
-
-td:nth-child(7) input {
-  text-align: right;
 }
 
 /* INPUT DISABILITATI */
