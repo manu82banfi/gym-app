@@ -118,19 +118,16 @@ function renderScheda() {
   const isTrainMode = currentMode === 'train';
   const canEdit = isEditMode || isTrainMode;
 
-  // Pulisci i dati prima di renderizzare (rimuovi undefined/null)
-  s.blocchi = s.blocchi.filter(b => b !== null && b !== undefined);
-  
   // Assicurati che tutti gli esercizi abbiano le proprietà corrette
   s.blocchi.forEach(b => {
     if (b.type === 'exercise') {
-      if (!b.nome) b.nome = '';
+      if (b.nome === undefined || b.nome === null) b.nome = '';
       if (!b.serie) b.serie = [];
       if (!b.kg) b.kg = [];
-      if (!b.rep) b.rep = '';
-      if (!b.rec) b.rec = '';
-      if (!b.prog) b.prog = '';
-      if (!b.note) b.note = '';
+      if (b.rep === undefined || b.rep === null) b.rep = '';
+      if (b.rec === undefined || b.rec === null) b.rec = '';
+      if (b.prog === undefined || b.prog === null) b.prog = '';
+      if (b.note === undefined || b.note === null) b.note = '';
       
       // Assicurati che serie e kg abbiano la lunghezza corretta
       while (b.serie.length < b.rows) b.serie.push('');
@@ -183,7 +180,7 @@ function renderScheda() {
   focusFirstInput();
 }
 
-// RENDER SINGOLO BLOCCO
+// RENDER SINGOLO BLOCCO - CORRETTO per preservare TUTTI i caratteri
 function renderBlocco(b, i, isEditMode, isTrainMode) {
   const canEdit = isEditMode || isTrainMode;
   const showActions = isEditMode;
@@ -226,8 +223,9 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
 
       // Colonna ESERCIZIO (rowspan)
       if (r === 0) {
+        // IMPORTANTE: NON usare escapeHtml per i valori degli input!
         rows += `<td rowspan="${b.rows}">
-          <input value="${escapeHtml(b.nome || '')}"
+          <input value="${(b.nome || '').replace(/"/g, '&quot;')}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="upd(${i},'nome',this.value)">
         </td>`;
@@ -236,7 +234,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       // Colonna SERIE
       rows += `
         <td class="serie">
-          <input value="${escapeHtml(b.serie[r] || '')}"
+          <input value="${(b.serie[r] || '').replace(/"/g, '&quot;')}"
           ${!canEdit ? 'disabled' : ''}
           onkeydown="serieKey(event,${i},${r})"
           oninput="updArr(${i},'serie',${r},this.value)">
@@ -246,7 +244,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       // Colonna REP (rowspan)
       if (r === 0) {
         rows += `<td rowspan="${b.rows}">
-          <input value="${escapeHtml(b.rep || '')}"
+          <input value="${(b.rep || '').replace(/"/g, '&quot;')}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="upd(${i},'rep',this.value)">
         </td>`;
@@ -254,7 +252,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
 
       // Colonna KG
       rows += `
-        <td><input value="${escapeHtml(b.kg[r] || '')}"
+        <td><input value="${(b.kg[r] || '').replace(/"/g, '&quot;')}"
         ${!canEdit ? 'disabled' : ''}
         oninput="updArr(${i},'kg',${r},this.value)"></td>
       `;
@@ -262,18 +260,18 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       // Colonna REC (rowspan)
       if (r === 0) {
         rows += `<td rowspan="${b.rows}">
-          <input value="${escapeHtml(b.rec || '')}"
+          <input value="${(b.rec || '').replace(/"/g, '&quot;')}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="upd(${i},'rec',this.value)">
         </td>`;
       }
 
-      // Colonne PROG e NOTE - PROTETTE DA MODIFICHE INDESIDERATE
+      // Colonne PROG e NOTE
       rows += `
-        <td><input value="${escapeHtml(b.prog || '')}"
+        <td><input value="${(b.prog || '').replace(/"/g, '&quot;')}"
         ${currentMode === 'read' ? 'disabled' : ''}
         oninput="upd(${i},'prog',this.value)"></td>
-        <td><input value="${escapeHtml(b.note || '')}"
+        <td><input value="${(b.note || '').replace(/"/g, '&quot;')}"
         ${currentMode === 'read' ? 'disabled' : ''}
         oninput="upd(${i},'note',this.value)"></td>
       `;
@@ -298,14 +296,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   }
 }
 
-// Funzione per evitare problemi con caratteri speciali HTML
-function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
 // UX: ENTER = nuova riga serie
 function serieKey(e, i, r) {
   if (e.key === "Enter" && currentMode === 'edit') {
@@ -324,7 +314,7 @@ function serieKey(e, i, r) {
   }
 }
 
-// AGGIUNTA ESERCIZI - CORRETTA
+// AGGIUNTA ESERCIZI
 function addExercise(n) {
   if (currentMode !== 'edit') return;
   
@@ -404,7 +394,7 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX
+// UPDATE LABELS DX/SX - ORA AGGIORNA SOLO LE ETICHETTE SENZA RICARICARE I DATI
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
@@ -424,7 +414,26 @@ function updateSideLabels() {
     showSX = false;
   }
   
-  if (attiva) renderScheda();
+  // Aggiorna solo le etichette senza ricaricare tutta la scheda
+  updateLabelsOnly();
+}
+
+// NUOVA FUNZIONE: Aggiorna solo le etichette superiori
+function updateLabelsOnly() {
+  const labelsContainer = document.querySelector('.labels-container');
+  if (!labelsContainer) return;
+  
+  let labelsHtml = '';
+  
+  if (showJammer) {
+    const jammerText = document.getElementById('jammerToggle')?.textContent || 'No Jammer';
+    labelsHtml += `<span class="jammer-label">${jammerText}</span>`;
+  }
+  
+  if (showDX) labelsHtml += '<span class="side-label">DX</span>';
+  if (showSX) labelsHtml += '<span class="side-label">SX</span>';
+  
+  labelsContainer.innerHTML = labelsHtml;
 }
 
 function updateCheckboxState() {
@@ -439,7 +448,7 @@ function updateCheckboxState() {
   }
 }
 
-// FUNZIONI UPDATE - CORRETTE
+// FUNZIONI UPDATE
 function upd(i, f, v) { 
   if (currentMode === 'read') return;
   const s = getS();
@@ -459,7 +468,7 @@ function updArr(i, f, r, v) {
   }
 }
 
-// MOVIMENTO - CORRETTO
+// MOVIMENTO
 function moveUp(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -516,7 +525,7 @@ function elencoSchede() {
       <h2 style="color:var(--text-light)">Le tue schede</h2>
       ${schede.map(s => `
         <div class="card">
-          <div class="card-title">${escapeHtml(s.nome || 'SCHEDA')}</div>
+          <div class="card-title">${(s.nome || 'SCHEDA').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
           <button onclick="apri(${s.id})">Apri</button>
           ${currentMode === 'edit' ? `
             <button onclick="copia(${s.id})">Copia</button>
@@ -591,7 +600,7 @@ function exportPDF() {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>${escapeHtml(s.nome)}</title>
+      <title>${s.nome}</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: #333; }
@@ -603,7 +612,7 @@ function exportPDF() {
       </style>
     </head>
     <body>
-      <h1>${escapeHtml(s.nome)}</h1>
+      <h1>${s.nome}</h1>
   `;
   
   if (showJammer || showDX || showSX) {
@@ -643,24 +652,24 @@ function exportPDF() {
         htmlContent += '<tr>';
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${b.rows}">${escapeHtml(b.nome || '')}</td>`;
+          htmlContent += `<td rowspan="${b.rows}">${b.nome || ''}</td>`;
         }
         
-        htmlContent += `<td>${escapeHtml(b.serie?.[r] || '')}</td>`;
+        htmlContent += `<td>${b.serie?.[r] || ''}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${b.rows}">${escapeHtml(b.rep || '')}</td>`;
+          htmlContent += `<td rowspan="${b.rows}">${b.rep || ''}</td>`;
         }
         
-        htmlContent += `<td>${escapeHtml(b.kg?.[r] || '')}</td>`;
+        htmlContent += `<td>${b.kg?.[r] || ''}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${b.rows}">${escapeHtml(b.rec || '')}</td>`;
+          htmlContent += `<td rowspan="${b.rows}">${b.rec || ''}</td>`;
         }
         
         htmlContent += `
-          <td>${escapeHtml(b.prog || '')}</td>
-          <td>${escapeHtml(b.note || '')}</td>
+          <td>${b.prog || ''}</td>
+          <td>${b.note || ''}</td>
         `;
         
         htmlContent += '</tr>';
