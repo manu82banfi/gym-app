@@ -126,14 +126,14 @@ function renderScheda() {
     <table>
       <thead>
         <tr>
-          <th>ESERCIZIO</th>
-          <th>SERIE</th>
-          <th>REP</th>
-          <th>KG</th>
-          <th>REC</th>
-          <th>PROG</th>
-          <th>NOTE</th>
-          <th></th>
+          <th class="col-esercizio">ESERCIZIO</th>
+          <th class="col-serie">SERIE</th>
+          <th class="col-rep">REP</th>
+          <th class="col-kg">KG</th>
+          <th class="col-rec">REC</th>
+          <th class="col-prog">PROG</th>
+          <th class="col-note">NOTE</th>
+          <th class="col-azioni"></th>
         </tr>
       </thead>
       <tbody>
@@ -150,7 +150,7 @@ function renderScheda() {
   updateCheckboxState();
 }
 
-// RENDER SINGOLO BLOCCO - OGNI RIGA HA I SUOI DATI INDIPENDENTI
+// RENDER SINGOLO BLOCCO - CON CLASSI SPECIFICHE
 function renderBlocco(b, i, isEditMode, isTrainMode) {
   const canEdit = isEditMode || isTrainMode;
   const showActions = isEditMode;
@@ -192,18 +192,18 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
     for (let r = 0; r < numRows; r++) {
       rows += `<tr class="row-hover">`;
 
-      // ESERCIZIO - rowspan
+      // ESERCIZIO - rowspan con classe
       if (r === 0) {
-        rows += `<td rowspan="${numRows}">
+        rows += `<td rowspan="${numRows}" class="col-esercizio">
           <input value="${escapeHtml(nome)}" data-field="nome" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'nome', this.value)">
         </td>`;
       }
 
-      // SERIE - una per riga
+      // SERIE - classe specifica
       rows += `
-        <td class="serie">
+        <td class="col-serie">
           <input value="${escapeHtml(serie[r] || '')}" data-field="serie" data-index="${i}" data-row="${r}"
           ${!canEdit ? 'disabled' : ''}
           onkeydown="serieKey(event, ${i}, ${r})"
@@ -211,45 +211,45 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>
       `;
 
-      // REP - rowspan
+      // REP - rowspan con classe
       if (r === 0) {
-        rows += `<td rowspan="${numRows}">
+        rows += `<td rowspan="${numRows}" class="col-rep">
           <input value="${escapeHtml(rep)}" data-field="rep" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'rep', this.value)">
         </td>`;
       }
 
-      // KG - una per riga
+      // KG - classe specifica
       rows += `
-        <td>
+        <td class="col-kg">
           <input value="${escapeHtml(kg[r] || '')}" data-field="kg" data-index="${i}" data-row="${r}"
           ${!canEdit ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'kg', ${r}, this.value)">
         </td>
       `;
 
-      // REC - rowspan
+      // REC - rowspan con classe
       if (r === 0) {
-        rows += `<td rowspan="${numRows}">
+        rows += `<td rowspan="${numRows}" class="col-rec">
           <input value="${escapeHtml(rec)}" data-field="rec" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'rec', this.value)">
         </td>`;
       }
 
-      // PROG - una per riga (CAMBIATO: ora è un array per riga)
+      // PROG - classe specifica
       rows += `
-        <td>
+        <td class="col-prog">
           <input value="${escapeHtml(prog[r] || '')}" data-field="prog" data-index="${i}" data-row="${r}"
           ${currentMode === 'read' ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'prog', ${r}, this.value)">
         </td>
       `;
 
-      // NOTE - una per riga (CAMBIATO: ora è un array per riga)
+      // NOTE - classe specifica
       rows += `
-        <td>
+        <td class="col-note">
           <input value="${escapeHtml(note[r] || '')}" data-field="note" data-index="${i}" data-row="${r}"
           ${currentMode === 'read' ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'note', ${r}, this.value)">
@@ -287,13 +287,12 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
-// UPDATE FUNCTIONS - MOLTO PIÙ SICURE
+// UPDATE FUNCTIONS
 function updateField(i, field, value) {
   if (currentMode === 'read') return;
   const s = getS();
   if (!s || !s.blocchi[i]) return;
   
-  // Aggiorna solo il campo specifico
   s.blocchi[i][field] = value;
   saveLocal();
 }
@@ -303,12 +302,10 @@ function updateArrayField(i, field, row, value) {
   const s = getS();
   if (!s || !s.blocchi[i]) return;
   
-  // Inizializza l'array se non esiste
   if (!s.blocchi[i][field]) {
     s.blocchi[i][field] = [];
   }
   
-  // Aggiorna solo la riga specifica
   s.blocchi[i][field][row] = value;
   saveLocal();
 }
@@ -323,13 +320,11 @@ function serieKey(e, i, r) {
     const blocco = s.blocchi[i];
     if (!blocco) return;
     
-    // Inizializza gli array
     if (!blocco.serie) blocco.serie = [];
     if (!blocco.kg) blocco.kg = [];
     if (!blocco.prog) blocco.prog = [];
     if (!blocco.note) blocco.note = [];
     
-    // Aggiungi nuova riga
     blocco.serie.push("");
     blocco.kg.push("");
     blocco.prog.push("");
@@ -356,8 +351,8 @@ function addExercise(n) {
     kg: Array(n).fill(""),
     rep: "",
     rec: "",
-    prog: Array(n).fill(""),  // Array per ogni riga
-    note: Array(n).fill("")   // Array per ogni riga
+    prog: Array(n).fill(""),
+    note: Array(n).fill("")
   };
   
   s.blocchi.push(nuovo);
@@ -413,7 +408,7 @@ function addSpacer() {
   renderScheda();
 }
 
-// TOGGLE JAMMER - SOLO VISUALE
+// TOGGLE JAMMER
 function toggleJammer() {
   if (currentMode !== 'edit') return;
   showJammer = !showJammer;
@@ -429,7 +424,7 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX - SOLO VISUALE
+// UPDATE LABELS DX/SX
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
@@ -600,10 +595,17 @@ function exportPDF() {
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: #333; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
         th { background-color: #f2f2f2; }
         .marker { height: 4px; padding: 0; }
         .spacer { height: 15px; background: #f0f0f0; }
+        .col-esercizio { text-align: left; }
+        .col-serie { text-align: center; }
+        .col-rep { text-align: center; }
+        .col-kg { text-align: center; }
+        .col-rec { text-align: center; }
+        .col-prog { text-align: left; }
+        .col-note { text-align: right; }
       </style>
     </head>
     <body>
@@ -624,13 +626,13 @@ function exportPDF() {
       <table>
         <thead>
           <tr>
-            <th>ESERCIZIO</th>
-            <th>SERIE</th>
-            <th>REP</th>
-            <th>KG</th>
-            <th>REC</th>
-            <th>PROG</th>
-            <th>NOTE</th>
+            <th class="col-esercizio">ESERCIZIO</th>
+            <th class="col-serie">SERIE</th>
+            <th class="col-rep">REP</th>
+            <th class="col-kg">KG</th>
+            <th class="col-rec">REC</th>
+            <th class="col-prog">PROG</th>
+            <th class="col-note">NOTE</th>
           </tr>
         </thead>
         <tbody>
@@ -650,24 +652,24 @@ function exportPDF() {
         htmlContent += '<tr>';
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}">${escapeHtml(b.nome || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-esercizio">${escapeHtml(b.nome || '')}</td>`;
         }
         
-        htmlContent += `<td>${escapeHtml((b.serie || [])[r] || '')}</td>`;
+        htmlContent += `<td class="col-serie">${escapeHtml((b.serie || [])[r] || '')}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}">${escapeHtml(b.rep || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-rep">${escapeHtml(b.rep || '')}</td>`;
         }
         
-        htmlContent += `<td>${escapeHtml((b.kg || [])[r] || '')}</td>`;
+        htmlContent += `<td class="col-kg">${escapeHtml((b.kg || [])[r] || '')}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}">${escapeHtml(b.rec || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-rec">${escapeHtml(b.rec || '')}</td>`;
         }
         
         htmlContent += `
-          <td>${escapeHtml(prog[r] || '')}</td>
-          <td>${escapeHtml(note[r] || '')}</td>
+          <td class="col-prog">${escapeHtml(prog[r] || '')}</td>
+          <td class="col-note">${escapeHtml(note[r] || '')}</td>
         `;
         
         htmlContent += '</tr>';
