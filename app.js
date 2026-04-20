@@ -55,7 +55,9 @@ function updateModeUI() {
   document.querySelectorAll('.mode-option').forEach(el => {
     el.classList.remove('active');
   });
-  document.getElementById(`mode-${currentMode}`).classList.add('active');
+  
+  const activeElement = document.getElementById(`mode-${currentMode}`);
+  if (activeElement) activeElement.classList.add('active');
   
   const buttons = document.querySelectorAll('.topbar button:not(.mode-option)');
   
@@ -104,12 +106,18 @@ function focusFirstInput() {
   }
 }
 
-// FUNZIONE PER CLONARE OGGETTI IN MODO SICURO
-function cloneBlocco(b) {
-  return JSON.parse(JSON.stringify(b));
+// Funzione escapeHtml corretta
+function escapeHtml(text) {
+  if (text === null || text === undefined) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
-// RENDER SCHEDA COMPLETA - USA I DATI ORIGINALI SENZA MODIFICARLI
+// RENDER SCHEDA COMPLETA - PRESERVA TUTTI I DATI ORIGINALI
 function renderScheda() {
   toolbar(true);
   const s = getS();
@@ -155,13 +163,16 @@ function renderScheda() {
       <tbody id="table-body">
   `;
 
-  // Costruisci le righe della tabella
+  // Costruisci le righe della tabella usando i dati originali (deep copy per sicurezza)
   s.blocchi.forEach((b, i) => {
     if (!b) return;
     
-    if (b.type === "marker") {
+    // Usa una copia dell'oggetto per il render
+    const blocco = JSON.parse(JSON.stringify(b));
+    
+    if (blocco.type === "marker") {
       html += `<tr data-index="${i}" data-type="marker">
-        <td colspan="7" class="marker" style="background:${b.color || '#ccc'}"></td>
+        <td colspan="7" class="marker" style="background:${blocco.color || '#ccc'}"></td>
         ${isEditMode ? `<td class="actions">
           <span onclick="moveUp(${i})">↑</span>
           <span onclick="moveDown(${i})">↓</span>
@@ -169,7 +180,7 @@ function renderScheda() {
         </td>` : '<td></td>'}
       </tr>`;
     }
-    else if (b.type === "spacer") {
+    else if (blocco.type === "spacer") {
       html += `<tr data-index="${i}" data-type="spacer">
         <td colspan="7" class="spacer"></td>
         ${isEditMode ? `<td class="actions">
@@ -179,20 +190,17 @@ function renderScheda() {
         </td>` : '<td></td>'}
       </tr>`;
     }
-    else if (b.type === "exercise") {
-      const nome = b.nome || '';
-      const rep = b.rep || '';
-      const rec = b.rec || '';
-      const prog = b.prog || '';
-      const note = b.note || '';
-      const rows = b.rows || 1;
+    else if (blocco.type === "exercise") {
+      const nome = blocco.nome || '';
+      const rep = blocco.rep || '';
+      const rec = blocco.rec || '';
+      const prog = blocco.prog || '';
+      const note = blocco.note || '';
+      const rows = blocco.rows || 1;
       
-      const serie = Array.isArray(b.serie) ? [...b.serie] : [];
-      const kg = Array.isArray(b.kg) ? [...b.kg] : [];
-      
-      // Padding degli array se necessario
-      while (serie.length < rows) serie.push('');
-      while (kg.length < rows) kg.push('');
+      // Usa gli array originali
+      const serie = Array.isArray(blocco.serie) ? blocco.serie : [];
+      const kg = Array.isArray(blocco.kg) ? blocco.kg : [];
       
       for (let r = 0; r < rows; r++) {
         html += `<tr data-index="${i}" data-type="exercise" data-row="${r}">`;
@@ -272,17 +280,6 @@ function renderScheda() {
   focusFirstInput();
 }
 
-// Funzione escapeHtml corretta
-function escapeHtml(text) {
-  if (text === null || text === undefined) return '';
-  return String(text)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
 // AGGIUNGE UN NUOVO BLOCCO AL DOM SENZA RICOSTRUIRE TUTTO
 function appendBloccoToDOM(blocco, index, isEditMode, isTrainMode) {
   const tbody = document.getElementById('table-body');
@@ -321,11 +318,8 @@ function appendBloccoToDOM(blocco, index, isEditMode, isTrainMode) {
     const note = blocco.note || '';
     const rows = blocco.rows || 1;
     
-    const serie = Array.isArray(blocco.serie) ? [...blocco.serie] : [];
-    const kg = Array.isArray(blocco.kg) ? [...blocco.kg] : [];
-    
-    while (serie.length < rows) serie.push('');
-    while (kg.length < rows) kg.push('');
+    const serie = Array.isArray(blocco.serie) ? blocco.serie : [];
+    const kg = Array.isArray(blocco.kg) ? blocco.kg : [];
     
     for (let r = 0; r < rows; r++) {
       html = `<tr data-index="${index}" data-type="exercise" data-row="${r}">`;
@@ -397,6 +391,138 @@ function appendBloccoToDOM(blocco, index, isEditMode, isTrainMode) {
   }
 }
 
+// RIMUOVE UN BLOCCO DAL DOM PER INDICE
+function removeBloccoFromDOM(index) {
+  const tbody = document.getElementById('table-body');
+  if (!tbody) return;
+  
+  // Trova tutte le righe con data-index uguale a index
+  const rows = tbody.querySelectorAll(`tr[data-index="${index}"]`);
+  rows.forEach(row => row.remove());
+}
+
+// AGGIORNA GLI INDICI NEL DOM DOPO ELIMINAZIONE/SPOSTAMENTO
+function updateDOMIndices() {
+  const tbody = document.getElementById('table-body');
+  if (!tbody) return;
+  
+  const s = getS();
+  if (!s) return;
+  
+  // Ricostruisci completamente il tbody con i dati aggiornati
+  // MA preservando tutti i valori originali
+  const isEditMode = currentMode === 'edit';
+  const isTrainMode = currentMode === 'train';
+  const canEdit = isEditMode || isTrainMode;
+  
+  let html = '';
+  
+  s.blocchi.forEach((b, i) => {
+    if (!b) return;
+    
+    if (b.type === "marker") {
+      html += `<tr data-index="${i}" data-type="marker">
+        <td colspan="7" class="marker" style="background:${b.color || '#ccc'}"></td>
+        ${isEditMode ? `<td class="actions">
+          <span onclick="moveUp(${i})">↑</span>
+          <span onclick="moveDown(${i})">↓</span>
+          <span onclick="del(${i})">✕</span>
+        </td>` : '<td></td>'}
+      </tr>`;
+    }
+    else if (b.type === "spacer") {
+      html += `<tr data-index="${i}" data-type="spacer">
+        <td colspan="7" class="spacer"></td>
+        ${isEditMode ? `<td class="actions">
+          <span onclick="moveUp(${i})">↑</span>
+          <span onclick="moveDown(${i})">↓</span>
+          <span onclick="del(${i})">✕</span>
+        </td>` : '<td></td>'}
+      </tr>`;
+    }
+    else if (b.type === "exercise") {
+      const nome = b.nome || '';
+      const rep = b.rep || '';
+      const rec = b.rec || '';
+      const prog = b.prog || '';
+      const note = b.note || '';
+      const rows = b.rows || 1;
+      
+      const serie = Array.isArray(b.serie) ? b.serie : [];
+      const kg = Array.isArray(b.kg) ? b.kg : [];
+      
+      for (let r = 0; r < rows; r++) {
+        html += `<tr data-index="${i}" data-type="exercise" data-row="${r}">`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}">
+            <input type="text" value="${escapeHtml(nome)}"
+            ${!isEditMode ? 'disabled' : ''}
+            oninput="upd(${i},'nome',this.value)">
+          </td>`;
+        }
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(serie[r] || '')}"
+          ${!canEdit ? 'disabled' : ''}
+          onkeydown="serieKey(event,${i},${r})"
+          oninput="updArr(${i},'serie',${r},this.value)">
+        </td>`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}">
+            <input type="text" value="${escapeHtml(rep)}"
+            ${!isEditMode ? 'disabled' : ''}
+            oninput="upd(${i},'rep',this.value)">
+          </td>`;
+        }
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(kg[r] || '')}"
+          ${!canEdit ? 'disabled' : ''}
+          oninput="updArr(${i},'kg',${r},this.value)">
+        </td>`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}">
+            <input type="text" value="${escapeHtml(rec)}"
+            ${!isEditMode ? 'disabled' : ''}
+            oninput="upd(${i},'rec',this.value)">
+          </td>`;
+        }
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(prog)}"
+          ${currentMode === 'read' ? 'disabled' : ''}
+          oninput="upd(${i},'prog',this.value)">
+        </td>`;
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(note)}"
+          ${currentMode === 'read' ? 'disabled' : ''}
+          oninput="upd(${i},'note',this.value)">
+        </td>`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}" class="actions">`;
+          if (isEditMode) {
+            html += `
+              <span onclick="moveUp(${i})">↑</span>
+              <span onclick="moveDown(${i})">↓</span>
+              <span onclick="del(${i})">✕</span>
+            `;
+          }
+          html += `</td>`;
+        }
+        
+        html += `</tr>`;
+      }
+    }
+  });
+  
+  tbody.innerHTML = html;
+}
+
 // UX: ENTER = nuova riga serie
 function serieKey(e, i, r) {
   if (e.key === "Enter" && currentMode === 'edit') {
@@ -415,11 +541,115 @@ function serieKey(e, i, r) {
     blocco.rows = blocco.serie.length;
     
     saveLocal();
-    renderScheda(); // Qui serve ricostruire perché cambia il rowspan
+    
+    // Aggiorna solo questo blocco nel DOM
+    const tbody = document.getElementById('table-body');
+    if (tbody) {
+      const oldRows = tbody.querySelectorAll(`tr[data-index="${i}"]`);
+      oldRows.forEach(row => row.remove());
+      
+      const isEditMode = currentMode === 'edit';
+      const isTrainMode = currentMode === 'train';
+      const canEdit = isEditMode || isTrainMode;
+      
+      let html = '';
+      const nome = blocco.nome || '';
+      const rep = blocco.rep || '';
+      const rec = blocco.rec || '';
+      const prog = blocco.prog || '';
+      const note = blocco.note || '';
+      const rows = blocco.rows;
+      
+      for (let r = 0; r < rows; r++) {
+        html += `<tr data-index="${i}" data-type="exercise" data-row="${r}">`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}">
+            <input type="text" value="${escapeHtml(nome)}"
+            ${!isEditMode ? 'disabled' : ''}
+            oninput="upd(${i},'nome',this.value)">
+          </td>`;
+        }
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(blocco.serie[r] || '')}"
+          ${!canEdit ? 'disabled' : ''}
+          onkeydown="serieKey(event,${i},${r})"
+          oninput="updArr(${i},'serie',${r},this.value)">
+        </td>`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}">
+            <input type="text" value="${escapeHtml(rep)}"
+            ${!isEditMode ? 'disabled' : ''}
+            oninput="upd(${i},'rep',this.value)">
+          </td>`;
+        }
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(blocco.kg[r] || '')}"
+          ${!canEdit ? 'disabled' : ''}
+          oninput="updArr(${i},'kg',${r},this.value)">
+        </td>`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}">
+            <input type="text" value="${escapeHtml(rec)}"
+            ${!isEditMode ? 'disabled' : ''}
+            oninput="upd(${i},'rec',this.value)">
+          </td>`;
+        }
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(prog)}"
+          ${currentMode === 'read' ? 'disabled' : ''}
+          oninput="upd(${i},'prog',this.value)">
+        </td>`;
+        
+        html += `<td>
+          <input type="text" value="${escapeHtml(note)}"
+          ${currentMode === 'read' ? 'disabled' : ''}
+          oninput="upd(${i},'note',this.value)">
+        </td>`;
+        
+        if (r === 0) {
+          html += `<td rowspan="${rows}" class="actions">`;
+          if (isEditMode) {
+            html += `
+              <span onclick="moveUp(${i})">↑</span>
+              <span onclick="moveDown(${i})">↓</span>
+              <span onclick="del(${i})">✕</span>
+            `;
+          }
+          html += `</td>`;
+        }
+        
+        html += `</tr>`;
+      }
+      
+      // Trova la posizione corretta per inserire
+      const allRows = Array.from(tbody.children);
+      let insertIndex = 0;
+      for (let idx = 0; idx < allRows.length; idx++) {
+        const row = allRows[idx];
+        const rowIndex = parseInt(row.getAttribute('data-index'));
+        if (rowIndex >= i) {
+          insertIndex = idx;
+          break;
+        }
+        insertIndex = idx + 1;
+      }
+      
+      if (insertIndex < allRows.length) {
+        allRows[insertIndex].insertAdjacentHTML('beforebegin', html);
+      } else {
+        tbody.insertAdjacentHTML('beforeend', html);
+      }
+    }
   }
 }
 
-// AGGIUNTA ESERCIZI - ORA AGGIUNGE SOLO AL DOM
+// AGGIUNTA ESERCIZI
 function addExercise(n) {
   if (currentMode !== 'edit') return;
   
@@ -441,7 +671,6 @@ function addExercise(n) {
   s.blocchi.push(nuovo);
   saveLocal();
   
-  // Aggiorna solo il DOM senza ricaricare tutta la tabella
   const isEditMode = currentMode === 'edit';
   const isTrainMode = currentMode === 'train';
   appendBloccoToDOM(nuovo, s.blocchi.length - 1, isEditMode, isTrainMode);
@@ -465,7 +694,7 @@ function toggleMarkerDropdown() {
   }
 }
 
-// AGGIUNGI MARKER DA DROPDOWN - AGGIUNGE SOLO AL DOM
+// AGGIUNGI MARKER DA DROPDOWN
 function addMarkerFromDropdown(color, muscolo) {
   if (currentMode !== 'edit') return;
   
@@ -488,7 +717,7 @@ function addMarkerFromDropdown(color, muscolo) {
   appendBloccoToDOM(nuovo, s.blocchi.length - 1, isEditMode, isTrainMode);
 }
 
-// AGGIUNGI SPAZIO - AGGIUNGE SOLO AL DOM
+// AGGIUNGI SPAZIO
 function addSpacer() {
   if (currentMode !== 'edit') return;
   
@@ -574,7 +803,7 @@ function updateCheckboxState() {
   }
 }
 
-// FUNZIONI UPDATE - SALVANO SOLO I DATI, NON FANNO RENDER
+// FUNZIONI UPDATE - SALVANO SOLO I DATI
 function upd(i, f, v) { 
   if (currentMode === 'read') return;
   const s = getS();
@@ -594,7 +823,7 @@ function updArr(i, f, r, v) {
   }
 }
 
-// MOVIMENTO - RICOSTRUISCE PERCHÉ CAMBIA L'ORDINE
+// MOVIMENTO - ORA AGGIORNA SOLO IL DOM
 function moveUp(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -603,9 +832,12 @@ function moveUp(i) {
   let arr = s.blocchi;
   if (i === 0) return;
   
+  // Scambia nell'array
   [arr[i], arr[i-1]] = [arr[i-1], arr[i]];
   saveLocal();
-  renderScheda();
+  
+  // Aggiorna il DOM
+  updateDOMIndices();
 }
 
 function moveDown(i) {
@@ -616,12 +848,15 @@ function moveDown(i) {
   let arr = s.blocchi;
   if (i === arr.length - 1) return;
   
+  // Scambia nell'array
   [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
   saveLocal();
-  renderScheda();
+  
+  // Aggiorna il DOM
+  updateDOMIndices();
 }
 
-// ELIMINA - RICOSTRUISCE PERCHÉ CAMBIA LA STRUTTURA
+// ELIMINA - ORA AGGIORNA SOLO IL DOM
 function del(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -629,7 +864,9 @@ function del(i) {
   
   s.blocchi.splice(i, 1);
   saveLocal();
-  renderScheda();
+  
+  // Aggiorna il DOM
+  updateDOMIndices();
 }
 
 // RINOMINA
