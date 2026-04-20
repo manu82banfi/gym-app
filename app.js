@@ -1,7 +1,7 @@
 // VARIABILI GLOBALI
 let schede = [];
 let attiva = null;
-let currentMode = 'edit'; // 'read', 'edit', 'train'
+let currentMode = 'edit';
 let showJammer = false;
 let showDX = false;
 let showSX = false;
@@ -94,17 +94,7 @@ function getS() {
   return schede.find(s => s.id === attiva);
 }
 
-// FOCUS AUTOMATICO
-function focusFirstInput() {
-  if (currentMode === 'edit' || currentMode === 'train') {
-    setTimeout(() => {
-      const el = document.querySelector("tbody input:not(:disabled)");
-      if (el) el.focus();
-    }, 50);
-  }
-}
-
-// RENDER SCHEDA COMPLETA - NON MODIFICA I DATI
+// RENDER SCHEDA COMPLETA
 function renderScheda() {
   toolbar(true);
   const s = getS();
@@ -131,7 +121,7 @@ function renderScheda() {
 
   let html = `
   <div class="container">
-    <h2 contenteditable="${isEditMode}" oninput="rename(this.innerText)">${s.nome || 'SCHEDA'}</h2>
+    <h2 contenteditable="${isEditMode}" oninput="rename(this.innerText)">${escapeHtml(s.nome || 'SCHEDA')}</h2>
     ${labelsHtml}
     <table>
       <thead>
@@ -158,11 +148,9 @@ function renderScheda() {
 
   updateJammerButton();
   updateCheckboxState();
-  
-  focusFirstInput();
 }
 
-// RENDER SINGOLO BLOCCO - NON MODIFICA I DATI
+// RENDER SINGOLO BLOCCO - OGNI RIGA HA I SUOI DATI INDIPENDENTI
 function renderBlocco(b, i, isEditMode, isTrainMode) {
   const canEdit = isEditMode || isTrainMode;
   const showActions = isEditMode;
@@ -192,74 +180,83 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   if (b.type === "exercise") {
     let rows = "";
     
-    // Usa i dati esattamente come sono, senza modificarli
     const nome = b.nome || '';
     const rep = b.rep || '';
     const rec = b.rec || '';
-    const prog = b.prog || '';
-    const note = b.note || '';
     const serie = b.serie || [];
     const kg = b.kg || [];
+    const prog = b.prog || [];
+    const note = b.note || [];
     const numRows = b.rows || 1;
 
     for (let r = 0; r < numRows; r++) {
       rows += `<tr class="row-hover">`;
 
-      // Colonna ESERCIZIO
+      // ESERCIZIO - rowspan
       if (r === 0) {
         rows += `<td rowspan="${numRows}">
-          <input value="${escapeHtml(nome)}"
+          <input value="${escapeHtml(nome)}" data-field="nome" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
-          oninput="upd(${i},'nome',this.value)">
+          oninput="updateField(${i}, 'nome', this.value)">
         </td>`;
       }
 
-      // Colonna SERIE
+      // SERIE - una per riga
       rows += `
         <td class="serie">
-          <input value="${escapeHtml(serie[r] || '')}"
+          <input value="${escapeHtml(serie[r] || '')}" data-field="serie" data-index="${i}" data-row="${r}"
           ${!canEdit ? 'disabled' : ''}
-          onkeydown="serieKey(event,${i},${r})"
-          oninput="updArr(${i},'serie',${r},this.value)">
+          onkeydown="serieKey(event, ${i}, ${r})"
+          oninput="updateArrayField(${i}, 'serie', ${r}, this.value)">
         </td>
       `;
 
-      // Colonna REP
+      // REP - rowspan
       if (r === 0) {
         rows += `<td rowspan="${numRows}">
-          <input value="${escapeHtml(rep)}"
+          <input value="${escapeHtml(rep)}" data-field="rep" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
-          oninput="upd(${i},'rep',this.value)">
+          oninput="updateField(${i}, 'rep', this.value)">
         </td>`;
       }
 
-      // Colonna KG
+      // KG - una per riga
       rows += `
-        <td><input value="${escapeHtml(kg[r] || '')}"
-        ${!canEdit ? 'disabled' : ''}
-        oninput="updArr(${i},'kg',${r},this.value)"></td>
+        <td>
+          <input value="${escapeHtml(kg[r] || '')}" data-field="kg" data-index="${i}" data-row="${r}"
+          ${!canEdit ? 'disabled' : ''}
+          oninput="updateArrayField(${i}, 'kg', ${r}, this.value)">
+        </td>
       `;
 
-      // Colonna REC
+      // REC - rowspan
       if (r === 0) {
         rows += `<td rowspan="${numRows}">
-          <input value="${escapeHtml(rec)}"
+          <input value="${escapeHtml(rec)}" data-field="rec" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
-          oninput="upd(${i},'rec',this.value)">
+          oninput="updateField(${i}, 'rec', this.value)">
         </td>`;
       }
 
-      // Colonne PROG e NOTE
+      // PROG - una per riga (CAMBIATO: ora è un array per riga)
       rows += `
-        <td><input value="${escapeHtml(prog)}"
-        ${currentMode === 'read' ? 'disabled' : ''}
-        oninput="upd(${i},'prog',this.value)"></td>
-        <td><input value="${escapeHtml(note)}"
-        ${currentMode === 'read' ? 'disabled' : ''}
-        oninput="upd(${i},'note',this.value)"></td>
+        <td>
+          <input value="${escapeHtml(prog[r] || '')}" data-field="prog" data-index="${i}" data-row="${r}"
+          ${currentMode === 'read' ? 'disabled' : ''}
+          oninput="updateArrayField(${i}, 'prog', ${r}, this.value)">
+        </td>
       `;
 
-      // Colonna AZIONI
+      // NOTE - una per riga (CAMBIATO: ora è un array per riga)
+      rows += `
+        <td>
+          <input value="${escapeHtml(note[r] || '')}" data-field="note" data-index="${i}" data-row="${r}"
+          ${currentMode === 'read' ? 'disabled' : ''}
+          oninput="updateArrayField(${i}, 'note', ${r}, this.value)">
+        </td>
+      `;
+
+      // AZIONI - rowspan
       if (r === 0) {
         rows += `<td rowspan="${numRows}" class="actions">`;
         if (showActions) {
@@ -290,7 +287,33 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
-// UX: ENTER = nuova riga serie
+// UPDATE FUNCTIONS - MOLTO PIÙ SICURE
+function updateField(i, field, value) {
+  if (currentMode === 'read') return;
+  const s = getS();
+  if (!s || !s.blocchi[i]) return;
+  
+  // Aggiorna solo il campo specifico
+  s.blocchi[i][field] = value;
+  saveLocal();
+}
+
+function updateArrayField(i, field, row, value) {
+  if (currentMode === 'read') return;
+  const s = getS();
+  if (!s || !s.blocchi[i]) return;
+  
+  // Inizializza l'array se non esiste
+  if (!s.blocchi[i][field]) {
+    s.blocchi[i][field] = [];
+  }
+  
+  // Aggiorna solo la riga specifica
+  s.blocchi[i][field][row] = value;
+  saveLocal();
+}
+
+// ENTER = nuova riga serie
 function serieKey(e, i, r) {
   if (e.key === "Enter" && currentMode === 'edit') {
     e.preventDefault();
@@ -300,11 +323,17 @@ function serieKey(e, i, r) {
     const blocco = s.blocchi[i];
     if (!blocco) return;
     
+    // Inizializza gli array
     if (!blocco.serie) blocco.serie = [];
     if (!blocco.kg) blocco.kg = [];
+    if (!blocco.prog) blocco.prog = [];
+    if (!blocco.note) blocco.note = [];
     
+    // Aggiungi nuova riga
     blocco.serie.push("");
     blocco.kg.push("");
+    blocco.prog.push("");
+    blocco.note.push("");
     blocco.rows = blocco.serie.length;
     
     saveLocal();
@@ -327,8 +356,8 @@ function addExercise(n) {
     kg: Array(n).fill(""),
     rep: "",
     rec: "",
-    prog: "",
-    note: ""
+    prog: Array(n).fill(""),  // Array per ogni riga
+    note: Array(n).fill("")   // Array per ogni riga
   };
   
   s.blocchi.push(nuovo);
@@ -354,7 +383,7 @@ function toggleMarkerDropdown() {
   }
 }
 
-// AGGIUNGI MARKER DA DROPDOWN
+// AGGIUNGI MARKER
 function addMarkerFromDropdown(color, muscolo) {
   if (currentMode !== 'edit') return;
   
@@ -384,10 +413,9 @@ function addSpacer() {
   renderScheda();
 }
 
-// TOGGLE JAMMER - SOLO VISUALE, NON MODIFICA DATI
+// TOGGLE JAMMER - SOLO VISUALE
 function toggleJammer() {
   if (currentMode !== 'edit') return;
-  
   showJammer = !showJammer;
   updateJammerButton();
   if (attiva) renderScheda();
@@ -401,7 +429,7 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX - SOLO VISUALE, NON MODIFICA DATI
+// UPDATE LABELS DX/SX - SOLO VISUALE
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
@@ -436,36 +464,14 @@ function updateCheckboxState() {
   }
 }
 
-// FUNZIONI UPDATE - MODIFICANO SOLO IL DATO SPECIFICO
-function upd(i, f, v) { 
-  if (currentMode === 'read') return;
-  const s = getS();
-  if (s && s.blocchi[i]) {
-    s.blocchi[i][f] = v;
-    saveLocal();
-  }
-}
-
-function updArr(i, f, r, v) { 
-  if (currentMode === 'read') return;
-  const s = getS();
-  if (s && s.blocchi[i]) {
-    if (!s.blocchi[i][f]) s.blocchi[i][f] = [];
-    s.blocchi[i][f][r] = v;
-    saveLocal();
-  }
-}
-
-// MOVIMENTO - NON MODIFICA I DATI, SOLO L'ORDINE
+// MOVIMENTO
 function moveUp(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
   
-  let arr = s.blocchi;
   if (i === 0) return;
-  
-  [arr[i], arr[i-1]] = [arr[i-1], arr[i]];
+  [s.blocchi[i], s.blocchi[i-1]] = [s.blocchi[i-1], s.blocchi[i]];
   saveLocal();
   renderScheda();
 }
@@ -475,10 +481,8 @@ function moveDown(i) {
   const s = getS();
   if (!s) return;
   
-  let arr = s.blocchi;
-  if (i === arr.length - 1) return;
-  
-  [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+  if (i === s.blocchi.length - 1) return;
+  [s.blocchi[i], s.blocchi[i+1]] = [s.blocchi[i+1], s.blocchi[i]];
   saveLocal();
   renderScheda();
 }
@@ -527,13 +531,6 @@ function elencoSchede() {
 
 function apri(id) {
   attiva = id;
-  
-  // Reset delle variabili visive quando si apre una scheda
-  const s = getS();
-  if (s) {
-    // Non modificare i dati della scheda
-  }
-  
   renderScheda();
 }
 
@@ -542,7 +539,6 @@ function copia(id) {
   const s = schede.find(x => x.id === id);
   if (!s) return;
   
-  // Crea una copia profonda
   const nuova = JSON.parse(JSON.stringify(s));
   nuova.id = Date.now();
   nuova.nome = (s.nome || 'SCHEDA') + " (copia)";
@@ -560,7 +556,7 @@ function eliminaScheda(id) {
   elencoSchede();
 }
 
-// SALVATAGGIO CLOUD - SOLO QUANDO CHIAMATO ESPLICITAMENTE
+// SALVATAGGIO CLOUD
 async function salvaCloud() {
   if (currentMode === 'read') return;
   
@@ -646,28 +642,32 @@ function exportPDF() {
     } else if (b.type === 'spacer') {
       htmlContent += `<tr><td colspan="7" class="spacer"></td></tr>`;
     } else if (b.type === 'exercise') {
-      for (let r = 0; r < (b.rows || 1); r++) {
+      const numRows = b.rows || 1;
+      const prog = b.prog || [];
+      const note = b.note || [];
+      
+      for (let r = 0; r < numRows; r++) {
         htmlContent += '<tr>';
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${b.rows || 1}">${escapeHtml(b.nome || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}">${escapeHtml(b.nome || '')}</td>`;
         }
         
         htmlContent += `<td>${escapeHtml((b.serie || [])[r] || '')}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${b.rows || 1}">${escapeHtml(b.rep || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}">${escapeHtml(b.rep || '')}</td>`;
         }
         
         htmlContent += `<td>${escapeHtml((b.kg || [])[r] || '')}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${b.rows || 1}">${escapeHtml(b.rec || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}">${escapeHtml(b.rec || '')}</td>`;
         }
         
         htmlContent += `
-          <td>${escapeHtml(b.prog || '')}</td>
-          <td>${escapeHtml(b.note || '')}</td>
+          <td>${escapeHtml(prog[r] || '')}</td>
+          <td>${escapeHtml(note[r] || '')}</td>
         `;
         
         htmlContent += '</tr>';
