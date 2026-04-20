@@ -2,42 +2,37 @@
 let schede = [];
 let attiva = null;
 let currentMode = 'edit';
-let showJammer = false;
-let showDX = false;
-let showSX = false;
+
+// Rimosse variabili globali showJammer, showDX, showSX
 
 // INIT
 async function init() {
-  // Carica le preferenze salvate
-  const savedPrefs = localStorage.getItem("gym_preferences");
-  if (savedPrefs) {
-    const prefs = JSON.parse(savedPrefs);
-    showJammer = prefs.showJammer || false;
-    showDX = prefs.showDX || false;
-    showSX = prefs.showSX || false;
-  }
-
   const cloud = await caricaCloud();
 
   if (cloud && cloud.length) {
     schede = cloud;
+    // Assicurati che ogni scheda abbia le proprietà delle preferenze
+    schede.forEach(s => {
+      if (s.showJammer === undefined) s.showJammer = false;
+      if (s.showDX === undefined) s.showDX = false;
+      if (s.showSX === undefined) s.showSX = false;
+    });
     saveLocal();
   } else {
     const local = localStorage.getItem("schede");
-    if (local) schede = JSON.parse(local);
+    if (local) {
+      schede = JSON.parse(local);
+      // Assicurati che ogni scheda abbia le proprietà delle preferenze
+      schede.forEach(s => {
+        if (s.showJammer === undefined) s.showJammer = false;
+        if (s.showDX === undefined) s.showDX = false;
+        if (s.showSX === undefined) s.showSX = false;
+      });
+    }
   }
 
   renderHome();
   updateModeUI();
-}
-
-// SALVA PREFERENZE
-function savePreferences() {
-  localStorage.setItem("gym_preferences", JSON.stringify({
-    showJammer: showJammer,
-    showDX: showDX,
-    showSX: showSX
-  }));
 }
 
 // HOME
@@ -99,7 +94,10 @@ function nuovaScheda() {
   const s = {
     id: Date.now(),
     nome: "NUOVA SCHEDA",
-    blocchi: []
+    blocchi: [],
+    showJammer: false,  // Preferenza specifica per questa scheda
+    showDX: false,      // Preferenza specifica per questa scheda
+    showSX: false       // Preferenza specifica per questa scheda
   };
   schede.push(s);
   attiva = s.id;
@@ -122,18 +120,23 @@ function renderScheda() {
     return;
   }
   
+  // Inizializza le preferenze se non esistono
+  if (s.showJammer === undefined) s.showJammer = false;
+  if (s.showDX === undefined) s.showDX = false;
+  if (s.showSX === undefined) s.showSX = false;
+  
   const isEditMode = currentMode === 'edit';
   const isTrainMode = currentMode === 'train';
   const canEdit = isEditMode || isTrainMode;
 
   let labelsHtml = '<div class="labels-container">';
   
-  if (showJammer) {
-    labelsHtml += `<span class="jammer-label">${showJammer ? 'Si Jammer' : 'No Jammer'}</span>`;
+  if (s.showJammer) {
+    labelsHtml += `<span class="jammer-label">Si Jammer</span>`;
   }
   
-  if (showDX) labelsHtml += '<span class="side-label">DX</span>';
-  if (showSX) labelsHtml += '<span class="side-label">SX</span>';
+  if (s.showDX) labelsHtml += '<span class="side-label">DX</span>';
+  if (s.showSX) labelsHtml += '<span class="side-label">SX</span>';
   
   labelsHtml += '</div>';
 
@@ -411,52 +414,61 @@ function addSpacer() {
   renderScheda();
 }
 
+// TOGGLE JAMMER - Modifica la scheda attiva
 function toggleJammer() {
   if (currentMode !== 'edit') return;
-  showJammer = !showJammer;
+  const s = getS();
+  if (!s) return;
+  
+  s.showJammer = !s.showJammer;
   updateJammerButton();
-  savePreferences(); // SALVA PREFERENZE
+  saveLocal();
   if (attiva) renderScheda();
 }
 
 function updateJammerButton() {
+  const s = getS();
   const btn = document.getElementById('jammerToggle');
-  if (btn) {
-    btn.textContent = showJammer ? 'Si Jammer' : 'No Jammer';
-    btn.className = `toggle-btn ${showJammer ? 'on' : 'off'}`;
+  if (btn && s) {
+    btn.textContent = s.showJammer ? 'Si Jammer' : 'No Jammer';
+    btn.className = `toggle-btn ${s.showJammer ? 'on' : 'off'}`;
   }
 }
 
+// UPDATE LABELS DX/SX - Modifica la scheda attiva
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
+  const s = getS();
+  if (!s) return;
   
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
   
   if (checkDX.checked) {
     checkSX.checked = false;
-    showDX = true;
-    showSX = false;
+    s.showDX = true;
+    s.showSX = false;
   } else if (checkSX.checked) {
     checkDX.checked = false;
-    showDX = false;
-    showSX = true;
+    s.showDX = false;
+    s.showSX = true;
   } else {
-    showDX = false;
-    showSX = false;
+    s.showDX = false;
+    s.showSX = false;
   }
   
-  savePreferences(); // SALVA PREFERENZE
+  saveLocal();
   if (attiva) renderScheda();
 }
 
 function updateCheckboxState() {
+  const s = getS();
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
   
-  if (checkDX && checkSX) {
-    checkDX.checked = showDX;
-    checkSX.checked = showSX;
+  if (checkDX && checkSX && s) {
+    checkDX.checked = s.showDX || false;
+    checkSX.checked = s.showSX || false;
     checkDX.disabled = (currentMode === 'train' || currentMode === 'read');
     checkSX.disabled = (currentMode === 'train' || currentMode === 'read');
   }
@@ -536,6 +548,7 @@ function copia(id) {
   const nuova = JSON.parse(JSON.stringify(s));
   nuova.id = Date.now();
   nuova.nome = (s.nome || 'SCHEDA') + " (copia)";
+  // Le preferenze vengono già copiate con JSON.parse(JSON.stringify(s))
   schede.push(nuova);
   saveLocal();
   elencoSchede();
@@ -609,13 +622,13 @@ function exportPDF() {
       <h1>${escapeHtml(s.nome)}</h1>
   `;
   
-  if (showJammer || showDX || showSX) {
+  if (s.showJammer || s.showDX || s.showSX) {
     htmlContent += '<div style="margin: 10px 0;">';
-    if (showJammer) {
-      htmlContent += `<strong style="color: #FFD700;">${showJammer ? 'Si Jammer' : 'No Jammer'}</strong> `;
+    if (s.showJammer) {
+      htmlContent += `<strong style="color: #FFD700;">Si Jammer</strong> `;
     }
-    if (showDX) htmlContent += '<strong style="color: #87CEEB;">DX</strong> ';
-    if (showSX) htmlContent += '<strong style="color: #87CEEB;">SX</strong>';
+    if (s.showDX) htmlContent += '<strong style="color: #87CEEB;">DX</strong> ';
+    if (s.showSX) htmlContent += '<strong style="color: #87CEEB;">SX</strong>';
     htmlContent += '</div>';
   }
   
