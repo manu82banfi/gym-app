@@ -245,12 +245,48 @@ th{
   letter-spacing:0.5px;
 }
 
-/* ALLINEAMENTO SINISTRO PER COLONNE SPECIFICHE */
-th:nth-child(1), td:nth-child(1), /* ESERCIZIO */
-th:nth-child(6), td:nth-child(6), /* PROG */
-th:nth-child(7), td:nth-child(7)  /* NOTE */ {
+/* ALLINEAMENTI SPECIFICI PER COLONNE */
+/* ESERCIZIO - allineamento a sinistra */
+th:nth-child(1), td:nth-child(1) {
   text-align: left;
   padding-left: 8px;
+}
+
+/* SERIE - allineamento centrato (default) */
+th:nth-child(2), td:nth-child(2) {
+  text-align: center;
+}
+
+/* REP - allineamento centrato (default) */
+th:nth-child(3), td:nth-child(3) {
+  text-align: center;
+}
+
+/* KG - allineamento centrato (default) */
+th:nth-child(4), td:nth-child(4) {
+  text-align: center;
+}
+
+/* REC - allineamento centrato (default) */
+th:nth-child(5), td:nth-child(5) {
+  text-align: center;
+}
+
+/* PROG - allineamento a sinistra */
+th:nth-child(6), td:nth-child(6) {
+  text-align: left;
+  padding-left: 8px;
+}
+
+/* NOTE - allineamento a destra */
+th:nth-child(7), td:nth-child(7) {
+  text-align: right;
+  padding-right: 8px;
+}
+
+/* AZIONI - allineamento centrato */
+th:nth-child(8), td:nth-child(8) {
+  text-align: center;
 }
 
 /* INPUT */
@@ -258,16 +294,37 @@ input{
   width:100%;
   border:none;
   background:transparent;
-  text-align:center;
   outline:none;
   font-size:13px;
 }
 
-/* Allineamento sinistro input in colonne specifiche */
-td:nth-child(1) input,
-td:nth-child(6) input,
-td:nth-child(7) input {
+/* Allineamento input in base alla colonna */
+td:nth-child(1) input {
   text-align: left;
+}
+
+td:nth-child(2) input {
+  text-align: center;
+}
+
+td:nth-child(3) input {
+  text-align: center;
+}
+
+td:nth-child(4) input {
+  text-align: center;
+}
+
+td:nth-child(5) input {
+  text-align: center;
+}
+
+td:nth-child(6) input {
+  text-align: left;
+}
+
+td:nth-child(7) input {
+  text-align: right;
 }
 
 /* INPUT DISABILITATI */
