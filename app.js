@@ -8,6 +8,15 @@ let showSX = false;
 
 // INIT
 async function init() {
+  // Carica le preferenze salvate
+  const savedPrefs = localStorage.getItem("gym_preferences");
+  if (savedPrefs) {
+    const prefs = JSON.parse(savedPrefs);
+    showJammer = prefs.showJammer || false;
+    showDX = prefs.showDX || false;
+    showSX = prefs.showSX || false;
+  }
+
   const cloud = await caricaCloud();
 
   if (cloud && cloud.length) {
@@ -20,6 +29,15 @@ async function init() {
 
   renderHome();
   updateModeUI();
+}
+
+// SALVA PREFERENZE
+function savePreferences() {
+  localStorage.setItem("gym_preferences", JSON.stringify({
+    showJammer: showJammer,
+    showDX: showDX,
+    showSX: showSX
+  }));
 }
 
 // HOME
@@ -150,7 +168,7 @@ function renderScheda() {
   updateCheckboxState();
 }
 
-// RENDER SINGOLO BLOCCO - CON CLASSI SPECIFICHE
+// RENDER SINGOLO BLOCCO
 function renderBlocco(b, i, isEditMode, isTrainMode) {
   const canEdit = isEditMode || isTrainMode;
   const showActions = isEditMode;
@@ -192,7 +210,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
     for (let r = 0; r < numRows; r++) {
       rows += `<tr class="row-hover">`;
 
-      // ESERCIZIO - rowspan con classe
       if (r === 0) {
         rows += `<td rowspan="${numRows}" class="col-esercizio">
           <input value="${escapeHtml(nome)}" data-field="nome" data-index="${i}"
@@ -201,7 +218,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>`;
       }
 
-      // SERIE - classe specifica
       rows += `
         <td class="col-serie">
           <input value="${escapeHtml(serie[r] || '')}" data-field="serie" data-index="${i}" data-row="${r}"
@@ -211,7 +227,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>
       `;
 
-      // REP - rowspan con classe
       if (r === 0) {
         rows += `<td rowspan="${numRows}" class="col-rep">
           <input value="${escapeHtml(rep)}" data-field="rep" data-index="${i}"
@@ -220,7 +235,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>`;
       }
 
-      // KG - classe specifica
       rows += `
         <td class="col-kg">
           <input value="${escapeHtml(kg[r] || '')}" data-field="kg" data-index="${i}" data-row="${r}"
@@ -229,7 +243,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>
       `;
 
-      // REC - rowspan con classe
       if (r === 0) {
         rows += `<td rowspan="${numRows}" class="col-rec">
           <input value="${escapeHtml(rec)}" data-field="rec" data-index="${i}"
@@ -238,7 +251,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>`;
       }
 
-      // PROG - classe specifica
       rows += `
         <td class="col-prog">
           <input value="${escapeHtml(prog[r] || '')}" data-field="prog" data-index="${i}" data-row="${r}"
@@ -247,7 +259,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>
       `;
 
-      // NOTE - classe specifica
       rows += `
         <td class="col-note">
           <input value="${escapeHtml(note[r] || '')}" data-field="note" data-index="${i}" data-row="${r}"
@@ -256,7 +267,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         </td>
       `;
 
-      // AZIONI - rowspan
       if (r === 0) {
         rows += `<td rowspan="${numRows}" class="actions">`;
         if (showActions) {
@@ -276,7 +286,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   }
 }
 
-// Funzione per escape HTML
 function escapeHtml(text) {
   if (text === null || text === undefined) return '';
   return String(text)
@@ -287,7 +296,6 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
-// UPDATE FUNCTIONS
 function updateField(i, field, value) {
   if (currentMode === 'read') return;
   const s = getS();
@@ -310,7 +318,6 @@ function updateArrayField(i, field, row, value) {
   saveLocal();
 }
 
-// ENTER = nuova riga serie
 function serieKey(e, i, r) {
   if (e.key === "Enter" && currentMode === 'edit') {
     e.preventDefault();
@@ -336,7 +343,6 @@ function serieKey(e, i, r) {
   }
 }
 
-// AGGIUNTA ESERCIZI
 function addExercise(n) {
   if (currentMode !== 'edit') return;
   
@@ -360,7 +366,6 @@ function addExercise(n) {
   renderScheda();
 }
 
-// TOGGLE DROPDOWN MARKER
 function toggleMarkerDropdown() {
   if (currentMode !== 'edit') return;
   const dropdown = document.getElementById('markerDropdown');
@@ -378,7 +383,6 @@ function toggleMarkerDropdown() {
   }
 }
 
-// AGGIUNGI MARKER
 function addMarkerFromDropdown(color, muscolo) {
   if (currentMode !== 'edit') return;
   
@@ -396,7 +400,6 @@ function addMarkerFromDropdown(color, muscolo) {
   renderScheda();
 }
 
-// AGGIUNGI SPAZIO
 function addSpacer() {
   if (currentMode !== 'edit') return;
   
@@ -408,11 +411,11 @@ function addSpacer() {
   renderScheda();
 }
 
-// TOGGLE JAMMER
 function toggleJammer() {
   if (currentMode !== 'edit') return;
   showJammer = !showJammer;
   updateJammerButton();
+  savePreferences(); // SALVA PREFERENZE
   if (attiva) renderScheda();
 }
 
@@ -424,7 +427,6 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   
@@ -444,6 +446,7 @@ function updateSideLabels() {
     showSX = false;
   }
   
+  savePreferences(); // SALVA PREFERENZE
   if (attiva) renderScheda();
 }
 
@@ -459,7 +462,6 @@ function updateCheckboxState() {
   }
 }
 
-// MOVIMENTO
 function moveUp(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -482,7 +484,6 @@ function moveDown(i) {
   renderScheda();
 }
 
-// ELIMINA
 function del(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -493,7 +494,6 @@ function del(i) {
   renderScheda();
 }
 
-// RINOMINA
 function rename(v) {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -503,7 +503,6 @@ function rename(v) {
   }
 }
 
-// ELENCO SCHEDE
 function elencoSchede() {
   toolbar(false);
 
@@ -551,7 +550,6 @@ function eliminaScheda(id) {
   elencoSchede();
 }
 
-// SALVATAGGIO CLOUD
 async function salvaCloud() {
   if (currentMode === 'read') return;
   
@@ -575,7 +573,6 @@ async function salvaCloud() {
   }
 }
 
-// EXPORT PDF
 function exportPDF() {
   if (!attiva) {
     alert('Apri prima una scheda');
@@ -693,10 +690,8 @@ function exportPDF() {
   };
 }
 
-// SAVE LOCAL
 function saveLocal() {
   localStorage.setItem("schede", JSON.stringify(schede));
 }
 
-// AVVIA APP
 init();

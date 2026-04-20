@@ -52,7 +52,6 @@ button:hover{
 
 .hidden{ display:none; }
 
-/* MARGINE SINISTRO TABELLA */
 main{
   margin-top: 120px;
   padding-left: 20px;
@@ -86,7 +85,6 @@ h2[contenteditable="true"]:focus{
   padding: 5px 10px;
 }
 
-/* SELEZIONE MODALITÀ */
 .mode-selector{
   display: flex;
   flex-direction: column;
@@ -116,7 +114,6 @@ h2[contenteditable="true"]:focus{
   font-weight: bold;
 }
 
-/* DROPDOWN MARKER */
 .dropdown{
   position: relative;
   display: inline-block;
@@ -145,7 +142,6 @@ h2[contenteditable="true"]:focus{
   filter: brightness(1.2);
 }
 
-/* TOGGLE JAMMER */
 .toggle-container{
   display: flex;
   align-items: center;
@@ -172,7 +168,6 @@ h2[contenteditable="true"]:focus{
   color: white;
 }
 
-/* CHECKBOX DX/SX */
 .checkbox-group{
   display: flex;
   gap: 10px;
@@ -193,7 +188,6 @@ h2[contenteditable="true"]:focus{
   cursor: not-allowed;
 }
 
-/* ETICHETTE SOPRA TABELLA */
 .labels-container{
   display: flex;
   align-items: center;
@@ -219,7 +213,6 @@ h2[contenteditable="true"]:focus{
   padding: 20px;
 }
 
-/* TABELLA */
 table{
   width:100%;
   border-collapse:collapse;
@@ -241,7 +234,7 @@ th{
   letter-spacing:0.5px;
 }
 
-/* ALLINEAMENTI CON CLASSI SPECIFICHE */
+/* ALLINEAMENTI */
 .col-esercizio,
 th.col-esercizio,
 td.col-esercizio {
@@ -288,7 +281,6 @@ td.col-note {
   text-align: center !important;
 }
 
-/* ALLINEAMENTO INPUT */
 .col-esercizio input {
   text-align: left !important;
 }
@@ -325,10 +317,13 @@ input{
   font-size:13px;
 }
 
+/* INPUT DISABILITATI - COLORE NERO INVECE CHE GRIGIO */
 input:disabled{
-  opacity: 0.7;
-  cursor: not-allowed;
-  background: #f0f0f0;
+  opacity: 1 !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background: transparent !important;
+  cursor: default;
 }
 
 .row-hover:hover{
