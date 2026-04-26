@@ -3,8 +3,6 @@ let schede = [];
 let attiva = null;
 let currentMode = 'edit';
 
-// Rimosse variabili globali showJammer, showDX, showSX
-
 // INIT
 async function init() {
   const cloud = await caricaCloud();
@@ -87,6 +85,24 @@ function updateModeUI() {
   }
 }
 
+// TOGGLE PER DROPDOWN ESERCIZI
+function toggleExerciseDropdown() {
+  if (currentMode !== 'edit') return;
+  const dropdown = document.getElementById('exerciseDropdown');
+  dropdown.classList.toggle('hidden');
+  
+  if (!dropdown.classList.contains('hidden')) {
+    setTimeout(() => {
+      document.addEventListener('click', function closeDropdown(e) {
+        if (!e.target.closest('.dropdown')) {
+          dropdown.classList.add('hidden');
+          document.removeEventListener('click', closeDropdown);
+        }
+      });
+    }, 100);
+  }
+}
+
 // NUOVA SCHEDA
 function nuovaScheda() {
   if (currentMode !== 'edit') return;
@@ -95,9 +111,9 @@ function nuovaScheda() {
     id: Date.now(),
     nome: "NUOVA SCHEDA",
     blocchi: [],
-    showJammer: false,  // Preferenza specifica per questa scheda
-    showDX: false,      // Preferenza specifica per questa scheda
-    showSX: false       // Preferenza specifica per questa scheda
+    showJammer: false,
+    showDX: false,
+    showSX: false
   };
   schede.push(s);
   attiva = s.id;
@@ -131,12 +147,15 @@ function renderScheda() {
 
   let labelsHtml = '<div class="labels-container">';
   
+  // Mostra SEMPRE l'etichetta Jammer con lo stato attuale
   if (s.showJammer) {
-    labelsHtml += `<span class="jammer-label">Si Jammer</span>`;
+    labelsHtml += `<span class="jammer-label">✅ Jammer Attivo</span>`;
+  } else {
+    labelsHtml += `<span class="jammer-label">❌ Jammer Non Attivo</span>`;
   }
   
-  if (s.showDX) labelsHtml += '<span class="side-label">DX</span>';
-  if (s.showSX) labelsHtml += '<span class="side-label">SX</span>';
+  if (s.showDX) labelsHtml += '<span class="side-label">✔️ DX</span>';
+  if (s.showSX) labelsHtml += '<span class="side-label">✔️ SX</span>';
   
   labelsHtml += '</div>';
 
@@ -183,7 +202,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-      </td>` : '<td></td>'}
+       </div>` : '<td></td>'}
     </tr>`;
   }
 
@@ -194,7 +213,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-      </td>` : '<td></td>'}
+       </div>` : '<td></td>'}
     </tr>`;
   }
 
@@ -218,7 +237,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(nome)}" data-field="nome" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'nome', this.value)">
-        </td>`;
+         </div>`;
       }
 
       rows += `
@@ -227,7 +246,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           ${!canEdit ? 'disabled' : ''}
           onkeydown="serieKey(event, ${i}, ${r})"
           oninput="updateArrayField(${i}, 'serie', ${r}, this.value)">
-        </td>
+         </div>
       `;
 
       if (r === 0) {
@@ -235,7 +254,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(rep)}" data-field="rep" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'rep', this.value)">
-        </td>`;
+         </div>`;
       }
 
       rows += `
@@ -243,7 +262,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(kg[r] || '')}" data-field="kg" data-index="${i}" data-row="${r}"
           ${!canEdit ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'kg', ${r}, this.value)">
-        </td>
+         </div>
       `;
 
       if (r === 0) {
@@ -251,7 +270,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(rec)}" data-field="rec" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'rec', this.value)">
-        </td>`;
+         </div>`;
       }
 
       rows += `
@@ -259,7 +278,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(prog[r] || '')}" data-field="prog" data-index="${i}" data-row="${r}"
           ${currentMode === 'read' ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'prog', ${r}, this.value)">
-        </td>
+         </div>
       `;
 
       rows += `
@@ -267,7 +286,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(note[r] || '')}" data-field="note" data-index="${i}" data-row="${r}"
           ${currentMode === 'read' ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'note', ${r}, this.value)">
-        </td>
+         </div>
       `;
 
       if (r === 0) {
@@ -279,10 +298,10 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
             <span onclick="del(${i})">✕</span>
           `;
         }
-        rows += `</td>`;
+        rows += `</div>`;
       }
 
-      rows += `</tr>`;
+      rows += `</td>`;
     }
 
     return rows;
@@ -367,6 +386,10 @@ function addExercise(n) {
   s.blocchi.push(nuovo);
   saveLocal();
   renderScheda();
+  
+  // Chiudi il dropdown dopo la selezione
+  const dropdown = document.getElementById('exerciseDropdown');
+  if (dropdown) dropdown.classList.add('hidden');
 }
 
 function toggleMarkerDropdown() {
@@ -548,7 +571,6 @@ function copia(id) {
   const nuova = JSON.parse(JSON.stringify(s));
   nuova.id = Date.now();
   nuova.nome = (s.nome || 'SCHEDA') + " (copia)";
-  // Le preferenze vengono già copiate con JSON.parse(JSON.stringify(s))
   schede.push(nuova);
   saveLocal();
   elencoSchede();
@@ -662,24 +684,24 @@ function exportPDF() {
         htmlContent += '<tr>';
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}" class="col-esercizio">${escapeHtml(b.nome || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-esercizio">${escapeHtml(b.nome || '')}</div>`;
         }
         
-        htmlContent += `<td class="col-serie">${escapeHtml((b.serie || [])[r] || '')}</td>`;
+        htmlContent += `<td class="col-serie">${escapeHtml((b.serie || [])[r] || '')}</div>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}" class="col-rep">${escapeHtml(b.rep || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-rep">${escapeHtml(b.rep || '')}</div>`;
         }
         
-        htmlContent += `<td class="col-kg">${escapeHtml((b.kg || [])[r] || '')}</td>`;
+        htmlContent += `<td class="col-kg">${escapeHtml((b.kg || [])[r] || '')}</div>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}" class="col-rec">${escapeHtml(b.rec || '')}</td>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-rec">${escapeHtml(b.rec || '')}</div>`;
         }
         
         htmlContent += `
-          <td class="col-prog">${escapeHtml(prog[r] || '')}</td>
-          <td class="col-note">${escapeHtml(note[r] || '')}</td>
+          <td class="col-prog">${escapeHtml(prog[r] || '')}</div>
+          <td class="col-note">${escapeHtml(note[r] || '')}</div>
         `;
         
         htmlContent += '</tr>';

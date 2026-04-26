@@ -41,10 +41,18 @@
     </div>
     
     <button onclick="addSpacer()">Spazio</button>
-    <button onclick="addExercise(1)">Esercizio 1</button>
-    <button onclick="addExercise(2)">Esercizio 2</button>
-    <button onclick="addExercise(3)">Esercizio 3</button>
-    <button onclick="addExercise(4)">Esercizio 4</button>
+    
+    <!-- Nuovo dropdown per Inserisci Esercizio -->
+    <div class="dropdown">
+      <button onclick="toggleExerciseDropdown()" class="dropbtn">Inserisci esercizio ▼</button>
+      <div id="exerciseDropdown" class="dropdown-content hidden">
+        <div onclick="addExercise(1)">1 riga</div>
+        <div onclick="addExercise(2)">2 righe</div>
+        <div onclick="addExercise(3)">3 righe</div>
+        <div onclick="addExercise(4)">4 righe</div>
+        <div onclick="addExercise(5)">5 righe</div>
+      </div>
+    </div>
     
     <!-- Selettore Jammer -->
     <div class="toggle-container">
