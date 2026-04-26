@@ -149,13 +149,13 @@ function renderScheda() {
   
   // Mostra SEMPRE l'etichetta Jammer con lo stato attuale
   if (s.showJammer) {
-    labelsHtml += `<span class="jammer-label">✅ Jammer Attivo</span>`;
+    labelsHtml += `<span class="jammer-label">✅ Si Jammer</span>`;
   } else {
-    labelsHtml += `<span class="jammer-label">❌ Jammer Non Attivo</span>`;
+    labelsHtml += `<span class="jammer-label">❌ No Jammer</span>`;
   }
   
-  if (s.showDX) labelsHtml += '<span class="side-label">✔️ DX</span>';
-  if (s.showSX) labelsHtml += '<span class="side-label">✔️ SX</span>';
+  if (s.showDX) labelsHtml += '<span class="side-label">DX</span>';
+  if (s.showSX) labelsHtml += '<span class="side-label">SX</span>';
   
   labelsHtml += '</div>';
 
