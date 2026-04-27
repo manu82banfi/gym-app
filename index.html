@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym App</title>
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
@@ -12,66 +12,73 @@
 
 <header>
   <div class="topbar">
-    <!-- Gruppo pulsanti principali a sinistra -->
+    <!-- Gruppo pulsanti principali a sinistra in griglia 2x2 -->
     <div class="main-buttons">
-      <button onclick="nuovaScheda()">Nuova</button>
-      <button onclick="elencoSchede()">Elenco</button>
-      <button onclick="salvaCloud()">Cloud</button>
-      <button onclick="exportPDF()">PDF</button>
+      <button onclick="nuovaScheda()">Nuova scheda</button>
+      <button onclick="elencoSchede()">Elenco schede</button>
+      <button onclick="salvaCloud()">Salva in Cloud</button>
+      <button onclick="exportPDF()">Esporta PDF</button>
     </div>
     
-    <!-- Modalità (in orizzontale a destra) -->
+    <!-- Contenitore dinamico per la toolbar (appare quando serve) -->
+    <div id="toolbarContainer" class="toolbar-container hidden">
+      <div class="toolbar-buttons">
+        <!-- Riga superiore: 3 elementi -->
+        <div class="toolbar-row top-row">
+          <!-- Marker con dropdown integrato -->
+          <div class="dropdown">
+            <button onclick="toggleMarkerDropdown()" class="dropbtn">Marker ▼</button>
+            <div id="markerDropdown" class="dropdown-content hidden">
+              <div onclick="addMarkerFromDropdown('green', 'Bicipiti')" style="background:#4CAF50">Bicipiti</div>
+              <div onclick="addMarkerFromDropdown('red', 'Tricipiti')" style="background:#f44336">Tricipiti</div>
+              <div onclick="addMarkerFromDropdown('#fa8405', 'Addominali')" style="background:#fa8405">Addominali</div>
+              <div onclick="addMarkerFromDropdown('#8f0663', 'Gambe')" style="background:#8f0663">Gambe</div>
+              <div onclick="addMarkerFromDropdown('white', 'Dorso')" style="background:#cccccc; color:#000">Dorso</div>
+              <div onclick="addMarkerFromDropdown('yellow', 'Spalle')" style="background:#FFEB3B; color:#000">Spalle</div>
+            </div>
+          </div>
+          
+          <button onclick="addSpacer()">Spazio</button>
+          
+          <!-- Dropdown per Inserisci esercizio -->
+          <div class="dropdown">
+            <button onclick="toggleExerciseDropdown()" class="dropbtn">Inserisci esercizio ▼</button>
+            <div id="exerciseDropdown" class="dropdown-content hidden">
+              <div onclick="addExercise(1)">1 riga</div>
+              <div onclick="addExercise(2)">2 righe</div>
+              <div onclick="addExercise(3)">3 righe</div>
+              <div onclick="addExercise(4)">4 righe</div>
+              <div onclick="addExercise(5)">5 righe</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Riga inferiore: 2 elementi -->
+        <div class="toolbar-row bottom-row">
+          <!-- Selettore Jammer -->
+          <div class="toggle-container">
+            <span class="toggle-label">Jammer:</span>
+            <button id="jammerToggle" onclick="toggleJammer()" class="toggle-btn off">No Jammer</button>
+          </div>
+          
+          <!-- Checkbox DX/SX -->
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="checkDX" onchange="updateSideLabels()"> DX
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="checkSX" onchange="updateSideLabels()"> SX
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modalità (3 piccole scritte verticali) a destra -->
     <div class="mode-selector">
       <span onclick="setMode('read')" id="mode-read" class="mode-option">👁 Lettura</span>
       <span onclick="setMode('edit')" id="mode-edit" class="mode-option active">✏️ Modifica</span>
       <span onclick="setMode('train')" id="mode-train" class="mode-option">💪 Allenamento</span>
-    </div>
-  </div>
-  
-  <!-- Contenitore dinamico per la toolbar (appare quando serve) -->
-  <div id="toolbarContainer" class="toolbar-container hidden">
-    <div class="toolbar-buttons">
-      <!-- Gruppo sinistro: Marker, Spazio, Inserisci esercizio -->
-      <div class="toolbar-left">
-        <div class="dropdown">
-          <button onclick="toggleMarkerDropdown()" class="dropbtn">Marker ▼</button>
-          <div id="markerDropdown" class="dropdown-content hidden">
-            <div onclick="addMarkerFromDropdown('green', 'Bicipiti')" style="background:#4CAF50">Bicipiti</div>
-            <div onclick="addMarkerFromDropdown('red', 'Tricipiti')" style="background:#f44336">Tricipiti</div>
-            <div onclick="addMarkerFromDropdown('#fa8405', 'Addominali')" style="background:#fa8405">Addominali</div>
-            <div onclick="addMarkerFromDropdown('#8f0663', 'Gambe')" style="background:#8f0663">Gambe</div>
-            <div onclick="addMarkerFromDropdown('white', 'Dorso')" style="background:#cccccc; color:#000">Dorso</div>
-            <div onclick="addMarkerFromDropdown('yellow', 'Spalle')" style="background:#FFEB3B; color:#000">Spalle</div>
-          </div>
-        </div>
-        <button onclick="addSpacer()">Spazio</button>
-        <div class="dropdown">
-          <button onclick="toggleExerciseDropdown()" class="dropbtn">Esercizio ▼</button>
-          <div id="exerciseDropdown" class="dropdown-content hidden">
-            <div onclick="addExercise(1)">1 riga</div>
-            <div onclick="addExercise(2)">2 righe</div>
-            <div onclick="addExercise(3)">3 righe</div>
-            <div onclick="addExercise(4)">4 righe</div>
-            <div onclick="addExercise(5)">5 righe</div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Gruppo destro: Jammer e DX/SX -->
-      <div class="toolbar-right">
-        <div class="toggle-container">
-          <span class="toggle-label">Jammer:</span>
-          <button id="jammerToggle" onclick="toggleJammer()" class="toggle-btn off">No</button>
-        </div>
-        <div class="checkbox-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="checkDX" onchange="updateSideLabels()"> DX
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="checkSX" onchange="updateSideLabels()"> SX
-          </label>
-        </div>
-      </div>
     </div>
   </div>
 </header>

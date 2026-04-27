@@ -568,3 +568,218 @@ input:disabled {
   .col-prog { width: 18% !important; }
   .col-note { width: 18% !important; }
 }
+
+/* === LAYOUT PER SMARTPHONE (max-width: 768px) - VERSIONE COMPATTA === */
+@media (max-width: 768px) {
+  
+  .topbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  
+  /* Pulsanti principali: griglia 2x2 più piccola a sinistra */
+  .main-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 6px;
+  }
+  
+  .main-buttons button {
+    padding: 5px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  
+  /* Selettore modalità: in alto a destra in orizzontale */
+  .mode-selector {
+    flex-direction: row;
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+    gap: 4px;
+  }
+  
+  .mode-option {
+    font-size: 10px;
+    padding: 4px 6px;
+    background: var(--bg-button);
+  }
+  
+  /* Toolbar container */
+  .toolbar-container {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .toolbar-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    gap: 10px;
+  }
+  
+  /* Blocco sinistro: 3 pulsanti in colonna */
+  .toolbar-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .top-row {
+    align-items: flex-start;
+    flex: 1;
+  }
+  
+  /* Blocco destro: Jammer + checkbox in colonna */
+  .bottom-row {
+    align-items: flex-end;
+    flex: 1;
+  }
+  
+  /* Pulsanti del blocco sinistro */
+  .top-row .dropdown,
+  .top-row button {
+    width: 100%;
+    min-width: 95px;
+  }
+  
+  .toolbar-buttons button,
+  .toolbar-buttons .dropbtn {
+    padding: 6px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  
+  /* Blocco destro - Jammer */
+  .toggle-container {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+  
+  .toggle-label {
+    font-size: 10px;
+  }
+  
+  .toggle-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 70px;
+  }
+  
+  /* Checkbox DX/SX in colonna */
+  .checkbox-group {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+  }
+  
+  .checkbox-label {
+    font-size: 11px;
+    gap: 4px;
+  }
+  
+  .checkbox-label input {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Main margin */
+  main {
+    margin-top: 70px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  /* Titolo scheda più compatto */
+  h2 {
+    font-size: 18px;
+    margin: 5px 0 10px 0;
+  }
+  
+  /* Tabella - riduzione larghezze colonne */
+  .container {
+    overflow-x: auto;
+  }
+  
+  table {
+    min-width: 550px;
+  }
+  
+  /* Colonne più strette su mobile */
+  th:nth-child(1), td:nth-child(1) { width: 200px; }  /* Esercizio */
+  th:nth-child(2), td:nth-child(2) { width: 35px; }   /* Serie - ridotto 70% */
+  th:nth-child(3), td:nth-child(3) { width: 50px; }   /* Rep - ridotto 30% (era 80px) */
+  th:nth-child(4), td:nth-child(4) { width: 30px; }   /* Kg - ridotto 40% (era 50px) */
+  th:nth-child(5), td:nth-child(5) { width: 25px; }   /* Rec - ridotto 50% (era 50px) */
+  th:nth-child(6), td:nth-child(6) { width: 100px; }  /* Prog */
+  th:nth-child(7), td:nth-child(7) { width: 100px; }  /* Note */
+  th:nth-child(8), td:nth-child(8) { width: 40px; }   /* Azioni */
+  
+  /* Font più piccoli in tabella */
+  td, th {
+    font-size: 10px;
+    padding: 4px 2px;
+  }
+  
+  input {
+    font-size: 10px;
+  }
+  
+  /* Etichette compatte */
+  .labels-container {
+    gap: 10px;
+    font-size: 10px;
+    justify-content: flex-start;
+  }
+  
+  /* Dropdown adattati */
+  .dropdown-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 240px;
+  }
+  
+  .dropdown-content div {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+/* Per schermi molto piccoli (max 400px) - ulteriore compressione */
+@media (max-width: 400px) {
+  .main-buttons button {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+  
+  .mode-option {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+  
+  .top-row .dropdown,
+  .top-row button {
+    min-width: 80px;
+  }
+  
+  .toggle-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+    min-width: 60px;
+  }
+  
+  .checkbox-label {
+    font-size: 10px;
+  }
+  
+  main {
+    margin-top: 65px;
+  }
+}
