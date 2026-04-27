@@ -18,7 +18,7 @@
 body {
   margin: 0;
   background: var(--bg-dark);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 /* HEADER FISSO */
@@ -27,104 +27,269 @@ header {
   top: 0;
   width: 100%;
   z-index: 1000;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
   background: var(--bg-header);
-  border-bottom: 1px solid var(--border-color);
-  gap: 10px;
-  flex-wrap: wrap;
 }
 
-/* Gruppo pulsanti principali a sinistra */
-.main-buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+/* === LAYOUT PC DEFAULT (min-width: 769px) === */
+@media (min-width: 769px) {
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 20px;
+  }
+
+  /* Pulsanti principali griglia 2x2 a sinistra */
+  .main-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 8px;
+  }
+
+  /* Toolbar centrale con 2 righe */
+  .toolbar-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .toolbar-container.hidden {
+    display: none;
+  }
+  
+  .toolbar-left, .toolbar-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  /* Unisco tutto in una struttura a 2 righe */
+  .toolbar-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .toolbar-left {
+    justify-content: center;
+  }
+  
+  .toolbar-right {
+    justify-content: center;
+  }
+
+  /* Selettore modalità a destra in colonna */
+  .mode-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border-left: 1px solid var(--border-color);
+    padding-left: 15px;
+  }
+
+  .mode-option {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  main {
+    margin-top: 100px;
+    padding-left: 20px;
+  }
+
+  .container {
+    width: 985px;
+  }
+
+  /* Larghezze colonne PC */
+  th:nth-child(1), td:nth-child(1) { width: 300px; }
+  th:nth-child(2), td:nth-child(2) { width: 50px; }
+  th:nth-child(3), td:nth-child(3) { width: 80px; }
+  th:nth-child(4), td:nth-child(4) { width: 50px; }
+  th:nth-child(5), td:nth-child(5) { width: 50px; }
+  th:nth-child(6), td:nth-child(6) { width: 150px; }
+  th:nth-child(7), td:nth-child(7) { width: 150px; }
+  th:nth-child(8), td:nth-child(8) { width: 60px; }
+  
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
 }
 
-.main-buttons button {
-  padding: 5px 8px;
-  font-size: 11px;
+/* === LAYOUT MOBILE (max-width: 768px) === */
+@media (max-width: 768px) {
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  /* Pulsanti principali ridotti e in alto a sinistra */
+  .main-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 6px;
+  }
+  
+  .main-buttons button {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Modalità in orizzontale a destra */
+  .mode-selector {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    border-left: 1px solid var(--border-color);
+    padding-left: 10px;
+  }
+  
+  .mode-option {
+    font-size: 11px;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: #8899bb;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  
+  .mode-option.active {
+    background: #2a4a7a;
+    color: white;
+  }
+
+  /* Toolbar: due blocchi affiancati */
+  .toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-top: 1px solid var(--border-color);
+    gap: 10px;
+  }
+  
+  .toolbar-container.hidden {
+    display: none;
+  }
+  
+  .toolbar-left {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .toolbar-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  /* Pulsanti toolbar compatti */
+  .toolbar-left button,
+  .toolbar-left .dropbtn {
+    padding: 5px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  
+  .toggle-label {
+    font-size: 11px;
+  }
+  
+  .toggle-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+    min-width: 60px;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .checkbox-label {
+    font-size: 11px;
+    gap: 2px;
+  }
+  
+  .checkbox-label input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+  }
+
+  main {
+    margin-top: 70px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  /* Contenitore tabella scrollabile */
+  .container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Larghezze colonne MOBILE ridotte */
+  table {
+    min-width: 650px;
+    width: 100%;
+  }
+  
+  th:nth-child(1), td:nth-child(1) { width: 200px; }  /* Esercizio */
+  th:nth-child(2), td:nth-child(2) { width: 35px; }   /* Serie - 70% più corta (da 50 a 35) */
+  th:nth-child(3), td:nth-child(3) { width: 55px; }   /* Rep - 30% più corta (da 80 a 55) */
+  th:nth-child(4), td:nth-child(4) { width: 30px; }   /* Kg - 40% più corta (da 50 a 30) */
+  th:nth-child(5), td:nth-child(5) { width: 25px; }   /* Rec - 50% più corta (da 50 a 25) */
+  th:nth-child(6), td:nth-child(6) { width: 120px; }  /* Prog */
+  th:nth-child(7), td:nth-child(7) { width: 120px; }  /* Note */
+  th:nth-child(8), td:nth-child(8) { width: 40px; }   /* Azioni */
+  
+  /* Testi più piccoli nella tabella mobile */
+  td, th {
+    font-size: 11px;
+    padding: 4px 2px;
+  }
+  
+  input {
+    font-size: 11px;
+  }
+  
+  /* Titolo scheda */
+  h2 {
+    font-size: 18px;
+    margin: 8px 0 10px 0;
+  }
+  
+  /* Etichette più compatte */
+  .labels-container {
+    gap: 10px;
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
 }
 
-/* Selettore modalità a destra - ORIZZONTALE */
-.mode-selector {
-  display: flex;
-  gap: 5px;
-  border-left: 1px solid var(--border-color);
-  padding-left: 10px;
-}
-
-.mode-option {
-  font-size: 10px;
-  padding: 4px 8px;
-  cursor: pointer;
-  color: #8899bb;
-  border-radius: 4px;
-  transition: all 0.2s;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.mode-option:hover {
-  background: var(--bg-button);
-}
-
-.mode-option.active {
-  background: #2a4a7a;
-  color: white;
-  font-weight: bold;
-}
-
-/* Contenitore dinamico per la toolbar */
-.toolbar-container {
-  width: 100%;
-  margin-top: 5px;
-}
-
-.toolbar-container.hidden {
-  display: none;
-}
-
-.toolbar-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/* Gruppo sinistro toolbar */
-.toolbar-left {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* Gruppo destro toolbar */
-.toolbar-right {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
+/* Stili comuni (sia PC che mobile) */
 button {
   background: var(--bg-button);
   color: var(--text-light);
   border: 1px solid var(--border-color);
-  padding: 5px 8px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 12px;
   transition: all 0.2s;
-  white-space: nowrap;
 }
 
 button:hover {
@@ -140,23 +305,9 @@ button:disabled {
   display: none;
 }
 
-main {
-  margin-top: 70px;
-  padding: 12px;
-}
-
-.container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  overflow-x: auto;
-}
-
 h2 {
   color: var(--text-light);
-  margin: 5px 0 10px 0;
-  padding: 5px;
-  font-size: 20px;
+  padding: 5px 0;
   border-bottom: 2px solid var(--border-color);
   display: inline-block;
 }
@@ -164,14 +315,14 @@ h2 {
 h2[contenteditable="true"]:hover {
   background: rgba(255,255,255,0.05);
   border-radius: 4px;
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 h2[contenteditable="true"]:focus {
   outline: 2px solid #2a4a7a;
   background: rgba(255,255,255,0.1);
   border-radius: 4px;
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 .dropdown {
@@ -194,29 +345,12 @@ h2[contenteditable="true"]:focus {
   color: white;
   padding: 8px 12px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   transition: all 0.2s;
 }
 
 .dropdown-content div:hover {
   filter: brightness(1.2);
-}
-
-.toggle-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.toggle-label {
-  color: var(--text-light);
-  font-size: 11px;
-}
-
-.toggle-btn {
-  min-width: 65px;
-  padding: 4px 8px;
-  font-size: 11px;
 }
 
 .toggle-btn.on {
@@ -229,41 +363,13 @@ h2[contenteditable="true"]:focus {
   color: white;
 }
 
-.checkbox-group {
-  display: flex;
-  gap: 8px;
-}
-
-.checkbox-label {
-  color: var(--text-light);
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  cursor: pointer;
-}
-
-.checkbox-label input {
-  margin: 0;
-  width: 14px;
-  height: 14px;
-}
-
-.checkbox-label input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .labels-container {
   display: flex;
   align-items: center;
-  padding: 4px 0;
+  padding: 5px 0;
   margin-bottom: 5px;
   color: var(--text-light);
-  font-size: 12px;
   font-weight: bold;
-  gap: 15px;
-  flex-wrap: wrap;
 }
 
 .jammer-label {
@@ -276,110 +382,45 @@ h2[contenteditable="true"]:focus {
 
 .home {
   color: var(--text-light);
+  padding: 20px;
   text-align: center;
-  padding: 40px 20px;
-  font-size: 14px;
 }
 
-/* TABELLA - LARGHEZZE RIDOTTE */
 table {
-  width: 100%;
   border-collapse: collapse;
   background: var(--table-bg);
   border-radius: 8px;
   overflow: hidden;
-  min-width: 600px;
 }
 
 th, td {
   border: 1px solid #2a3b55;
-  padding: 6px 4px;
   vertical-align: middle;
 }
 
 th {
   background: var(--table-header);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.5px;
 }
 
-/* NUOVE LARGHEZZE COLONNE (più compatte) */
-.col-esercizio { width: 35% !important; }
-.col-serie { width: 8% !important; }     /* 70% più corta rispetto a prima */
-.col-rep { width: 10% !important; }      /* 30% più corta */
-.col-kg { width: 8% !important; }        /* 40% più corta */
-.col-rec { width: 9% !important; }       /* 50% più corta */
-.col-prog { width: 15% !important; }
-.col-note { width: 15% !important; }
-.col-azioni { width: 5% !important; }
-
 /* ALLINEAMENTI */
-.col-esercizio,
-th.col-esercizio,
-td.col-esercizio {
-  text-align: left !important;
-}
-
-.col-serie,
-th.col-serie,
-td.col-serie,
-.col-rep,
-th.col-rep,
-td.col-rep,
-.col-kg,
-th.col-kg,
-td.col-kg,
-.col-rec,
-th.col-rec,
-td.col-rec {
-  text-align: center !important;
-}
-
-.col-prog,
-th.col-prog,
-td.col-prog {
-  text-align: left !important;
-}
-
-.col-note,
-th.col-note,
-td.col-note {
-  text-align: right !important;
-}
-
-.actions {
-  text-align: center !important;
-}
-
-.col-esercizio input {
-  text-align: left !important;
-}
-
-.col-serie input,
-.col-rep input,
-.col-kg input,
-.col-rec input {
-  text-align: center !important;
-}
-
-.col-prog input {
-  text-align: left !important;
-}
-
-.col-note input {
-  text-align: right !important;
-}
+.col-esercizio, th.col-esercizio, td.col-esercizio { text-align: left !important; }
+.col-serie, th.col-serie, td.col-serie { text-align: center !important; }
+.col-rep, th.col-rep, td.col-rep { text-align: center !important; }
+.col-kg, th.col-kg, td.col-kg { text-align: center !important; }
+.col-rec, th.col-rec, td.col-rec { text-align: center !important; }
+.col-prog, th.col-prog, td.col-prog { text-align: left !important; }
+.col-note, th.col-note, td.col-note { text-align: right !important; }
+.actions { text-align: center !important; }
 
 input {
   width: 100%;
   border: none;
   background: transparent;
   outline: none;
-  font-size: 11px;
-  padding: 4px 2px;
 }
 
-/* INPUT DISABILITATI - COLORE NERO */
 input:disabled {
   opacity: 1 !important;
   color: #000000 !important;
@@ -398,7 +439,7 @@ input:disabled {
 }
 
 .spacer {
-  height: 12px;
+  height: 15px;
   padding: 0;
   background: var(--bg-dark);
 }
@@ -407,15 +448,13 @@ input:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
 }
 
 .actions span {
   cursor: pointer;
   opacity: 0.8;
-  font-size: 14px;
-  padding: 2px 4px;
 }
 
 .actions span:hover {
@@ -425,7 +464,7 @@ input:disabled {
 .card {
   background: var(--card-bg);
   color: var(--text-light);
-  margin: 10px 0;
+  margin: 10px;
   padding: 12px;
   border-radius: 8px;
   border: 1px solid #1f3557;
@@ -434,352 +473,4 @@ input:disabled {
 .card-title {
   font-weight: bold;
   margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.card button {
-  margin-right: 8px;
-  padding: 5px 10px;
-  font-size: 11px;
-}
-
-/* === LAYOUT SMARTPHONE === */
-@media (max-width: 768px) {
-  .topbar {
-    padding: 6px 10px;
-  }
-  
-  .main-buttons button {
-    padding: 4px 6px;
-    font-size: 10px;
-  }
-  
-  .mode-option {
-    font-size: 9px;
-    padding: 3px 6px;
-  }
-  
-  .toolbar-buttons {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-  
-  .toolbar-left, .toolbar-right {
-    justify-content: center;
-  }
-  
-  button {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-  
-  .toggle-btn {
-    padding: 5px 10px;
-  }
-  
-  .checkbox-label {
-    font-size: 12px;
-  }
-  
-  .checkbox-label input {
-    width: 16px;
-    height: 16px;
-  }
-  
-  main {
-    margin-top: 80px;
-    padding: 8px;
-  }
-  
-  h2 {
-    font-size: 18px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  table {
-    min-width: 550px;
-  }
-  
-  th, td {
-    padding: 5px 3px;
-  }
-  
-  th {
-    font-size: 9px;
-  }
-  
-  input {
-    font-size: 10px;
-    padding: 3px 1px;
-  }
-  
-  .labels-container {
-    justify-content: center;
-    font-size: 11px;
-  }
-  
-  /* Dropdown ottimizzati per mobile */
-  .dropdown-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 85%;
-    max-width: 260px;
-    border-radius: 12px;
-  }
-  
-  .dropdown-content div {
-    padding: 12px;
-    font-size: 14px;
-  }
-}
-
-/* Schermi molto piccoli */
-@media (max-width: 480px) {
-  .toolbar-left, .toolbar-right {
-    flex-wrap: wrap;
-  }
-  
-  .toolbar-left {
-    justify-content: flex-start;
-  }
-  
-  .toolbar-right {
-    justify-content: flex-end;
-  }
-  
-  main {
-    margin-top: 85px;
-  }
-  
-  table {
-    min-width: 500px;
-  }
-  
-  .col-esercizio { width: 30% !important; }
-  .col-prog { width: 18% !important; }
-  .col-note { width: 18% !important; }
-}
-
-/* === LAYOUT PER SMARTPHONE (max-width: 768px) - VERSIONE COMPATTA === */
-@media (max-width: 768px) {
-  
-  .topbar {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
-  }
-  
-  /* Pulsanti principali: griglia 2x2 più piccola a sinistra */
-  .main-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
-    gap: 6px;
-  }
-  
-  .main-buttons button {
-    padding: 5px 8px;
-    font-size: 11px;
-    white-space: nowrap;
-  }
-  
-  /* Selettore modalità: in alto a destra in orizzontale */
-  .mode-selector {
-    flex-direction: row;
-    border-left: none;
-    padding-left: 0;
-    margin-left: 0;
-    gap: 4px;
-  }
-  
-  .mode-option {
-    font-size: 10px;
-    padding: 4px 6px;
-    background: var(--bg-button);
-  }
-  
-  /* Toolbar container */
-  .toolbar-container {
-    width: 100%;
-    margin-top: 8px;
-  }
-  
-  .toolbar-buttons {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0;
-    gap: 10px;
-  }
-  
-  /* Blocco sinistro: 3 pulsanti in colonna */
-  .toolbar-row {
-    flex-direction: column;
-    gap: 6px;
-  }
-  
-  .top-row {
-    align-items: flex-start;
-    flex: 1;
-  }
-  
-  /* Blocco destro: Jammer + checkbox in colonna */
-  .bottom-row {
-    align-items: flex-end;
-    flex: 1;
-  }
-  
-  /* Pulsanti del blocco sinistro */
-  .top-row .dropdown,
-  .top-row button {
-    width: 100%;
-    min-width: 95px;
-  }
-  
-  .toolbar-buttons button,
-  .toolbar-buttons .dropbtn {
-    padding: 6px 8px;
-    font-size: 11px;
-    white-space: nowrap;
-  }
-  
-  /* Blocco destro - Jammer */
-  .toggle-container {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 3px;
-  }
-  
-  .toggle-label {
-    font-size: 10px;
-  }
-  
-  .toggle-btn {
-    padding: 4px 8px;
-    font-size: 11px;
-    min-width: 70px;
-  }
-  
-  /* Checkbox DX/SX in colonna */
-  .checkbox-group {
-    flex-direction: column;
-    gap: 4px;
-    align-items: flex-end;
-  }
-  
-  .checkbox-label {
-    font-size: 11px;
-    gap: 4px;
-  }
-  
-  .checkbox-label input {
-    width: 14px;
-    height: 14px;
-  }
-  
-  /* Main margin */
-  main {
-    margin-top: 70px;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-  
-  /* Titolo scheda più compatto */
-  h2 {
-    font-size: 18px;
-    margin: 5px 0 10px 0;
-  }
-  
-  /* Tabella - riduzione larghezze colonne */
-  .container {
-    overflow-x: auto;
-  }
-  
-  table {
-    min-width: 550px;
-  }
-  
-  /* Colonne più strette su mobile */
-  th:nth-child(1), td:nth-child(1) { width: 200px; }  /* Esercizio */
-  th:nth-child(2), td:nth-child(2) { width: 35px; }   /* Serie - ridotto 70% */
-  th:nth-child(3), td:nth-child(3) { width: 50px; }   /* Rep - ridotto 30% (era 80px) */
-  th:nth-child(4), td:nth-child(4) { width: 30px; }   /* Kg - ridotto 40% (era 50px) */
-  th:nth-child(5), td:nth-child(5) { width: 25px; }   /* Rec - ridotto 50% (era 50px) */
-  th:nth-child(6), td:nth-child(6) { width: 100px; }  /* Prog */
-  th:nth-child(7), td:nth-child(7) { width: 100px; }  /* Note */
-  th:nth-child(8), td:nth-child(8) { width: 40px; }   /* Azioni */
-  
-  /* Font più piccoli in tabella */
-  td, th {
-    font-size: 10px;
-    padding: 4px 2px;
-  }
-  
-  input {
-    font-size: 10px;
-  }
-  
-  /* Etichette compatte */
-  .labels-container {
-    gap: 10px;
-    font-size: 10px;
-    justify-content: flex-start;
-  }
-  
-  /* Dropdown adattati */
-  .dropdown-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 240px;
-  }
-  
-  .dropdown-content div {
-    padding: 10px;
-    font-size: 13px;
-  }
-}
-
-/* Per schermi molto piccoli (max 400px) - ulteriore compressione */
-@media (max-width: 400px) {
-  .main-buttons button {
-    padding: 4px 6px;
-    font-size: 10px;
-  }
-  
-  .mode-option {
-    font-size: 9px;
-    padding: 3px 5px;
-  }
-  
-  .top-row .dropdown,
-  .top-row button {
-    min-width: 80px;
-  }
-  
-  .toggle-btn {
-    padding: 3px 6px;
-    font-size: 10px;
-    min-width: 60px;
-  }
-  
-  .checkbox-label {
-    font-size: 10px;
-  }
-  
-  main {
-    margin-top: 65px;
-  }
 }

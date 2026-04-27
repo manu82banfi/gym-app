@@ -8,7 +8,6 @@ async function caricaCloud() {
     const r = await fetch(BASE_URL, {
       headers: { "X-Master-Key": API_KEY }
     });
-
     const j = await r.json();
     return j.record || [];
   } catch {
