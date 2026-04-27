@@ -39,9 +39,16 @@ function renderHome() {
   app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
-// TOOLBAR VISIBILITÀ
+// TOOLBAR VISIBILITÀ - MODIFICATA PER USARE IL NUOVO CONTENITORE
 function toolbar(show) {
-  document.getElementById("toolbar").classList.toggle("hidden", !show);
+  const toolbarContainer = document.getElementById("toolbarContainer");
+  if (toolbarContainer) {
+    if (show) {
+      toolbarContainer.classList.remove("hidden");
+    } else {
+      toolbarContainer.classList.add("hidden");
+    }
+  }
 }
 
 // GESTIONE MODALITÀ
@@ -68,7 +75,7 @@ function updateModeUI() {
   });
   document.getElementById(`mode-${currentMode}`).classList.add('active');
   
-  const buttons = document.querySelectorAll('.topbar button:not(.mode-option)');
+  const buttons = document.querySelectorAll('.main-buttons button:not(.mode-option)');
   
   if (currentMode === 'read') {
     buttons.forEach(btn => {
@@ -149,13 +156,13 @@ function renderScheda() {
   
   // Mostra SEMPRE l'etichetta Jammer con lo stato attuale
   if (s.showJammer) {
-    labelsHtml += `<span class="jammer-label">✅ Si Jammer</span>`;
+    labelsHtml += `<span class="jammer-label">✅ Jammer Attivo</span>`;
   } else {
-    labelsHtml += `<span class="jammer-label">❌ No Jammer</span>`;
+    labelsHtml += `<span class="jammer-label">❌ Jammer Non Attivo</span>`;
   }
   
-  if (s.showDX) labelsHtml += '<span class="side-label">DX</span>';
-  if (s.showSX) labelsHtml += '<span class="side-label">SX</span>';
+  if (s.showDX) labelsHtml += '<span class="side-label">✔️ DX</span>';
+  if (s.showSX) labelsHtml += '<span class="side-label">✔️ SX</span>';
   
   labelsHtml += '</div>';
 
@@ -202,8 +209,8 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-       </div>` : '<td></td>'}
-    </tr>`;
+       </div>` : '<td>\n       </div>'}
+    </td>`;
   }
 
   if (b.type === "spacer") {
@@ -213,7 +220,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-       </div>` : '<td></td>'}
+       </div>` : '<td>\n       </div>'}
     </tr>`;
   }
 
@@ -301,7 +308,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         rows += `</div>`;
       }
 
-      rows += `</td>`;
+      rows += `</tr>`;
     }
 
     return rows;
@@ -704,7 +711,7 @@ function exportPDF() {
           <td class="col-note">${escapeHtml(note[r] || '')}</div>
         `;
         
-        htmlContent += '</tr>';
+        htmlContent += '</table>';
       }
     }
   });
