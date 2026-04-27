@@ -36,7 +36,7 @@ header{
   flex-wrap: wrap;
 }
 
-/* Gruppo pulsanti principali in griglia 2x2 */
+/* Gruppo pulsanti principali a sinistra in griglia 2x2 */
 .main-buttons {
   display: grid;
   grid-template-columns: repeat(2, auto);
@@ -59,10 +59,44 @@ header{
 
 .toolbar-buttons {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-header);
+  padding: 0 10px;
+}
+
+.toolbar-row {
+  display: flex;
   gap: 10px;
   align-items: center;
-  flex-wrap: wrap;
-  background: var(--bg-header);
+  justify-content: center;
+}
+
+.top-row {
+  justify-content: center;
+}
+
+.bottom-row {
+  justify-content: center;
+}
+
+/* Stili per i pulsanti nella toolbar */
+.toolbar-buttons button,
+.toolbar-buttons .dropbtn {
+  background: var(--bg-button);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.toolbar-buttons button:hover,
+.toolbar-buttons .dropbtn:hover {
+  background: var(--bg-button-hover);
 }
 
 /* Selettore modalità a destra */
@@ -430,8 +464,39 @@ input:disabled {
     justify-content: center;
   }
   
+  .toolbar-buttons {
+    align-items: center;
+  }
+  
+  .toolbar-row {
+    flex-wrap: wrap;
+  }
+  
   main {
     margin-top: 140px;
+  }
+}
+
+/* Media query per schermi molto piccoli */
+@media (max-width: 600px) {
+  .top-row, .bottom-row {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .toolbar-row button,
+  .toolbar-row .dropdown,
+  .toolbar-row .toggle-container,
+  .toolbar-row .checkbox-group {
+    width: 100%;
+  }
+  
+  .dropdown {
+    width: 100%;
+  }
+  
+  .dropbtn {
+    width: 100%;
   }
 }
 
