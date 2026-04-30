@@ -9,7 +9,6 @@ async function init() {
 
   if (cloud && cloud.length) {
     schede = cloud;
-    // Assicurati che ogni scheda abbia le proprietà delle preferenze
     schede.forEach(s => {
       if (s.showJammer === undefined) s.showJammer = false;
       if (s.showDX === undefined) s.showDX = false;
@@ -20,7 +19,6 @@ async function init() {
     const local = localStorage.getItem("schede");
     if (local) {
       schede = JSON.parse(local);
-      // Assicurati che ogni scheda abbia le proprietà delle preferenze
       schede.forEach(s => {
         if (s.showJammer === undefined) s.showJammer = false;
         if (s.showDX === undefined) s.showDX = false;
@@ -31,15 +29,17 @@ async function init() {
 
   renderHome();
   updateModeUI();
+  updateMobileModeUI();
 }
 
 // HOME
 function renderHome() {
   toolbar(false);
+  mobileInsertToolbar(false);
   app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
 }
 
-// TOOLBAR VISIBILITÀ - MODIFICATA PER USARE IL NUOVO CONTENITORE
+// TOOLBAR VISIBILITÀ - DESKTOP
 function toolbar(show) {
   const toolbarContainer = document.getElementById("toolbarContainer");
   if (toolbarContainer) {
@@ -51,10 +51,24 @@ function toolbar(show) {
   }
 }
 
+// TOOLBAR MOBILE INSERT
+function mobileInsertToolbar(show) {
+  const container = document.getElementById("mobileInsertContainer");
+  if (container) {
+    if (show) {
+      container.classList.remove("hidden");
+    } else {
+      container.classList.add("hidden");
+    }
+  }
+  updateMobileInsertMenu();
+}
+
 // GESTIONE MODALITÀ
 function setMode(mode) {
   currentMode = mode;
   updateModeUI();
+  updateMobileModeUI();
   
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
@@ -73,7 +87,8 @@ function updateModeUI() {
   document.querySelectorAll('.mode-option').forEach(el => {
     el.classList.remove('active');
   });
-  document.getElementById(`mode-${currentMode}`).classList.add('active');
+  const modeEl = document.getElementById(`mode-${currentMode}`);
+  if (modeEl) modeEl.classList.add('active');
   
   const buttons = document.querySelectorAll('.main-buttons button:not(.mode-option)');
   
@@ -90,6 +105,20 @@ function updateModeUI() {
     buttons.forEach(btn => btn.disabled = false);
     if (attiva) toolbar(true);
   }
+}
+
+function updateMobileModeUI() {
+  // Aggiorna menu mobile
+  ['read', 'edit', 'train'].forEach(m => {
+    const el = document.getElementById(`mobile-mode-${m}`);
+    if (el) {
+      if (m === currentMode) {
+        el.classList.add('active-mobile');
+      } else {
+        el.classList.remove('active-mobile');
+      }
+    }
+  });
 }
 
 // TOGGLE PER DROPDOWN ESERCIZI
@@ -136,6 +165,7 @@ function getS() {
 // RENDER SCHEDA COMPLETA
 function renderScheda() {
   toolbar(true);
+  mobileInsertToolbar(true);
   const s = getS();
   
   if (!s) {
@@ -143,7 +173,6 @@ function renderScheda() {
     return;
   }
   
-  // Inizializza le preferenze se non esistono
   if (s.showJammer === undefined) s.showJammer = false;
   if (s.showDX === undefined) s.showDX = false;
   if (s.showSX === undefined) s.showSX = false;
@@ -154,7 +183,6 @@ function renderScheda() {
 
   let labelsHtml = '<div class="labels-container">';
   
-  // Mostra SEMPRE l'etichetta Jammer con lo stato attuale
   if (s.showJammer) {
     labelsHtml += `<span class="jammer-label">✅ Jammer Attivo</span>`;
   } else {
@@ -195,6 +223,7 @@ function renderScheda() {
 
   updateJammerButton();
   updateCheckboxState();
+  updateMobileInsertMenu();
 }
 
 // RENDER SINGOLO BLOCCO
@@ -209,8 +238,8 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-       </div>` : '<td>\n       </div>'}
-    </td>`;
+       </td>` : '<td></td>'}
+    </tr>`;
   }
 
   if (b.type === "spacer") {
@@ -220,7 +249,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-       </div>` : '<td>\n       </div>'}
+       </td>` : '<td></td>'}
     </tr>`;
   }
 
@@ -244,7 +273,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(nome)}" data-field="nome" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'nome', this.value)">
-         </div>`;
+         </td>`;
       }
 
       rows += `
@@ -253,7 +282,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           ${!canEdit ? 'disabled' : ''}
           onkeydown="serieKey(event, ${i}, ${r})"
           oninput="updateArrayField(${i}, 'serie', ${r}, this.value)">
-         </div>
+         </td>
       `;
 
       if (r === 0) {
@@ -261,7 +290,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(rep)}" data-field="rep" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'rep', this.value)">
-         </div>`;
+         </td>`;
       }
 
       rows += `
@@ -269,7 +298,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(kg[r] || '')}" data-field="kg" data-index="${i}" data-row="${r}"
           ${!canEdit ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'kg', ${r}, this.value)">
-         </div>
+         </td>
       `;
 
       if (r === 0) {
@@ -277,7 +306,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(rec)}" data-field="rec" data-index="${i}"
           ${!isEditMode ? 'disabled' : ''}
           oninput="updateField(${i}, 'rec', this.value)">
-         </div>`;
+         </td>`;
       }
 
       rows += `
@@ -285,7 +314,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(prog[r] || '')}" data-field="prog" data-index="${i}" data-row="${r}"
           ${currentMode === 'read' ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'prog', ${r}, this.value)">
-         </div>
+         </td>
       `;
 
       rows += `
@@ -293,7 +322,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
           <input value="${escapeHtml(note[r] || '')}" data-field="note" data-index="${i}" data-row="${r}"
           ${currentMode === 'read' ? 'disabled' : ''}
           oninput="updateArrayField(${i}, 'note', ${r}, this.value)">
-         </div>
+         </td>
       `;
 
       if (r === 0) {
@@ -305,7 +334,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
             <span onclick="del(${i})">✕</span>
           `;
         }
-        rows += `</div>`;
+        rows += `</td>`;
       }
 
       rows += `</tr>`;
@@ -394,7 +423,6 @@ function addExercise(n) {
   saveLocal();
   renderScheda();
   
-  // Chiudi il dropdown dopo la selezione
   const dropdown = document.getElementById('exerciseDropdown');
   if (dropdown) dropdown.classList.add('hidden');
 }
@@ -428,7 +456,9 @@ function addMarkerFromDropdown(color, muscolo) {
     muscolo: muscolo
   });
   
-  document.getElementById('markerDropdown').classList.add('hidden');
+  const markerDropdown = document.getElementById('markerDropdown');
+  if (markerDropdown) markerDropdown.classList.add('hidden');
+  
   saveLocal();
   renderScheda();
 }
@@ -444,7 +474,7 @@ function addSpacer() {
   renderScheda();
 }
 
-// TOGGLE JAMMER - Modifica la scheda attiva
+// TOGGLE JAMMER
 function toggleJammer() {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -465,7 +495,7 @@ function updateJammerButton() {
   }
 }
 
-// UPDATE LABELS DX/SX - Modifica la scheda attiva
+// UPDATE LABELS DX/SX
 function updateSideLabels() {
   if (currentMode !== 'edit') return;
   const s = getS();
@@ -547,6 +577,7 @@ function rename(v) {
 
 function elencoSchede() {
   toolbar(false);
+  mobileInsertToolbar(false);
 
   app.innerHTML = `
     <div style="padding:20px;">
@@ -691,27 +722,27 @@ function exportPDF() {
         htmlContent += '<tr>';
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}" class="col-esercizio">${escapeHtml(b.nome || '')}</div>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-esercizio">${escapeHtml(b.nome || '')}</td>`;
         }
         
-        htmlContent += `<td class="col-serie">${escapeHtml((b.serie || [])[r] || '')}</div>`;
+        htmlContent += `<td class="col-serie">${escapeHtml((b.serie || [])[r] || '')}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}" class="col-rep">${escapeHtml(b.rep || '')}</div>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-rep">${escapeHtml(b.rep || '')}</td>`;
         }
         
-        htmlContent += `<td class="col-kg">${escapeHtml((b.kg || [])[r] || '')}</div>`;
+        htmlContent += `<td class="col-kg">${escapeHtml((b.kg || [])[r] || '')}</td>`;
         
         if (r === 0) {
-          htmlContent += `<td rowspan="${numRows}" class="col-rec">${escapeHtml(b.rec || '')}</div>`;
+          htmlContent += `<td rowspan="${numRows}" class="col-rec">${escapeHtml(b.rec || '')}</td>`;
         }
         
         htmlContent += `
-          <td class="col-prog">${escapeHtml(prog[r] || '')}</div>
-          <td class="col-note">${escapeHtml(note[r] || '')}</div>
+          <td class="col-prog">${escapeHtml(prog[r] || '')}</td>
+          <td class="col-note">${escapeHtml(note[r] || '')}</td>
         `;
         
-        htmlContent += '</table>';
+        htmlContent += '</tr>';
       }
     }
   });
@@ -734,6 +765,123 @@ function exportPDF() {
 
 function saveLocal() {
   localStorage.setItem("schede", JSON.stringify(schede));
+}
+
+// ============================================
+// FUNZIONI MOBILE - MENU HAMBURGER E INSERT
+// ============================================
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const insertMenu = document.getElementById('mobileInsertMenu');
+  
+  // Chiudi l'altro menu se aperto
+  if (insertMenu && !insertMenu.classList.contains('hidden')) {
+    insertMenu.classList.add('hidden');
+  }
+  
+  if (menu) {
+    menu.classList.toggle('hidden');
+    
+    if (!menu.classList.contains('hidden')) {
+      updateMobileModeUI();
+      setTimeout(() => {
+        document.addEventListener('click', function closeMobileMenuHandler(e) {
+          if (!e.target.closest('.mobile-menu')) {
+            menu.classList.add('hidden');
+            document.removeEventListener('click', closeMobileMenuHandler);
+          }
+        });
+      }, 100);
+    }
+  }
+}
+
+function closeMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  if (menu) {
+    menu.classList.add('hidden');
+  }
+}
+
+function toggleMobileInsert() {
+  if (currentMode !== 'edit') return;
+  
+  const menu = document.getElementById('mobileInsertMenu');
+  const mobileMenu = document.getElementById('mobileMenu');
+  
+  // Chiudi l'altro menu se aperto
+  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+    mobileMenu.classList.add('hidden');
+  }
+  
+  if (menu) {
+    menu.classList.toggle('hidden');
+    
+    if (!menu.classList.contains('hidden')) {
+      updateMobileInsertMenu();
+      setTimeout(() => {
+        document.addEventListener('click', function closeInsertMenuHandler(e) {
+          if (!e.target.closest('.mobile-insert')) {
+            menu.classList.add('hidden');
+            document.removeEventListener('click', closeInsertMenuHandler);
+          }
+        });
+      }, 100);
+    }
+  }
+}
+
+function closeMobileInsert() {
+  const menu = document.getElementById('mobileInsertMenu');
+  if (menu) {
+    menu.classList.add('hidden');
+  }
+}
+
+function updateMobileInsertMenu() {
+  const s = getS();
+  
+  // Aggiorna testo Jammer
+  const jammerText = document.getElementById('mobile-jammer-text');
+  if (jammerText && s) {
+    jammerText.textContent = s.showJammer ? '🔧 Jammer: Sì' : '🔧 Jammer: No';
+  }
+  
+  // Aggiorna testo DX
+  const dxText = document.getElementById('mobile-dx-text');
+  if (dxText && s) {
+    dxText.textContent = s.showDX ? '☑ DX' : '☐ DX';
+  }
+  
+  // Aggiorna testo SX
+  const sxText = document.getElementById('mobile-sx-text');
+  if (sxText && s) {
+    sxText.textContent = s.showSX ? '☑ SX' : '☐ SX';
+  }
+}
+
+// Funzioni DX/SX per mobile
+function toggleDX() {
+  if (currentMode !== 'edit') return;
+  const s = getS();
+  if (!s) return;
+  
+  s.showDX = !s.showDX;
+  if (s.showDX) s.showSX = false;
+  saveLocal();
+  if (attiva) renderScheda();
+}
+
+function toggleSX() {
+  if (currentMode !== 'edit') return;
+  const s = getS();
+  if (!s) return;
+  
+  s.showSX = !s.showSX;
+  if (s.showSX) s.showDX = false;
+  saveLocal();
+  if (attiva) renderScheda();
 }
 
 init();

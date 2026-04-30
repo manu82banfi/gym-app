@@ -36,6 +36,15 @@ header{
   flex-wrap: wrap;
 }
 
+/* VERSIONE DESKTOP - visibile di default */
+.desktop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  gap: 20px;
+}
+
 /* Gruppo pulsanti principali a sinistra in griglia 2x2 */
 .main-buttons {
   display: grid;
@@ -447,59 +456,6 @@ input:disabled {
   margin-bottom: 8px;
 }
 
-/* Media query per schermi piccoli */
-@media (max-width: 900px) {
-  .topbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .mode-selector {
-    flex-direction: row;
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    padding-left: 0;
-    padding-top: 10px;
-    margin-left: 0;
-    justify-content: center;
-  }
-  
-  .toolbar-buttons {
-    align-items: center;
-  }
-  
-  .toolbar-row {
-    flex-wrap: wrap;
-  }
-  
-  main {
-    margin-top: 140px;
-  }
-}
-
-/* Media query per schermi molto piccoli */
-@media (max-width: 600px) {
-  .top-row, .bottom-row {
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .toolbar-row button,
-  .toolbar-row .dropdown,
-  .toolbar-row .toggle-container,
-  .toolbar-row .checkbox-group {
-    width: 100%;
-  }
-  
-  .dropdown {
-    width: 100%;
-  }
-  
-  .dropbtn {
-    width: 100%;
-  }
-}
-
 /* LARGHEZZE COLONNE */
 th:nth-child(1), td:nth-child(1) { width: 300px; }
 th:nth-child(2), td:nth-child(2) { width: 50px; }
@@ -512,4 +468,169 @@ th:nth-child(8), td:nth-child(8) { width: 60px; }
 
 table {
   table-layout: fixed;
+}
+
+/* ============================================ */
+/* VERSIONE MOBILE - Nasconde desktop e mostra mobile */
+/* ============================================ */
+.mobile-header {
+  display: none;
+}
+
+.hamburger-btn,
+.insert-btn {
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--bg-button);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.insert-btn {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+  gap: 5px;
+}
+
+.mobile-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-header);
+  min-width: 200px;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+  z-index: 1002;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.mobile-dropdown div {
+  color: white;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.mobile-dropdown div:hover {
+  background: var(--bg-button-hover);
+}
+
+.mobile-section-title {
+  color: #8899bb !important;
+  font-size: 11px !important;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 14px 4px 14px !important;
+  cursor: default !important;
+}
+
+.mobile-section-title:hover {
+  background: transparent !important;
+}
+
+.mobile-section-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+  padding: 0 !important;
+  cursor: default !important;
+}
+
+.mobile-section-divider:hover {
+  background: var(--border-color) !important;
+}
+
+/* Stili per i pulsanti modalità nel menu mobile */
+#mobile-mode-read.active-mobile,
+#mobile-mode-edit.active-mobile,
+#mobile-mode-train.active-mobile {
+  background: #2a4a7a;
+  font-weight: bold;
+}
+
+/* Media query per schermi piccoli (smartphone) */
+@media (max-width: 900px) {
+  .desktop-header {
+    display: none !important;
+  }
+  
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+  }
+  
+  .mobile-menu {
+    position: relative;
+  }
+  
+  .mobile-insert {
+    position: relative;
+  }
+  
+  .mobile-insert .mobile-dropdown {
+    left: auto;
+    right: 0;
+  }
+  
+  .topbar {
+    padding: 8px;
+  }
+  
+  main {
+    margin-top: 60px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  table {
+    font-size: 12px;
+  }
+  
+  th, td {
+    padding: 4px 2px;
+  }
+  
+  input {
+    font-size: 11px;
+  }
+  
+  /* Riduci larghezze colonne su mobile */
+  th:nth-child(1), td:nth-child(1) { width: 120px; }
+  th:nth-child(2), td:nth-child(2) { width: 35px; }
+  th:nth-child(3), td:nth-child(3) { width: 40px; }
+  th:nth-child(4), td:nth-child(4) { width: 35px; }
+  th:nth-child(5), td:nth-child(5) { width: 35px; }
+  th:nth-child(6), td:nth-child(6) { width: 70px; }
+  th:nth-child(7), td:nth-child(7) { width: 70px; }
+  th:nth-child(8), td:nth-child(8) { width: 40px; }
+  
+  .actions span {
+    font-size: 12px;
+  }
+  
+  .labels-container {
+    font-size: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  h2 {
+    font-size: 18px;
+  }
 }
