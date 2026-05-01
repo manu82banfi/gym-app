@@ -2,7 +2,7 @@
    COLORI PRINCIPALI - MODIFICA QUI PER CAMBIARE TEMA
    ============================================ */
 :root {
-  --bg-dark: #0b1220;              /* Sfondo principale scuro */
+  --bg-dark: #0b8220;              /* Sfondo principale scuro */
   --bg-header: #0f1a2e;            /* Sfondo header */
   --bg-button: #16263f;            /* Sfondo pulsanti */
   --bg-button-hover: #1d3557;      /* Sfondo pulsanti al passaggio mouse */
@@ -24,7 +24,7 @@
   --marker-spalle: #FFEB3B;        /* Giallo - Spalle */
   
   /* Dimensioni marker */
-  --marker-height: 8px;            /* Altezza marker (prima 4px) */
+  --marker-height: 8px;            /* Altezza marker */
   
   /* Colori toggle */
   --toggle-on: #4CAF50;            /* Verde toggle ON */
