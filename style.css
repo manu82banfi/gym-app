@@ -409,22 +409,36 @@ input:disabled {
   cursor: default;
 }
 
-/* Rimosso hover dalle righe */
-/* .row-hover:hover {
-  background: #d6e4ff;
-} */
-
+/* MARKER - sempre 4px */
 .marker {
   height: 4px;
   padding: 0;
+  line-height: 0;
+  font-size: 0;
 }
 
+.marker td {
+  height: 4px;
+  padding: 0;
+  border: none;
+  line-height: 0;
+  font-size: 0;
+}
+
+/* SPACER */
 .spacer {
   height: 15px;
   padding: 0;
   background: var(--bg-dark);
 }
 
+.spacer td {
+  height: 15px;
+  padding: 0;
+  border: none;
+}
+
+/* AZIONI (frecce e X) - senza contorno, senza influire sull'altezza */
 .actions {
   display: flex;
   justify-content: center;
@@ -432,15 +446,40 @@ input:disabled {
   gap: 6px;
   white-space: nowrap;
   font-size: 14px;
+  padding: 0;
+  line-height: 0;
 }
 
 .actions span {
   cursor: pointer;
   opacity: 0.8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  font-size: 14px;
+  border: none;
+  outline: none;
 }
 
 .actions span:hover {
   opacity: 1;
+}
+
+/* Celle senza azioni: stessa altezza delle celle con azioni */
+td:not(.actions) {
+  /* nessuna modifica */
+}
+
+/* Forza tutte le righe alla stessa altezza */
+tr {
+  height: auto;
+}
+
+tr td {
+  height: auto;
 }
 
 .card {
@@ -646,5 +685,27 @@ table {
   
   h2 {
     font-size: 18px;
+  }
+  
+  /* Marker mobile: più sottili del 10% = 3.6px */
+  .marker {
+    height: 3.6px;
+  }
+  
+  .marker td {
+    height: 3.6px;
+  }
+  
+  /* Menu mobile: scelte marker più sottili del 10% (padding ridotto) */
+  .mobile-insert-dropdown .mobile-section-title:first-of-type + div,
+  .mobile-insert-dropdown div[style*="background"] {
+    padding: 7px 12px !important;
+    font-size: 12.6px !important;
+  }
+  
+  /* Target specifico: i 6 div marker nel menu insert su mobile */
+  #mobileInsertMenu div[style*="background"] {
+    padding: 7px 12px !important;
+    font-size: 12.6px !important;
   }
 }

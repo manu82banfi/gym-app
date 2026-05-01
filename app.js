@@ -232,23 +232,23 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
 
   if (b.type === "marker") {
     return `<tr>
-      <td colspan="7" class="marker" style="background:${b.color || '#4CAF50'}"></td>
-      ${showActions ? `<td class="actions">
-        <span onclick="moveUp(${i})">↑</span>
-        <span onclick="moveDown(${i})">↓</span>
-        <span onclick="del(${i})">✕</span>
-       </td>` : '<td></td>'}
+      <td colspan="7" class="marker" style="background:${b.color || '#4CAF50'}; height:4px; padding:0; border:none; line-height:0; font-size:0;"></td>
+      ${showActions ? `<td class="actions" style="padding:0; border:none; height:4px; line-height:0;">
+        <span onclick="moveUp(${i})" style="font-size:10px;">↑</span>
+        <span onclick="moveDown(${i})" style="font-size:10px;">↓</span>
+        <span onclick="del(${i})" style="font-size:10px;">✕</span>
+       </td>` : `<td style="padding:0; border:none; height:4px;"></td>`}
     </tr>`;
   }
 
   if (b.type === "spacer") {
     return `<tr>
-      <td colspan="7" class="spacer"></td>
-      ${showActions ? `<td class="actions">
-        <span onclick="moveUp(${i})">↑</span>
-        <span onclick="moveDown(${i})">↓</span>
-        <span onclick="del(${i})">✕</span>
-       </td>` : '<td></td>'}
+      <td colspan="7" class="spacer" style="height:15px; padding:0; background:var(--bg-dark); border:none;"></td>
+      ${showActions ? `<td class="actions" style="padding:0; border:none; height:15px;">
+        <span onclick="moveUp(${i})" style="font-size:10px;">↑</span>
+        <span onclick="moveDown(${i})" style="font-size:10px;">↓</span>
+        <span onclick="del(${i})" style="font-size:10px;">✕</span>
+       </td>` : `<td style="padding:0; border:none; height:15px;"></td>`}
     </tr>`;
   }
 
@@ -776,7 +776,6 @@ function toggleMobileMenu() {
   const modeMenu = document.getElementById('mobileModeMenu');
   const insertMenu = document.getElementById('mobileInsertMenu');
   
-  // Chiudi gli altri menu se aperti
   if (modeMenu && !modeMenu.classList.contains('hidden')) {
     modeMenu.classList.add('hidden');
   }
@@ -813,7 +812,6 @@ function toggleMobileModeMenu() {
   const actionMenu = document.getElementById('mobileMenu');
   const insertMenu = document.getElementById('mobileInsertMenu');
   
-  // Chiudi gli altri menu se aperti
   if (actionMenu && !actionMenu.classList.contains('hidden')) {
     actionMenu.classList.add('hidden');
   }
@@ -853,7 +851,6 @@ function toggleMobileInsert() {
   const actionMenu = document.getElementById('mobileMenu');
   const modeMenu = document.getElementById('mobileModeMenu');
   
-  // Chiudi gli altri menu se aperti
   if (actionMenu && !actionMenu.classList.contains('hidden')) {
     actionMenu.classList.add('hidden');
   }
