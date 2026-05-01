@@ -2,7 +2,7 @@
    COLORI PRINCIPALI - MODIFICA QUI PER CAMBIARE TEMA
    ============================================ */
 :root {
-  --bg-dark: #0b8220;              /* Sfondo principale scuro */
+  --bg-dark: #0b1220;              /* Sfondo principale scuro */
   --bg-header: #0f1a2e;            /* Sfondo header */
   --bg-button: #16263f;            /* Sfondo pulsanti */
   --bg-button-hover: #1d3557;      /* Sfondo pulsanti al passaggio mouse */
