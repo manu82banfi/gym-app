@@ -1,16 +1,43 @@
-/* COLORI PRINCIPALI - MODIFICA QUI PER CAMBIARE TEMA */
+/* ============================================
+   COLORI PRINCIPALI - MODIFICA QUI PER CAMBIARE TEMA
+   ============================================ */
 :root {
-  --bg-dark: #0b1220;
-  --bg-header: #0f1a2e;
-  --bg-button: #16263f;
-  --bg-button-hover: #1d3557;
-  --border-color: #1c2b45;
-  --text-light: #e6f0ff;
-  --table-bg: #e6edf7;
-  --table-header: #b8c7dd;
-  --card-bg: #10233f;
+  --bg-dark: #0b1220;              /* Sfondo principale scuro */
+  --bg-header: #0f1a2e;            /* Sfondo header */
+  --bg-button: #16263f;            /* Sfondo pulsanti */
+  --bg-button-hover: #1d3557;      /* Sfondo pulsanti al passaggio mouse */
+  --border-color: #1c2b45;         /* Colore bordi */
+  --text-light: #e6f0ff;           /* Testo chiaro */
+  --table-bg: #e6edf7;             /* Sfondo tabella */
+  --table-header: #b8c7dd;         /* Sfondo intestazione tabella */
+  --card-bg: #10233f;              /* Sfondo card */
+  
+  /* Colori modalità */
+  --mode-active-bg: #2a4a7a;       /* Sfondo modalità attiva */
+  
+  /* Colori marker - MODIFICA QUI */
+  --marker-bicipiti: #4CAF50;      /* Verde - Bicipiti */
+  --marker-tricipiti: #f44336;     /* Rosso - Tricipiti */
+  --marker-addominali: #fa8405;    /* Arancione - Addominali */
+  --marker-gambe: #8f0663;         /* Viola - Gambe */
+  --marker-dorso: #cccccc;         /* Grigio - Dorso */
+  --marker-spalle: #FFEB3B;        /* Giallo - Spalle */
+  
+  /* Dimensioni marker */
+  --marker-height: 8px;            /* Altezza marker (prima 4px) */
+  
+  /* Colori toggle */
+  --toggle-on: #4CAF50;            /* Verde toggle ON */
+  --toggle-off: #666;              /* Grigio toggle OFF */
+  
+  /* Colori etichette */
+  --jammer-color: #FFD700;         /* Oro - etichetta Jammer */
+  --side-color: #87CEEB;           /* Azzurro - etichette DX/SX */
 }
 
+/* ============================================
+   STILI BASE
+   ============================================ */
 body{
   margin:0;
   background: var(--bg-dark);
@@ -56,7 +83,7 @@ header{
   white-space: nowrap;
 }
 
-/* Contenitore dinamico per la toolbar */
+/* Contenitore dinamico per la toolbar (appare quando serve) */
 .toolbar-container {
   flex: 1;
   min-width: 0;
@@ -134,7 +161,7 @@ header{
 }
 
 .mode-option.active {
-  background: #2a4a7a;
+  background: var(--mode-active-bg);
   color: white;
   font-weight: bold;
 }
@@ -193,12 +220,15 @@ h2[contenteditable="true"]:hover {
 }
 
 h2[contenteditable="true"]:focus {
-  outline: 2px solid #2a4a7a;
+  outline: 2px solid var(--mode-active-bg);
   background: rgba(255,255,255,0.1);
   border-radius: 4px;
   padding: 5px 10px;
 }
 
+/* ============================================
+   DROPDOWN
+   ============================================ */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -227,6 +257,9 @@ h2[contenteditable="true"]:focus {
   filter: brightness(1.2);
 }
 
+/* ============================================
+   TOGGLE E CHECKBOX
+   ============================================ */
 .toggle-container {
   display: flex;
   align-items: center;
@@ -243,12 +276,12 @@ h2[contenteditable="true"]:focus {
 }
 
 .toggle-btn.on {
-  background: #4CAF50;
+  background: var(--toggle-on);
   color: white;
 }
 
 .toggle-btn.off {
-  background: #666;
+  background: var(--toggle-off);
   color: white;
 }
 
@@ -271,6 +304,9 @@ h2[contenteditable="true"]:focus {
   cursor: not-allowed;
 }
 
+/* ============================================
+   ETICHETTE JAMMER / DX / SX
+   ============================================ */
 .labels-container {
   display: flex;
   align-items: center;
@@ -284,11 +320,11 @@ h2[contenteditable="true"]:focus {
 }
 
 .jammer-label {
-  color: #FFD700;
+  color: var(--jammer-color);
 }
 
 .side-label {
-  color: #87CEEB;
+  color: var(--side-color);
 }
 
 .home {
@@ -296,6 +332,9 @@ h2[contenteditable="true"]:focus {
   padding: 20px;
 }
 
+/* ============================================
+   TABELLA
+   ============================================ */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -317,7 +356,7 @@ th {
   letter-spacing: 0.5px;
 }
 
-/* ALLINEAMENTI */
+/* ALLINEAMENTI COLONNE */
 .col-esercizio,
 th.col-esercizio,
 td.col-esercizio {
@@ -409,23 +448,27 @@ input:disabled {
   cursor: default;
 }
 
-/* MARKER - sempre 6px */
+/* ============================================
+   MARKER - altezza modificabile in :root (--marker-height)
+   ============================================ */
 .marker {
-  height: 6px;
+  height: var(--marker-height);
   padding: 0;
   line-height: 0;
   font-size: 0;
 }
 
 .marker td {
-  height: 6px;
+  height: var(--marker-height);
   padding: 0;
   border: none;
   line-height: 0;
   font-size: 0;
 }
 
-/* SPACER */
+/* ============================================
+   SPACER
+   ============================================ */
 .spacer {
   height: 15px;
   padding: 0;
@@ -438,7 +481,9 @@ input:disabled {
   border: none;
 }
 
-/* AZIONI (frecce e X) - senza contorno, senza influire sull'altezza */
+/* ============================================
+   AZIONI (frecce e X) - senza contorno
+   ============================================ */
 .actions {
   display: flex;
   justify-content: center;
@@ -468,20 +513,9 @@ input:disabled {
   opacity: 1;
 }
 
-/* Celle senza azioni: stessa altezza delle celle con azioni */
-td:not(.actions) {
-  /* nessuna modifica */
-}
-
-/* Forza tutte le righe alla stessa altezza */
-tr {
-  height: auto;
-}
-
-tr td {
-  height: auto;
-}
-
+/* ============================================
+   CARD (elenco schede)
+   ============================================ */
 .card {
   background: var(--card-bg);
   color: var(--text-light);
@@ -496,7 +530,9 @@ tr td {
   margin-bottom: 8px;
 }
 
-/* LARGHEZZE COLONNE */
+/* ============================================
+   LARGHEZZE COLONNE
+   ============================================ */
 th:nth-child(1), td:nth-child(1) { width: 300px; }
 th:nth-child(2), td:nth-child(2) { width: 50px; }
 th:nth-child(3), td:nth-child(3) { width: 80px; }
@@ -510,13 +546,14 @@ table {
   table-layout: fixed;
 }
 
-/* ============================================ */
-/* VERSIONE MOBILE - Nasconde desktop e mostra mobile */
-/* ============================================ */
+/* ============================================
+   VERSIONE MOBILE
+   ============================================ */
 .mobile-header {
   display: none;
 }
 
+/* Pulsanti menu mobile */
 .hamburger-btn,
 .mode-btn,
 .insert-btn {
@@ -542,6 +579,7 @@ table {
   font-size: 18px;
 }
 
+/* Dropdown mobile */
 .mobile-dropdown {
   position: absolute;
   top: 100%;
@@ -569,6 +607,7 @@ table {
   background: var(--bg-button-hover);
 }
 
+/* Titoli sezioni nel menu mobile */
 .mobile-section-title {
   color: #8899bb !important;
   font-size: 11px !important;
@@ -583,6 +622,7 @@ table {
   background: transparent !important;
 }
 
+/* Divisore nel menu mobile */
 .mobile-section-divider {
   height: 1px;
   background: var(--border-color);
@@ -601,15 +641,17 @@ table {
   right: 0;
 }
 
-/* Stili per i pulsanti modalità nel menu mobile */
+/* Modalità attiva nel menu mobile */
 #mobile-mode-read.active-mobile,
 #mobile-mode-edit.active-mobile,
 #mobile-mode-train.active-mobile {
-  background: #2a4a7a;
+  background: var(--mode-active-bg);
   font-weight: bold;
 }
 
-/* Media query per schermi piccoli (smartphone) */
+/* ============================================
+   MEDIA QUERY - SMARTPHONE (max 900px)
+   ============================================ */
 @media (max-width: 900px) {
   .desktop-header {
     display: none !important;
@@ -687,23 +729,16 @@ table {
     font-size: 18px;
   }
   
-  /* Marker mobile: più sottili del 10% = 3.6px */
+  /* Marker mobile: 10% più sottili di --marker-height */
   .marker {
-    height: 6px;
+    height: calc(var(--marker-height) * 0.9);
   }
   
   .marker td {
-    height: 6px;
+    height: calc(var(--marker-height) * 0.9);
   }
   
-  /* Menu mobile: scelte marker più sottili del 10% (padding ridotto) */
-  .mobile-insert-dropdown .mobile-section-title:first-of-type + div,
-  .mobile-insert-dropdown div[style*="background"] {
-    padding: 7px 12px !important;
-    font-size: 12.6px !important;
-  }
-  
-  /* Target specifico: i 6 div marker nel menu insert su mobile */
+  /* Marker nel menu ✚ più sottili del 10% */
   #mobileInsertMenu div[style*="background"] {
     padding: 7px 12px !important;
     font-size: 12.6px !important;

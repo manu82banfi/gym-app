@@ -231,13 +231,15 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   const showActions = isEditMode;
 
   if (b.type === "marker") {
+    // Il marker usa il colore salvato (b.color) o il colore di default per bicipiti
+    // I colori sono definiti in style.css nelle variabili --marker-*
     return `<tr>
-      <td colspan="7" class="marker" style="background:${b.color || '#4CAF50'}; height:4px; padding:0; border:none; line-height:0; font-size:0;"></td>
-      ${showActions ? `<td class="actions" style="padding:0; border:none; height:6px; line-height:0;">
+      <td colspan="7" class="marker" style="background:${b.color || 'var(--marker-bicipiti)'}; height:var(--marker-height); padding:0; border:none; line-height:0; font-size:0;"></td>
+      ${showActions ? `<td class="actions" style="padding:0; border:none; height:var(--marker-height); line-height:0;">
         <span onclick="moveUp(${i})" style="font-size:10px;">↑</span>
         <span onclick="moveDown(${i})" style="font-size:10px;">↓</span>
         <span onclick="del(${i})" style="font-size:10px;">✕</span>
-       </td>` : `<td style="padding:0; border:none; height:4px;"></td>`}
+       </td>` : `<td style="padding:0; border:none; height:var(--marker-height);"></td>`}
     </tr>`;
   }
 
