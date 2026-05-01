@@ -689,11 +689,11 @@ table {
   
   /* Marker mobile: più sottili del 10% = 3.6px */
   .marker {
-    height: 3.6px;
+    height: 13.6px;
   }
   
   .marker td {
-    height: 3.6px;
+    height: 13.6px;
   }
   
   /* Menu mobile: scelte marker più sottili del 10% (padding ridotto) */
