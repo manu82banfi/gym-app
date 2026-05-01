@@ -233,7 +233,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   if (b.type === "marker") {
     return `<tr>
       <td colspan="7" class="marker" style="background:${b.color || '#4CAF50'}; height:4px; padding:0; border:none; line-height:0; font-size:0;"></td>
-      ${showActions ? `<td class="actions" style="padding:0; border:none; height:4px; line-height:0;">
+      ${showActions ? `<td class="actions" style="padding:0; border:none; height:6px; line-height:0;">
         <span onclick="moveUp(${i})" style="font-size:10px;">↑</span>
         <span onclick="moveDown(${i})" style="font-size:10px;">↓</span>
         <span onclick="del(${i})" style="font-size:10px;">✕</span>
