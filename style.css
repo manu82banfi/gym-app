@@ -409,16 +409,16 @@ input:disabled {
   cursor: default;
 }
 
-/* MARKER - sempre 4px */
+/* MARKER - sempre 6px */
 .marker {
-  height: 4px;
+  height: 6px;
   padding: 0;
   line-height: 0;
   font-size: 0;
 }
 
 .marker td {
-  height: 4px;
+  height: 6px;
   padding: 0;
   border: none;
   line-height: 0;
@@ -689,11 +689,11 @@ table {
   
   /* Marker mobile: più sottili del 10% = 3.6px */
   .marker {
-    height: 13.6px;
+    height: 6px;
   }
   
   .marker td {
-    height: 13.6px;
+    height: 6px;
   }
   
   /* Menu mobile: scelte marker più sottili del 10% (padding ridotto) */
