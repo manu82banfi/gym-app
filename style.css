@@ -569,6 +569,35 @@ table {
   background: #2a4a7a;
   font-weight: bold;
 }
+/* Rimuovi bordi dalle celle actions vuote */
+td.actions:empty {
+  border: none !important;
+}
+
+/* Stile icone azioni - senza contorno e più compatte */
+.actions span {
+  cursor: pointer;
+  opacity: 0.8;
+  display: inline-block;
+  padding: 0 2px;
+  line-height: 1;
+  font-size: 13px;
+}
+
+.actions span:hover {
+  opacity: 1;
+}
+
+/* Righe tabella - altezza fissa uniforme */
+table tbody tr {
+  height: 28px;
+}
+
+/* Cella azioni senza padding extra */
+td.actions {
+  padding: 0 2px !important;
+  line-height: 1;
+}
 
 /* Media query per schermi piccoli (smartphone) */
 @media (max-width: 900px) {
