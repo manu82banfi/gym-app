@@ -409,9 +409,10 @@ input:disabled {
   cursor: default;
 }
 
-.row-hover:hover {
+/* Rimosso hover dalle righe */
+/* .row-hover:hover {
   background: #d6e4ff;
-}
+} */
 
 .marker {
   height: 4px;
@@ -478,6 +479,7 @@ table {
 }
 
 .hamburger-btn,
+.mode-btn,
 .insert-btn {
   width: 44px;
   height: 44px;
@@ -494,10 +496,11 @@ table {
 }
 
 .insert-btn {
-  width: auto;
-  padding: 0 12px;
-  font-size: 14px;
-  gap: 5px;
+  font-size: 20px;
+}
+
+.mode-btn {
+  font-size: 18px;
 }
 
 .mobile-dropdown {
@@ -505,7 +508,7 @@ table {
   top: 100%;
   left: 0;
   background: var(--bg-header);
-  min-width: 200px;
+  min-width: 180px;
   max-height: 70vh;
   overflow-y: auto;
   box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
@@ -553,6 +556,12 @@ table {
   background: var(--border-color) !important;
 }
 
+/* Dropdown insert va verso sinistra (aperto da destra) */
+.mobile-insert-dropdown {
+  left: auto;
+  right: 0;
+}
+
 /* Stili per i pulsanti modalità nel menu mobile */
 #mobile-mode-read.active-mobile,
 #mobile-mode-edit.active-mobile,
@@ -572,10 +581,14 @@ table {
     justify-content: space-between;
     align-items: flex-start;
     width: 100%;
-    gap: 10px;
+    gap: 0;
   }
   
   .mobile-menu {
+    position: relative;
+  }
+  
+  .mobile-mode-menu {
     position: relative;
   }
   
@@ -583,9 +596,10 @@ table {
     position: relative;
   }
   
-  .mobile-insert .mobile-dropdown {
-    left: auto;
-    right: 0;
+  /* Allineamento centrato per il pulsante modalità */
+  .mobile-mode-menu .mobile-dropdown {
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .topbar {

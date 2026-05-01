@@ -108,7 +108,6 @@ function updateModeUI() {
 }
 
 function updateMobileModeUI() {
-  // Aggiorna menu mobile
   ['read', 'edit', 'train'].forEach(m => {
     const el = document.getElementById(`mobile-mode-${m}`);
     if (el) {
@@ -266,7 +265,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
     const numRows = b.rows || 1;
 
     for (let r = 0; r < numRows; r++) {
-      rows += `<tr class="row-hover">`;
+      rows += `<tr>`;
 
       if (r === 0) {
         rows += `<td rowspan="${numRows}" class="col-esercizio">
@@ -768,14 +767,19 @@ function saveLocal() {
 }
 
 // ============================================
-// FUNZIONI MOBILE - MENU HAMBURGER E INSERT
+// FUNZIONI MOBILE - 3 MENU SEPARATI
 // ============================================
 
+// --- MENU AZIONI (☰ a sinistra) ---
 function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
+  const modeMenu = document.getElementById('mobileModeMenu');
   const insertMenu = document.getElementById('mobileInsertMenu');
   
-  // Chiudi l'altro menu se aperto
+  // Chiudi gli altri menu se aperti
+  if (modeMenu && !modeMenu.classList.contains('hidden')) {
+    modeMenu.classList.add('hidden');
+  }
   if (insertMenu && !insertMenu.classList.contains('hidden')) {
     insertMenu.classList.add('hidden');
   }
@@ -784,7 +788,6 @@ function toggleMobileMenu() {
     menu.classList.toggle('hidden');
     
     if (!menu.classList.contains('hidden')) {
-      updateMobileModeUI();
       setTimeout(() => {
         document.addEventListener('click', function closeMobileMenuHandler(e) {
           if (!e.target.closest('.mobile-menu')) {
@@ -804,15 +807,58 @@ function closeMobileMenu() {
   }
 }
 
+// --- MENU MODALITÀ (◉ al centro) ---
+function toggleMobileModeMenu() {
+  const menu = document.getElementById('mobileModeMenu');
+  const actionMenu = document.getElementById('mobileMenu');
+  const insertMenu = document.getElementById('mobileInsertMenu');
+  
+  // Chiudi gli altri menu se aperti
+  if (actionMenu && !actionMenu.classList.contains('hidden')) {
+    actionMenu.classList.add('hidden');
+  }
+  if (insertMenu && !insertMenu.classList.contains('hidden')) {
+    insertMenu.classList.add('hidden');
+  }
+  
+  if (menu) {
+    menu.classList.toggle('hidden');
+    updateMobileModeUI();
+    
+    if (!menu.classList.contains('hidden')) {
+      setTimeout(() => {
+        document.addEventListener('click', function closeModeMenuHandler(e) {
+          if (!e.target.closest('.mobile-mode-menu')) {
+            menu.classList.add('hidden');
+            document.removeEventListener('click', closeModeMenuHandler);
+          }
+        });
+      }, 100);
+    }
+  }
+}
+
+function closeMobileModeMenu() {
+  const menu = document.getElementById('mobileModeMenu');
+  if (menu) {
+    menu.classList.add('hidden');
+  }
+}
+
+// --- MENU INSERISCI (✚ a destra) ---
 function toggleMobileInsert() {
   if (currentMode !== 'edit') return;
   
   const menu = document.getElementById('mobileInsertMenu');
-  const mobileMenu = document.getElementById('mobileMenu');
+  const actionMenu = document.getElementById('mobileMenu');
+  const modeMenu = document.getElementById('mobileModeMenu');
   
-  // Chiudi l'altro menu se aperto
-  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-    mobileMenu.classList.add('hidden');
+  // Chiudi gli altri menu se aperti
+  if (actionMenu && !actionMenu.classList.contains('hidden')) {
+    actionMenu.classList.add('hidden');
+  }
+  if (modeMenu && !modeMenu.classList.contains('hidden')) {
+    modeMenu.classList.add('hidden');
   }
   
   if (menu) {
@@ -842,26 +888,22 @@ function closeMobileInsert() {
 function updateMobileInsertMenu() {
   const s = getS();
   
-  // Aggiorna testo Jammer
   const jammerText = document.getElementById('mobile-jammer-text');
   if (jammerText && s) {
     jammerText.textContent = s.showJammer ? '🔧 Jammer: Sì' : '🔧 Jammer: No';
   }
   
-  // Aggiorna testo DX
   const dxText = document.getElementById('mobile-dx-text');
   if (dxText && s) {
     dxText.textContent = s.showDX ? '☑ DX' : '☐ DX';
   }
   
-  // Aggiorna testo SX
   const sxText = document.getElementById('mobile-sx-text');
   if (sxText && s) {
     sxText.textContent = s.showSX ? '☑ SX' : '☐ SX';
   }
 }
 
-// Funzioni DX/SX per mobile
 function toggleDX() {
   if (currentMode !== 'edit') return;
   const s = getS();

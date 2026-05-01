@@ -84,33 +84,33 @@
       </div>
     </div>
 
-    <!-- Versione MOBILE: tutto dentro menu hamburger -->
+    <!-- Versione MOBILE: 3 menu separati -->
     <div class="mobile-header">
-      <!-- Menu Hamburger con TUTTI i pulsanti -->
+      <!-- Menu Azioni a sinistra (hamburger ☰) -->
       <div class="dropdown mobile-menu">
         <button onclick="toggleMobileMenu()" class="hamburger-btn">☰</button>
         <div id="mobileMenu" class="dropdown-content mobile-dropdown hidden">
-          <!-- Sezione pulsanti principali -->
-          <div class="mobile-section-title">AZIONI</div>
           <div onclick="nuovaScheda(); closeMobileMenu()">➕ Nuova scheda</div>
           <div onclick="elencoSchede(); closeMobileMenu()">📋 Elenco schede</div>
           <div onclick="salvaCloud(); closeMobileMenu()">☁️ Salva in Cloud</div>
           <div onclick="exportPDF(); closeMobileMenu()">📄 Esporta PDF</div>
-          
-          <div class="mobile-section-divider"></div>
-          
-          <!-- Sezione modalità -->
-          <div class="mobile-section-title">MODALITÀ</div>
-          <div onclick="setMode('read'); closeMobileMenu()" id="mobile-mode-read">👁 Lettura</div>
-          <div onclick="setMode('edit'); closeMobileMenu()" id="mobile-mode-edit">✏️ Modifica</div>
-          <div onclick="setMode('train'); closeMobileMenu()" id="mobile-mode-train">💪 Allenamento</div>
         </div>
       </div>
 
-      <!-- Menu Inserisci per mobile (visibile solo con scheda attiva) -->
+      <!-- Menu Modalità al centro (icona ○) -->
+      <div class="dropdown mobile-mode-menu">
+        <button onclick="toggleMobileModeMenu()" class="mode-btn">◉</button>
+        <div id="mobileModeMenu" class="dropdown-content mobile-dropdown hidden">
+          <div onclick="setMode('read'); closeMobileModeMenu()" id="mobile-mode-read">👁 Lettura</div>
+          <div onclick="setMode('edit'); closeMobileModeMenu()" id="mobile-mode-edit">✏️ Modifica</div>
+          <div onclick="setMode('train'); closeMobileModeMenu()" id="mobile-mode-train">💪 Allenamento</div>
+        </div>
+      </div>
+
+      <!-- Menu Inserisci a destra (appare solo con scheda attiva) -->
       <div id="mobileInsertContainer" class="dropdown mobile-insert hidden">
-        <button onclick="toggleMobileInsert()" class="insert-btn">✚ Inserisci</button>
-        <div id="mobileInsertMenu" class="dropdown-content mobile-dropdown hidden">
+        <button onclick="toggleMobileInsert()" class="insert-btn">✚</button>
+        <div id="mobileInsertMenu" class="dropdown-content mobile-dropdown mobile-insert-dropdown hidden">
           <!-- Marker -->
           <div class="mobile-section-title">MARKER</div>
           <div onclick="addMarkerFromDropdown('green', 'Bicipiti'); closeMobileInsert()" style="background:#4CAF50; color:white">Bicipiti</div>
