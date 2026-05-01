@@ -600,10 +600,13 @@ td.actions {
 }
 
 /* Media query per schermi piccoli (smartphone) */
-@media (max-width: 900px) {
-  .desktop-header {
-    display: none !important;
-  }
+@media (max-width: 900px)
+/* Marker nel menu mobile più sottili del 10% */
+.mobile-insert-dropdown .mobile-section-title + div,
+.mobile-insert-dropdown div[style*="background"] {
+  font-size: 12.6px !important;
+  padding: 7px 14px !important;
+}
   
   .mobile-header {
     display: flex;
