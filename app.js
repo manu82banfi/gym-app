@@ -230,25 +230,25 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   const canEdit = isEditMode || isTrainMode;
   const showActions = isEditMode;
 
-if (b.type === "marker") {
+  if (b.type === "marker") {
     return `<tr>
       <td colspan="7" class="marker" style="background:${b.color || '#4CAF50'}"></td>
       ${showActions ? `<td class="actions">
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-       </td>` : '<td class="actions" style="border:none"></td>'}
+       </td>` : '<td></td>'}
     </tr>`;
   }
 
-if (b.type === "spacer") {
+  if (b.type === "spacer") {
     return `<tr>
       <td colspan="7" class="spacer"></td>
       ${showActions ? `<td class="actions">
         <span onclick="moveUp(${i})">↑</span>
         <span onclick="moveDown(${i})">↓</span>
         <span onclick="del(${i})">✕</span>
-       </td>` : '<td class="actions" style="border:none"></td>'}
+       </td>` : '<td></td>'}
     </tr>`;
   }
 
