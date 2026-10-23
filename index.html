@@ -31,7 +31,7 @@
             <div class="dropdown">
               <button onclick="toggleMarkerDropdown()" class="dropbtn">Marker ▼</button>
               <div id="markerDropdown" class="dropdown-content hidden">
-                <div onclick="addMarkerFromDropdown('blu', 'Petto')" style="background:#2582e6">Petto</div>                
+                <div onclick="addMarkerFromDropdown('#2582e6', 'Petto')" style="background:#2582e6">Petto</div>                
                 <div onclick="addMarkerFromDropdown('green', 'Bicipiti')" style="background:#4CAF50">Bicipiti</div>
                 <div onclick="addMarkerFromDropdown('red', 'Tricipiti')" style="background:#f44336">Tricipiti</div>
                 <div onclick="addMarkerFromDropdown('#fa8405', 'Addominali')" style="background:#fb9121">Addominali</div>
@@ -114,6 +114,7 @@
         <div id="mobileInsertMenu" class="dropdown-content mobile-dropdown mobile-insert-dropdown hidden">
           <!-- Marker -->
           <div class="mobile-section-title">MARKER</div>
+          <div onclick="addMarkerFromDropdown('#2582e6', 'Petto'); closeMobileInsert()" style="background:#2582e6; color:white">Petto</div>
           <div onclick="addMarkerFromDropdown('green', 'Bicipiti'); closeMobileInsert()" style="background:#4CAF50; color:white">Bicipiti</div>
           <div onclick="addMarkerFromDropdown('red', 'Tricipiti'); closeMobileInsert()" style="background:#f44336; color:white">Tricipiti</div>
           <div onclick="addMarkerFromDropdown('#fa8405', 'Addominali'); closeMobileInsert()" style="background:#fa8405; color:white">Addominali</div>
