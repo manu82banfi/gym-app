@@ -24,7 +24,7 @@
   --marker-spalle: #FFEB3B;        /* Giallo - Spalle */
   
   /* Dimensioni marker */
-  --marker-height: 8px;            /* Altezza marker */
+  --marker-height: 8px;            /* Altezza marker (prima 4px) */
   
   /* Colori toggle */
   --toggle-on: #4CAF50;            /* Verde toggle ON */
