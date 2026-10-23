@@ -16,6 +16,7 @@
   --mode-active-bg: #2a4a7a;       /* Sfondo modalità attiva */
   
   /* Colori marker - MODIFICA QUI */
+  --marker-petto: #2582e6;         /* Blu - Petto */
   --marker-bicipiti: #4CAF50;      /* Verde - Bicipiti */
   --marker-tricipiti: #f44336;     /* Rosso - Tricipiti */
   --marker-addominali: #fa8405;    /* Arancione - Addominali */

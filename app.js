@@ -3,8 +3,45 @@ let schede = [];
 let attiva = null;
 let currentMode = 'edit';
 
+// ============================================
+// CONFIGURAZIONE MARKER (unico punto di verità)
+// Aggiungi/rimuovi/modifica qui: i menu desktop e mobile si aggiornano da soli.
+// ============================================
+const MARKERS = [
+  { color: '#2582e6', nome: 'Petto',       textColor: 'white' },
+  { color: '#4CAF50', nome: 'Bicipiti',    textColor: 'white' },
+  { color: '#f44336', nome: 'Tricipiti',   textColor: 'white' },
+  { color: '#fa8405', nome: 'Addominali',  textColor: 'white' },
+  { color: '#8f0663', nome: 'Gambe',       textColor: 'white' },
+  { color: '#cccccc', nome: 'Dorso',       textColor: 'black' },
+  { color: '#FFEB3B', nome: 'Spalle',      textColor: 'black' }
+];
+
+// Genera le voci del dropdown marker desktop
+function renderMarkerDropdown() {
+  const box = document.getElementById('markerDropdown');
+  if (!box) return;
+  box.innerHTML = MARKERS.map(m => `
+    <div onclick="addMarkerFromDropdown('${m.color}', '${m.nome}')"
+         style="background:${m.color}; color:${m.textColor}">${m.nome}</div>
+  `).join('');
+}
+
+// Genera le voci del menu marker mobile
+function renderMobileMarkerItems() {
+  const box = document.getElementById('mobileMarkerItems');
+  if (!box) return;
+  box.innerHTML = MARKERS.map(m => `
+    <div onclick="addMarkerFromDropdown('${m.color}', '${m.nome}'); closeMobileInsert()"
+         style="background:${m.color}; color:${m.textColor}">${m.nome}</div>
+  `).join('');
+}
+
 // INIT
 async function init() {
+  renderMarkerDropdown();
+  renderMobileMarkerItems();
+
   const cloud = await caricaCloud();
 
   if (cloud && cloud.length) {
@@ -231,8 +268,6 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
   const showActions = isEditMode;
 
   if (b.type === "marker") {
-    // Il marker usa il colore salvato (b.color) o il colore di default per bicipiti
-    // I colori sono definiti in style.css nelle variabili --marker-*
     return `<tr>
       <td colspan="7" class="marker" style="background:${b.color || 'var(--marker-bicipiti)'}; height:var(--marker-height); padding:0; border:none; line-height:0; font-size:0;"></td>
       ${showActions ? `<td class="actions" style="padding:0; border:none; height:var(--marker-height); line-height:0;">
