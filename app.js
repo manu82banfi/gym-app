@@ -69,11 +69,49 @@ async function init() {
   updateMobileModeUI();
 }
 
-// HOME
+// ============================================
+// HOME / MASCHERA INIZIALE
+// ============================================
 function renderHome() {
   toolbar(false);
   mobileInsertToolbar(false);
-  app.innerHTML = "<div class='home'>Seleziona o crea una scheda</div>";
+
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="home-screen">
+      <button class="home-tile" onclick="vaiAllenamento()">
+        <img src="img/allenamento.png" alt="Allenamento"
+             onerror="this.style.display='none'; this.parentElement.classList.add('no-img')">
+        <span class="home-tile-label">Allenamento</span>
+      </button>
+      <button class="home-tile" onclick="vaiCreaScheda()">
+        <img src="img/crea-scheda.png" alt="Crea scheda"
+             onerror="this.style.display='none'; this.parentElement.classList.add('no-img')">
+        <span class="home-tile-label">Crea scheda</span>
+      </button>
+    </div>
+  `;
+}
+
+// Pulsante "Allenamento": vai all'elenco schede in modalità Allenamento
+function vaiAllenamento() {
+  setMode('train');
+  elencoSchede();
+}
+
+// Pulsante "Crea scheda": crea e apre una nuova scheda in modalità Modifica
+function vaiCreaScheda() {
+  setMode('edit');
+  nuovaScheda();
+}
+
+// Torna alla maschera iniziale
+function tornaHome() {
+  attiva = null;
+  setMode('edit');
+  renderHome();
+  updateModeUI();
+  updateMobileModeUI();
 }
 
 // TOOLBAR VISIBILITÀ - DESKTOP
@@ -101,20 +139,22 @@ function mobileInsertToolbar(show) {
   updateMobileInsertMenu();
 }
 
+// ============================================
 // GESTIONE MODALITÀ
+// ============================================
 function setMode(mode) {
   currentMode = mode;
   updateModeUI();
   updateMobileModeUI();
-  
+
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
-  
+
   if (checkDX && checkSX) {
     checkDX.disabled = (currentMode === 'train' || currentMode === 'read');
     checkSX.disabled = (currentMode === 'train' || currentMode === 'read');
   }
-  
+
   if (attiva !== null) {
     renderScheda();
   }
@@ -126,9 +166,9 @@ function updateModeUI() {
   });
   const modeEl = document.getElementById(`mode-${currentMode}`);
   if (modeEl) modeEl.classList.add('active');
-  
+
   const buttons = document.querySelectorAll('.main-buttons button:not(.mode-option)');
-  
+
   if (currentMode === 'read') {
     buttons.forEach(btn => {
       const text = btn.textContent;
@@ -162,7 +202,7 @@ function toggleExerciseDropdown() {
   if (currentMode !== 'edit') return;
   const dropdown = document.getElementById('exerciseDropdown');
   dropdown.classList.toggle('hidden');
-  
+
   if (!dropdown.classList.contains('hidden')) {
     setTimeout(() => {
       document.addEventListener('click', function closeDropdown(e) {
@@ -178,7 +218,7 @@ function toggleExerciseDropdown() {
 // NUOVA SCHEDA
 function nuovaScheda() {
   if (currentMode !== 'edit') return;
-  
+
   const s = {
     id: Date.now(),
     nome: "NUOVA SCHEDA",
@@ -198,36 +238,38 @@ function getS() {
   return schede.find(s => s.id === attiva);
 }
 
+// ============================================
 // RENDER SCHEDA COMPLETA
+// ============================================
 function renderScheda() {
   toolbar(true);
   mobileInsertToolbar(true);
   const s = getS();
-  
+
   if (!s) {
     renderHome();
     return;
   }
-  
+
   if (s.showJammer === undefined) s.showJammer = false;
   if (s.showDX === undefined) s.showDX = false;
   if (s.showSX === undefined) s.showSX = false;
-  
+
   const isEditMode = currentMode === 'edit';
   const isTrainMode = currentMode === 'train';
   const canEdit = isEditMode || isTrainMode;
 
   let labelsHtml = '<div class="labels-container">';
-  
+
   if (s.showJammer) {
     labelsHtml += `<span class="jammer-label">✅ Jammer Attivo</span>`;
   } else {
     labelsHtml += `<span class="jammer-label">❌ Jammer Non Attivo</span>`;
   }
-  
+
   if (s.showDX) labelsHtml += '<span class="side-label">✔️ DX</span>';
   if (s.showSX) labelsHtml += '<span class="side-label">✔️ SX</span>';
-  
+
   labelsHtml += '</div>';
 
   let html = `
@@ -291,7 +333,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
 
   if (b.type === "exercise") {
     let rows = "";
-    
+
     const nome = b.nome || '';
     const rep = b.rep || '';
     const rec = b.rec || '';
@@ -394,7 +436,7 @@ function updateField(i, field, value) {
   if (currentMode === 'read') return;
   const s = getS();
   if (!s || !s.blocchi[i]) return;
-  
+
   s.blocchi[i][field] = value;
   saveLocal();
 }
@@ -403,11 +445,11 @@ function updateArrayField(i, field, row, value) {
   if (currentMode === 'read') return;
   const s = getS();
   if (!s || !s.blocchi[i]) return;
-  
+
   if (!s.blocchi[i][field]) {
     s.blocchi[i][field] = [];
   }
-  
+
   s.blocchi[i][field][row] = value;
   saveLocal();
 }
@@ -417,21 +459,21 @@ function serieKey(e, i, r) {
     e.preventDefault();
     const s = getS();
     if (!s) return;
-    
+
     const blocco = s.blocchi[i];
     if (!blocco) return;
-    
+
     if (!blocco.serie) blocco.serie = [];
     if (!blocco.kg) blocco.kg = [];
     if (!blocco.prog) blocco.prog = [];
     if (!blocco.note) blocco.note = [];
-    
+
     blocco.serie.push("");
     blocco.kg.push("");
     blocco.prog.push("");
     blocco.note.push("");
     blocco.rows = blocco.serie.length;
-    
+
     saveLocal();
     renderScheda();
   }
@@ -439,10 +481,10 @@ function serieKey(e, i, r) {
 
 function addExercise(n) {
   if (currentMode !== 'edit') return;
-  
+
   const s = getS();
   if (!s) return;
-  
+
   const nuovo = {
     type: "exercise",
     rows: n,
@@ -454,11 +496,11 @@ function addExercise(n) {
     prog: Array(n).fill(""),
     note: Array(n).fill("")
   };
-  
+
   s.blocchi.push(nuovo);
   saveLocal();
   renderScheda();
-  
+
   const dropdown = document.getElementById('exerciseDropdown');
   if (dropdown) dropdown.classList.add('hidden');
 }
@@ -467,7 +509,7 @@ function toggleMarkerDropdown() {
   if (currentMode !== 'edit') return;
   const dropdown = document.getElementById('markerDropdown');
   dropdown.classList.toggle('hidden');
-  
+
   if (!dropdown.classList.contains('hidden')) {
     setTimeout(() => {
       document.addEventListener('click', function closeDropdown(e) {
@@ -482,40 +524,42 @@ function toggleMarkerDropdown() {
 
 function addMarkerFromDropdown(color, muscolo) {
   if (currentMode !== 'edit') return;
-  
+
   const s = getS();
   if (!s) return;
-  
+
   s.blocchi.push({
     type: "marker",
     color: color,
     muscolo: muscolo
   });
-  
+
   const markerDropdown = document.getElementById('markerDropdown');
   if (markerDropdown) markerDropdown.classList.add('hidden');
-  
+
   saveLocal();
   renderScheda();
 }
 
 function addSpacer() {
   if (currentMode !== 'edit') return;
-  
+
   const s = getS();
   if (!s) return;
-  
+
   s.blocchi.push({type: "spacer"});
   saveLocal();
   renderScheda();
 }
 
+// ============================================
 // TOGGLE JAMMER
+// ============================================
 function toggleJammer() {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   s.showJammer = !s.showJammer;
   updateJammerButton();
   saveLocal();
@@ -536,10 +580,10 @@ function updateSideLabels() {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
-  
+
   if (checkDX.checked) {
     checkSX.checked = false;
     s.showDX = true;
@@ -552,7 +596,7 @@ function updateSideLabels() {
     s.showDX = false;
     s.showSX = false;
   }
-  
+
   saveLocal();
   if (attiva) renderScheda();
 }
@@ -561,7 +605,7 @@ function updateCheckboxState() {
   const s = getS();
   const checkDX = document.getElementById('checkDX');
   const checkSX = document.getElementById('checkSX');
-  
+
   if (checkDX && checkSX && s) {
     checkDX.checked = s.showDX || false;
     checkSX.checked = s.showSX || false;
@@ -574,7 +618,7 @@ function moveUp(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   if (i === 0) return;
   [s.blocchi[i], s.blocchi[i-1]] = [s.blocchi[i-1], s.blocchi[i]];
   saveLocal();
@@ -585,7 +629,7 @@ function moveDown(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   if (i === s.blocchi.length - 1) return;
   [s.blocchi[i], s.blocchi[i+1]] = [s.blocchi[i+1], s.blocchi[i]];
   saveLocal();
@@ -596,7 +640,7 @@ function del(i) {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   s.blocchi.splice(i, 1);
   saveLocal();
   renderScheda();
@@ -611,6 +655,9 @@ function rename(v) {
   }
 }
 
+// ============================================
+// ELENCO SCHEDE
+// ============================================
 function elencoSchede() {
   toolbar(false);
   mobileInsertToolbar(false);
@@ -641,7 +688,7 @@ function copia(id) {
   if (currentMode !== 'edit') return;
   const s = schede.find(x => x.id === id);
   if (!s) return;
-  
+
   const nuova = JSON.parse(JSON.stringify(s));
   nuova.id = Date.now();
   nuova.nome = (s.nome || 'SCHEDA') + " (copia)";
@@ -659,9 +706,12 @@ function eliminaScheda(id) {
   elencoSchede();
 }
 
+// ============================================
+// SALVATAGGIO CLOUD
+// ============================================
 async function salvaCloud() {
   if (currentMode === 'read') return;
-  
+
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',
@@ -671,7 +721,7 @@ async function salvaCloud() {
       },
       body: JSON.stringify(schede)
     });
-    
+
     if (response.ok) {
       alert('✅ Salvato nel cloud!');
     } else {
@@ -682,15 +732,18 @@ async function salvaCloud() {
   }
 }
 
+// ============================================
+// EXPORT PDF
+// ============================================
 function exportPDF() {
   if (!attiva) {
     alert('Apri prima una scheda');
     return;
   }
-  
+
   const s = getS();
   if (!s) return;
-  
+
   let htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -717,7 +770,7 @@ function exportPDF() {
     <body>
       <h1>${escapeHtml(s.nome)}</h1>
   `;
-  
+
   if (s.showJammer || s.showDX || s.showSX) {
     htmlContent += '<div style="margin: 10px 0;">';
     if (s.showJammer) {
@@ -727,7 +780,7 @@ function exportPDF() {
     if (s.showSX) htmlContent += '<strong style="color: #87CEEB;">SX</strong>';
     htmlContent += '</div>';
   }
-  
+
   htmlContent += `
       <table>
         <thead>
@@ -743,7 +796,7 @@ function exportPDF() {
         </thead>
         <tbody>
   `;
-  
+
   s.blocchi.forEach(b => {
     if (b.type === 'marker') {
       htmlContent += `<tr><td colspan="7" class="marker" style="background:${b.color || '#4CAF50'}"></td></tr>`;
@@ -753,47 +806,47 @@ function exportPDF() {
       const numRows = b.rows || 1;
       const prog = b.prog || [];
       const note = b.note || [];
-      
+
       for (let r = 0; r < numRows; r++) {
         htmlContent += '<tr>';
-        
+
         if (r === 0) {
           htmlContent += `<td rowspan="${numRows}" class="col-esercizio">${escapeHtml(b.nome || '')}</td>`;
         }
-        
+
         htmlContent += `<td class="col-serie">${escapeHtml((b.serie || [])[r] || '')}</td>`;
-        
+
         if (r === 0) {
           htmlContent += `<td rowspan="${numRows}" class="col-rep">${escapeHtml(b.rep || '')}</td>`;
         }
-        
+
         htmlContent += `<td class="col-kg">${escapeHtml((b.kg || [])[r] || '')}</td>`;
-        
+
         if (r === 0) {
           htmlContent += `<td rowspan="${numRows}" class="col-rec">${escapeHtml(b.rec || '')}</td>`;
         }
-        
+
         htmlContent += `
           <td class="col-prog">${escapeHtml(prog[r] || '')}</td>
           <td class="col-note">${escapeHtml(note[r] || '')}</td>
         `;
-        
+
         htmlContent += '</tr>';
       }
     }
   });
-  
+
   htmlContent += `
         </tbody>
       </table>
     </body>
     </html>
   `;
-  
+
   const printWindow = window.open('', '_blank');
   printWindow.document.write(htmlContent);
   printWindow.document.close();
-  
+
   printWindow.onload = function() {
     printWindow.print();
   };
@@ -812,17 +865,17 @@ function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   const modeMenu = document.getElementById('mobileModeMenu');
   const insertMenu = document.getElementById('mobileInsertMenu');
-  
+
   if (modeMenu && !modeMenu.classList.contains('hidden')) {
     modeMenu.classList.add('hidden');
   }
   if (insertMenu && !insertMenu.classList.contains('hidden')) {
     insertMenu.classList.add('hidden');
   }
-  
+
   if (menu) {
     menu.classList.toggle('hidden');
-    
+
     if (!menu.classList.contains('hidden')) {
       setTimeout(() => {
         document.addEventListener('click', function closeMobileMenuHandler(e) {
@@ -848,18 +901,18 @@ function toggleMobileModeMenu() {
   const menu = document.getElementById('mobileModeMenu');
   const actionMenu = document.getElementById('mobileMenu');
   const insertMenu = document.getElementById('mobileInsertMenu');
-  
+
   if (actionMenu && !actionMenu.classList.contains('hidden')) {
     actionMenu.classList.add('hidden');
   }
   if (insertMenu && !insertMenu.classList.contains('hidden')) {
     insertMenu.classList.add('hidden');
   }
-  
+
   if (menu) {
     menu.classList.toggle('hidden');
     updateMobileModeUI();
-    
+
     if (!menu.classList.contains('hidden')) {
       setTimeout(() => {
         document.addEventListener('click', function closeModeMenuHandler(e) {
@@ -883,21 +936,21 @@ function closeMobileModeMenu() {
 // --- MENU INSERISCI (✚ a destra) ---
 function toggleMobileInsert() {
   if (currentMode !== 'edit') return;
-  
+
   const menu = document.getElementById('mobileInsertMenu');
   const actionMenu = document.getElementById('mobileMenu');
   const modeMenu = document.getElementById('mobileModeMenu');
-  
+
   if (actionMenu && !actionMenu.classList.contains('hidden')) {
     actionMenu.classList.add('hidden');
   }
   if (modeMenu && !modeMenu.classList.contains('hidden')) {
     modeMenu.classList.add('hidden');
   }
-  
+
   if (menu) {
     menu.classList.toggle('hidden');
-    
+
     if (!menu.classList.contains('hidden')) {
       updateMobileInsertMenu();
       setTimeout(() => {
@@ -921,17 +974,17 @@ function closeMobileInsert() {
 
 function updateMobileInsertMenu() {
   const s = getS();
-  
+
   const jammerText = document.getElementById('mobile-jammer-text');
   if (jammerText && s) {
     jammerText.textContent = s.showJammer ? '🔧 Jammer: Sì' : '🔧 Jammer: No';
   }
-  
+
   const dxText = document.getElementById('mobile-dx-text');
   if (dxText && s) {
     dxText.textContent = s.showDX ? '☑ DX' : '☐ DX';
   }
-  
+
   const sxText = document.getElementById('mobile-sx-text');
   if (sxText && s) {
     sxText.textContent = s.showSX ? '☑ SX' : '☐ SX';
@@ -942,7 +995,7 @@ function toggleDX() {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   s.showDX = !s.showDX;
   if (s.showDX) s.showSX = false;
   saveLocal();
@@ -953,11 +1006,12 @@ function toggleSX() {
   if (currentMode !== 'edit') return;
   const s = getS();
   if (!s) return;
-  
+
   s.showSX = !s.showSX;
   if (s.showSX) s.showDX = false;
   saveLocal();
   if (attiva) renderScheda();
 }
 
+// AVVIO
 init();

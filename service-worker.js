@@ -1,4 +1,4 @@
-const CACHE_NAME = "gym-app-cache-v3";
+const CACHE_NAME = "gym-app-cache-v4";
 
 const FILES = [
   "./",
@@ -7,7 +7,9 @@ const FILES = [
   "cloud.js",
   "style.css",
   "manifest.json",
-  "icon.png"
+  "icon.png",
+  "img/allenamento.png",
+  "img/crea-scheda.png"
 ];
 
 self.addEventListener("install", (event) => {
