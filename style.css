@@ -651,6 +651,87 @@ table {
 }
 
 /* ============================================
+   HOME / MASCHERA INIZIALE
+   Due pulsanti-immagine rettangolari, dimensioni normali
+   ============================================ */
+.home-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 900px;        /* larghezza massima della maschera */
+  margin: 0 auto;          /* centrata orizzontalmente */
+}
+
+/* Pulsante-immagine rettangolare */
+.home-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 220px;       /* ALTEZZA MASSIMA: modifica qui se vuoi più alti/bassi */
+  aspect-ratio: 2 / 1;     /* rettangolo orizzontale (2:1) */
+  padding: 0;
+  margin: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--card-bg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  font-size: 13px;         /* reset: senza questo il <button> usa font enormi */
+  color: var(--text-light);
+}
+
+.home-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--mode-active-bg);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+.home-tile:active {
+  transform: scale(0.98);
+}
+
+/* Immagine dentro il pulsante: riempie il rettangolo */
+.home-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* cover = riempie; contain = mostra tutta l'immagine */
+  display: block;
+}
+
+/* Etichetta in sovrimpressione (fondo del rettangolo) */
+.home-tile-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Fallback: se l'immagine non c'è, mostra solo il testo grande */
+.home-tile.no-img {
+  background: var(--bg-button);
+  aspect-ratio: auto;      /* niente rettangolo: solo riquadro col testo */
+  min-height: 120px;
+  max-height: none;
+}
+.home-tile.no-img .home-tile-label {
+  position: static;
+  background: transparent;
+  font-size: 28px;
+  padding: 30px 20px;
+}
+
+/* ============================================
    MEDIA QUERY - SMARTPHONE (max 900px)
    ============================================ */
 @media (max-width: 900px) {
@@ -743,5 +824,24 @@ table {
   #mobileInsertMenu div[style*="background"] {
     padding: 7px 12px !important;
     font-size: 12.6px !important;
+  }
+  /* Home mobile: rettangoli un po' più bassi */
+  .home-screen {
+    gap: 14px;
+    padding: 12px;
+    max-width: 100%;
+  }
+  .home-tile {
+    aspect-ratio: 16 / 9;   /* più orizzontale su mobile */
+    max-height: 180px;      /* ALTEZZA MASSIMA mobile: modifica qui */
+    border-radius: 12px;
+  }
+  .home-tile-label {
+    font-size: 18px;
+    padding: 10px;
+  }
+  .home-tile.no-img .home-tile-label {
+    font-size: 22px;
+    padding: 24px 16px;
   }
 }
