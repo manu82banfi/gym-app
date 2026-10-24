@@ -1,4 +1,4 @@
-const CACHE_NAME = "gym-app-cache-v4";
+const CACHE_NAME = "gym-app-cache-v6";
 
 const FILES = [
   "./",
