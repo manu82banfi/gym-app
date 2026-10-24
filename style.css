@@ -38,7 +38,7 @@
   /* ============================================
      HOME - DIMENSIONI PULSANTI (MODIFICA QUI)
      ============================================ */
-  --home-tile-height: 160px;       /* Altezza pulsante home desktop */
+  --home-tile-height: 200px;       /* Altezza pulsante home desktop */
   --home-tile-height-mobile: 90px;/* Altezza pulsante home mobile */
   --home-tile-maxwidth: 400px;     /* Larghezza massima maschera */
 }
