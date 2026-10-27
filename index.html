@@ -16,12 +16,12 @@
     <div class="desktop-header">
       <!-- Gruppo pulsanti principali a sinistra in griglia 2x2 -->
       <div class="main-buttons">
-        <button onclick="nuovaScheda()">Nuova scheda</button>
-        <button onclick="elencoSchede()">Elenco schede</button>
-        <button onclick="salvaCloud()">Salva in Cloud</button>
-        <button onclick="exportPDF()">Esporta PDF</button>
+      <button onclick="tornaHome()">🏠 Home</button>
+      <button onclick="nuovaScheda()">Nuova scheda</button>
+      <button onclick="elencoSchede()">Elenco schede</button>
+      <button onclick="salvaCloud()">Salva in Cloud</button>
+      <button onclick="exportPDF()">Esporta PDF</button>
       </div>
-      
       <!-- Contenitore dinamico per la toolbar (appare quando serve) -->
       <div id="toolbarContainer" class="toolbar-container hidden">
         <div class="toolbar-buttons">
@@ -83,13 +83,13 @@
       <div class="dropdown mobile-menu">
         <button onclick="toggleMobileMenu()" class="hamburger-btn">☰</button>
         <div id="mobileMenu" class="dropdown-content mobile-dropdown hidden">
-          <div onclick="nuovaScheda(); closeMobileMenu()">➕ Nuova scheda</div>
-          <div onclick="elencoSchede(); closeMobileMenu()">📋 Elenco schede</div>
-          <div onclick="salvaCloud(); closeMobileMenu()">☁️ Salva in Cloud</div>
-          <div onclick="exportPDF(); closeMobileMenu()">📄 Esporta PDF</div>
-        </div>
+        <div onclick="tornaHome(); closeMobileMenu()">🏠 Home</div>
+        <div onclick="nuovaScheda(); closeMobileMenu()">➕ Nuova scheda</div>
+        <div onclick="elencoSchede(); closeMobileMenu()">📋 Elenco schede</div>
+        <div onclick="salvaCloud(); closeMobileMenu()">☁️ Salva in Cloud</div>
+        <div onclick="exportPDF(); closeMobileMenu()">📄 Esporta PDF</div>
       </div>
-
+    </div>
       <!-- Menu Modalità al centro (icona ◉) -->
       <div class="dropdown mobile-mode-menu">
         <button onclick="toggleMobileModeMenu()" class="mode-btn">◉</button>
