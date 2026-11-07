@@ -1,10 +1,10 @@
 // VARIABILI GLOBALI
 let schede = [];
-let catalogo = [];
+let catalogo = [];              // Catalogo esercizi (editabile)
 let attiva = null;
 let currentMode = 'edit';
-let filtroMuscolo = 'Tutti';
-let esercizioInModifica = null;
+let filtroMuscolo = 'Tutti';    // Stato filtro pagina esercizi
+let esercizioInModifica = null; // Per il form esercizio (null = nuovo)
 
 // ============================================
 // CONFIGURAZIONE MARKER (unico punto di verità)
@@ -32,6 +32,7 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+// Sceglie colore testo (bianco o nero) in base allo sfondo esadecimale
 function getTextColorForBg(bg) {
   if (!bg || bg[0] !== '#') return '#fff';
   const c = bg.replace('#', '');
@@ -41,20 +42,6 @@ function getTextColorForBg(bg) {
   const b = parseInt(c.substr(4, 2), 16);
   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return lum > 0.6 ? '#000' : '#fff';
-}
-
-// ============================================
-// ▼▼▼ MODIFICA: gestione visibilità header ▼▼▼
-// Quando siamo sulla home, aggiungiamo body.home-active
-// che nasconde l'header via CSS.
-// Su tutte le altre pagine, rimuoviamo la classe.
-// ============================================
-function setHomeActive(active) {
-  if (active) {
-    document.body.classList.add('home-active');
-  } else {
-    document.body.classList.remove('home-active');
-  }
 }
 
 // ============================================
@@ -87,6 +74,7 @@ async function init() {
 
   const cloud = await caricaCloud();
 
+  // Riconosce formato vecchio (solo schede = array) e nuovo ({schede, catalogo})
   const cloudIsOldFormat = Array.isArray(cloud);
   const cloudHasData = cloud && (
     (cloudIsOldFormat && cloud.length > 0) ||
@@ -137,9 +125,6 @@ async function init() {
 // HOME
 // ============================================
 function renderHome() {
-  // ▼▼▼ MODIFICA: nasconde header + mostra flottante home come "spento" ▼▼▼
-  setHomeActive(true);
-
   toolbar(false);
   mobileInsertToolbar(false);
 
@@ -166,25 +151,21 @@ function renderHome() {
 }
 
 function vaiAllenamento() {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   setMode('train');
   elencoSchede();
 }
 
 function vaiCreaScheda() {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   setMode('edit');
   nuovaScheda();
 }
 
 function vaiEsercizi() {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   filtroMuscolo = 'Tutti';
   renderEsercizi();
 }
 
 function tornaHome() {
-  setHomeActive(true);    // ▼▼▼ MODIFICA ▼▼▼
   attiva = null;
   setMode('edit');
   renderHome();
@@ -242,6 +223,7 @@ function updateModeUI() {
   if (currentMode === 'read') {
     buttons.forEach(btn => {
       const text = btn.textContent;
+      // In lettura sono abilitati solo Home, Esercizi, Elenco
       btn.disabled = !(text.includes('Home') || text.includes('Esercizi') || text.includes('Elenco'));
     });
     toolbar(false);
@@ -268,7 +250,6 @@ function updateMobileModeUI() {
 // PAGINA ESERCIZI
 // ============================================
 function renderEsercizi() {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   toolbar(false);
   mobileInsertToolbar(false);
 
@@ -302,6 +283,7 @@ function setFiltroMuscolo(m) {
   renderEsercizi();
 }
 
+// Card esercizio riutilizzabile (selezionabile = onclick aggiunge alla scheda)
 function renderEsercizioCard(e, selezionabile) {
   const colore = MUSCOLI_COLORI[e.muscolo] || '#666';
   const textColor = getTextColorForBg(colore);
@@ -328,7 +310,6 @@ function renderEsercizioCard(e, selezionabile) {
 // DETTAGLIO ESERCIZIO
 // ============================================
 function renderDettaglioEsercizio(id) {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   toolbar(false);
   mobileInsertToolbar(false);
 
@@ -367,7 +348,6 @@ function renderDettaglioEsercizio(id) {
 // ============================================
 function mostraFormEsercizio(id) {
   if (currentMode !== 'edit') return;
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
 
   const ex = id ? catalogo.find(e => e.id === id) : null;
   esercizioInModifica = ex ? ex.id : null;
@@ -408,6 +388,7 @@ function mostraFormEsercizio(id) {
   `;
 }
 
+// Ridimensiona e comprime l'immagine caricata (JPEG, max 600px, qualità 0.75)
 function anteprimaFoto(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -450,6 +431,7 @@ function salvaEsercizio(event) {
     return;
   }
 
+  // L'upload base64 vince sul campo URL
   const foto = fotoBase64 || fotoUrl;
 
   if (esercizioInModifica) {
@@ -463,6 +445,7 @@ function salvaEsercizio(event) {
     alert('✅ Esercizio aggiornato');
     renderDettaglioEsercizio(ex.id);
   } else {
+    // Genera ID univoco slug
     const baseId = nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'esercizio';
     let id = baseId;
     let counter = 1;
@@ -489,7 +472,6 @@ function eliminaEsercizio(id) {
 // ============================================
 function apriSelettoreEsercizio() {
   if (currentMode !== 'edit') return;
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   toolbar(false);
 
   const listaFiltrata = filtroMuscolo === 'Tutti'
@@ -546,7 +528,7 @@ function aggiungiEsercizioDaCatalogo(esercizioId, n) {
   const nuovo = {
     type: "exercise",
     esercizioId: esercizioId,
-    nome: ex.nome,
+    nome: ex.nome,  // mantenuto per retrocompatibilità
     rows: n || 1,
     serie: Array(n || 1).fill(""),
     kg: Array(n || 1).fill(""),
@@ -565,12 +547,14 @@ function aggiungiEsercizioLibero() {
   const n = prompt('Quante righe (serie)? (default 1, max 10)', '1');
   if (n === null) return;
   const num = Math.max(1, Math.min(10, parseInt(n) || 1));
-  addExercise(num);
+  addExercise(num);  // riusa la funzione esistente
 }
 
 // ============================================
 // HELPER BLOCCO ESERCIZIO
 // ============================================
+// Restituisce il nome visualizzato di un blocco esercizio
+// (dal catalogo se ha esercizioId, altrimenti dal campo nome)
 function getNomeBloccoEsercizio(b) {
   if (b.esercizioId) {
     const ex = catalogo.find(e => e.id === b.esercizioId);
@@ -604,7 +588,6 @@ function toggleExerciseDropdown() {
 // ============================================
 function nuovaScheda() {
   if (currentMode !== 'edit') return;
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
 
   const s = {
     id: Date.now(),
@@ -628,7 +611,6 @@ function getS() {
 // RENDER SCHEDA
 // ============================================
 function renderScheda() {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   toolbar(true);
   mobileInsertToolbar(true);
   const s = getS();
@@ -727,6 +709,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       rows += `<tr>`;
 
       if (r === 0) {
+        // Se dal catalogo: nome read-only. Se libero: editabile in edit mode.
         const nomeDisabilitato = !isEditMode || isCatalogExercise;
         const nomeOninput = isCatalogExercise ? '' : `oninput="updateField(${i}, 'nome', this.value)"`;
         rows += `<td rowspan="${numRows}" class="col-esercizio">
@@ -1002,7 +985,6 @@ function rename(v) {
 // ELENCO SCHEDE
 // ============================================
 function elencoSchede() {
-  setHomeActive(false);   // ▼▼▼ MODIFICA ▼▼▼
   toolbar(false);
   mobileInsertToolbar(false);
 
