@@ -1015,6 +1015,28 @@ table {
 }
 
 /* ============================================
+   HEADER NASCOSTO SULLA MASCHERA INIZIALE
+   ============================================ */
+body.home-active header {
+  display: none;
+}
+
+/* Quando l'header è nascosto, sposta il main in alto
+   (altrimenti resta il margin-top: 80px pensato per l'header fisso) */
+body.home-active main {
+  margin-top: 0;
+  padding: 0;
+}
+
+/* E nella media query mobile */
+@media (max-width: 900px) {
+  body.home-active main {
+    margin-top: 0;
+    padding: 0;
+  }
+}
+
+/* ============================================
    MEDIA QUERY - SMARTPHONE (max 900px)
    ============================================ */
 
@@ -1159,4 +1181,12 @@ table {
     font-size: 22px;
     padding: 16px;
   }
+}
+body.home-active main {
+  margin-top: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

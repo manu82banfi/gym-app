@@ -127,6 +127,7 @@ async function init() {
 function renderHome() {
   toolbar(false);
   mobileInsertToolbar(false);
+  document.body.classList.add('home-active');   // ← NASCONDE l'header
 
   const app = document.getElementById("app");
   app.innerHTML = `
@@ -252,6 +253,7 @@ function updateMobileModeUI() {
 function renderEsercizi() {
   toolbar(false);
   mobileInsertToolbar(false);
+  document.body.classList.remove('home-active');   // ← MOSTRA l'header
 
   const listaFiltrata = filtroMuscolo === 'Tutti'
     ? catalogo
@@ -312,6 +314,7 @@ function renderEsercizioCard(e, selezionabile) {
 function renderDettaglioEsercizio(id) {
   toolbar(false);
   mobileInsertToolbar(false);
+  document.body.classList.remove('home-active');   // ← MOSTRA l'header
 
   const ex = catalogo.find(e => e.id === id);
   if (!ex) { renderEsercizi(); return; }
@@ -613,6 +616,7 @@ function getS() {
 function renderScheda() {
   toolbar(true);
   mobileInsertToolbar(true);
+  document.body.classList.remove('home-active');   // ← MOSTRA l'header
   const s = getS();
 
   if (!s) { renderHome(); return; }
@@ -987,6 +991,7 @@ function rename(v) {
 function elencoSchede() {
   toolbar(false);
   mobileInsertToolbar(false);
+  document.body.classList.remove('home-active');   // ← MOSTRA l'header
 
   app.innerHTML = `
     <div style="padding:20px;">
