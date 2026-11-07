@@ -127,45 +127,27 @@ async function init() {
 function renderHome() {
   toolbar(false);
   mobileInsertToolbar(false);
-  document.body.classList.add('home-active');   // NASCONDE l'header
 
   const app = document.getElementById("app");
   app.innerHTML = `
     <div class="home-screen">
       <button class="home-tile" onclick="vaiAllenamento()">
         <img src="img/allenamento.png" alt="Allenamento"
-             onload="checkHomeImage(this)"
-             onerror="nascondiHomeImage(this)">
+             onerror="this.style.display='none'; this.parentElement.classList.add('no-img')">
         <span class="home-tile-label">Allenamento</span>
       </button>
       <button class="home-tile" onclick="vaiCreaScheda()">
         <img src="img/crea-scheda.png" alt="Crea scheda"
-             onload="checkHomeImage(this)"
-             onerror="nascondiHomeImage(this)">
+             onerror="this.style.display='none'; this.parentElement.classList.add('no-img')">
         <span class="home-tile-label">Crea scheda</span>
       </button>
       <button class="home-tile" onclick="vaiEsercizi()">
         <img src="img/esercizi.png" alt="Esercizi"
-             onload="checkHomeImage(this)"
-             onerror="nascondiHomeImage(this)">
+             onerror="this.style.display='none'; this.parentElement.classList.add('no-img')">
         <span class="home-tile-label">Esercizi</span>
       </button>
     </div>
   `;
-}
-
-// Fallback robusto per le immagini della home:
-// se il file non c'è (404) o è corrotto (dimensioni 0) nasconde l'<img>
-// e mostra solo il testo grande.
-function nascondiHomeImage(img) {
-  img.style.display = 'none';
-  if (img.parentElement) img.parentElement.classList.add('no-img');
-}
-
-function checkHomeImage(img) {
-  if (!img.naturalWidth || !img.naturalHeight) {
-    nascondiHomeImage(img);
-  }
 }
 
 function vaiAllenamento() {
@@ -241,6 +223,7 @@ function updateModeUI() {
   if (currentMode === 'read') {
     buttons.forEach(btn => {
       const text = btn.textContent;
+      // In lettura sono abilitati solo Home, Esercizi, Elenco
       btn.disabled = !(text.includes('Home') || text.includes('Esercizi') || text.includes('Elenco'));
     });
     toolbar(false);
@@ -269,7 +252,6 @@ function updateMobileModeUI() {
 function renderEsercizi() {
   toolbar(false);
   mobileInsertToolbar(false);
-  document.body.classList.remove('home-active');   // MOSTRA l'header
 
   const listaFiltrata = filtroMuscolo === 'Tutti'
     ? catalogo
@@ -330,7 +312,6 @@ function renderEsercizioCard(e, selezionabile) {
 function renderDettaglioEsercizio(id) {
   toolbar(false);
   mobileInsertToolbar(false);
-  document.body.classList.remove('home-active');   // MOSTRA l'header
 
   const ex = catalogo.find(e => e.id === id);
   if (!ex) { renderEsercizi(); return; }
@@ -367,7 +348,6 @@ function renderDettaglioEsercizio(id) {
 // ============================================
 function mostraFormEsercizio(id) {
   if (currentMode !== 'edit') return;
-  document.body.classList.remove('home-active');   // MOSTRA l'header
 
   const ex = id ? catalogo.find(e => e.id === id) : null;
   esercizioInModifica = ex ? ex.id : null;
@@ -493,7 +473,6 @@ function eliminaEsercizio(id) {
 function apriSelettoreEsercizio() {
   if (currentMode !== 'edit') return;
   toolbar(false);
-  document.body.classList.remove('home-active');   // MOSTRA l'header
 
   const listaFiltrata = filtroMuscolo === 'Tutti'
     ? catalogo
@@ -574,6 +553,8 @@ function aggiungiEsercizioLibero() {
 // ============================================
 // HELPER BLOCCO ESERCIZIO
 // ============================================
+// Restituisce il nome visualizzato di un blocco esercizio
+// (dal catalogo se ha esercizioId, altrimenti dal campo nome)
 function getNomeBloccoEsercizio(b) {
   if (b.esercizioId) {
     const ex = catalogo.find(e => e.id === b.esercizioId);
@@ -632,7 +613,6 @@ function getS() {
 function renderScheda() {
   toolbar(true);
   mobileInsertToolbar(true);
-  document.body.classList.remove('home-active');   // MOSTRA l'header
   const s = getS();
 
   if (!s) { renderHome(); return; }
@@ -729,6 +709,7 @@ function renderBlocco(b, i, isEditMode, isTrainMode) {
       rows += `<tr>`;
 
       if (r === 0) {
+        // Se dal catalogo: nome read-only. Se libero: editabile in edit mode.
         const nomeDisabilitato = !isEditMode || isCatalogExercise;
         const nomeOninput = isCatalogExercise ? '' : `oninput="updateField(${i}, 'nome', this.value)"`;
         rows += `<td rowspan="${numRows}" class="col-esercizio">
@@ -1006,7 +987,6 @@ function rename(v) {
 function elencoSchede() {
   toolbar(false);
   mobileInsertToolbar(false);
-  document.body.classList.remove('home-active');   // MOSTRA l'header
 
   app.innerHTML = `
     <div style="padding:20px;">
