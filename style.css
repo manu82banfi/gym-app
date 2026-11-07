@@ -38,9 +38,9 @@
   /* ============================================
      HOME - DIMENSIONI PULSANTI (MODIFICA QUI)
      ============================================ */
-  --home-tile-height: 200px;       /* Altezza pulsante home desktop */
-  --home-tile-height-mobile: 90px;/* Altezza pulsante home mobile */
-  --home-tile-maxwidth: 400px;     /* Larghezza massima maschera */
+  --home-tile-height: 160px;       /* Altezza pulsante home desktop */
+  --home-tile-height-mobile: 110px;/* Altezza pulsante home mobile */
+  --home-tile-maxwidth: 700px;     /* Larghezza massima maschera */
 }
 
 /* ============================================
@@ -737,6 +737,284 @@ table {
 }
 
 /* ============================================
+   PAGINA ESERCIZI
+   ============================================ */
+.esercizi-page {
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.esercizi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.esercizi-header h2 {
+  margin: 0;
+}
+
+.esercizi-empty {
+  color: var(--text-light);
+  padding: 30px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Filtro muscoli (chips) */
+.filtro-muscoli {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.muscolo-chip {
+  background: var(--bg-button);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.muscolo-chip:hover {
+  background: var(--bg-button-hover);
+}
+
+.muscolo-chip.active {
+  background: var(--mode-active-bg);
+  border-color: var(--mode-active-bg);
+  font-weight: bold;
+}
+
+/* Griglia esercizi */
+.esercizi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+/* Card esercizio */
+.esercizio-card {
+  background: var(--card-bg);
+  border: 1px solid #1f3557;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+
+.esercizio-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--mode-active-bg);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.esercizio-card.selezionabile {
+  border-color: var(--mode-active-bg);
+}
+
+/* Thumb (miniatura) */
+.esercizio-thumb {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  background: #0a1828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+}
+
+.esercizio-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.esercizio-thumb.no-img {
+  background: linear-gradient(135deg, #10233f 0%, #1a3050 100%);
+}
+
+.esercizio-thumb.no-img span {
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
+}
+
+.esercizio-card-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.esercizio-nome {
+  color: var(--text-light);
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.muscolo-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+}
+
+/* Dettaglio esercizio */
+.esercizio-dettaglio {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dettaglio-body {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.dettaglio-foto {
+  width: 300px;
+  max-width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #0a1828;
+  border: 1px solid var(--border-color);
+}
+
+.dettaglio-foto.no-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #10233f 0%, #1a3050 100%);
+}
+
+.dettaglio-info {
+  flex: 1;
+  min-width: 250px;
+  color: var(--text-light);
+}
+
+.dettaglio-info h2 {
+  margin-top: 0;
+}
+
+.dettaglio-note {
+  margin: 15px 0;
+  font-size: 14px;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.dettaglio-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Form esercizio */
+.esercizio-form-page {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--text-light);
+}
+
+.form-esercizio {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.form-esercizio label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.form-esercizio input,
+.form-esercizio select,
+.form-esercizio textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-button);
+  color: var(--text-light);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.form-esercizio input:focus,
+.form-esercizio select:focus,
+.form-esercizio textarea:focus {
+  outline: 2px solid var(--mode-active-bg);
+}
+
+.foto-preview {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a1828;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.foto-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.btn-primary {
+  background: var(--mode-active-bg);
+  color: white;
+  font-weight: bold;
+}
+
+.btn-danger {
+  background: #7a1f1f;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #a02525;
+}
+
+/* ============================================
    MEDIA QUERY - SMARTPHONE (max 900px)
    ============================================ */
 @media (max-width: 900px) {
@@ -851,5 +1129,32 @@ table {
   .home-tile.no-img .home-tile-label {
     font-size: 22px;
     padding: 16px;
+  }
+  /* Esercizi mobile */
+  .esercizi-page {
+    padding: 10px;
+  }
+  .esercizi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .esercizio-thumb {
+    height: 90px;
+  }
+  .esercizio-nome {
+    font-size: 13px;
+  }
+  .esercizio-dettaglio {
+    padding: 10px;
+  }
+  .dettaglio-body {
+    flex-direction: column;
+  }
+  .dettaglio-foto {
+    width: 100%;
+    height: 220px;
+  }
+  .esercizio-form-page {
+    padding: 10px;
   }
 }
