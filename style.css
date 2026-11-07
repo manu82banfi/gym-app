@@ -667,8 +667,8 @@ table {
   flex-direction: column;
   gap: 20px;
   padding: 20px;
-  max-width: var(--home-tile-maxwidth);  /* larghezza massima (modifica in :root) */
-  margin: 0 auto;                         /* centrata orizzontalmente */
+  max-width: var(--home-tile-maxwidth);
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -678,7 +678,7 @@ table {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: var(--home-tile-height);        /* ALTEZZA FISSA: modifica in :root */
+  height: var(--home-tile-height);
   padding: 0;
   margin: 0;
   border: 2px solid var(--border-color);
@@ -687,7 +687,7 @@ table {
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-  font-size: 13px;                         /* reset font nativo del <button> */
+  font-size: 13px;
   color: var(--text-light);
   box-sizing: border-box;
 }
@@ -708,7 +708,7 @@ table {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;      /* cover = riempie tutto. Se preferisci l'immagine intera, usa contain */
+  object-fit: cover;
   display: block;
 }
 
@@ -1021,14 +1021,17 @@ body.home-active header {
   display: none;
 }
 
-/* Quando l'header è nascosto, sposta il main in alto
-   (altrimenti resta il margin-top: 80px pensato per l'header fisso) */
+/* Quando l'header è nascosto, sposta il main in alto e centra verticalmente */
 body.home-active main {
   margin-top: 0;
   padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* E nella media query mobile */
+/* Variante mobile (ridondante ma esplicita) */
 @media (max-width: 900px) {
   body.home-active main {
     margin-top: 0;
@@ -1039,7 +1042,6 @@ body.home-active main {
 /* ============================================
    MEDIA QUERY - SMARTPHONE (max 900px)
    ============================================ */
-
 @media (max-width: 900px) {
   .desktop-header {
     display: none !important;
@@ -1160,17 +1162,14 @@ body.home-active main {
     padding: 10px;
   }
   
-  /* ==========================================
-     HOME MOBILE - pulsanti con altezza fissa ridotta
-     (modifica --home-tile-height-mobile in :root)
-     ========================================== */
+  /* HOME MOBILE - pulsanti con altezza fissa ridotta */
   .home-screen {
     gap: 14px;
     padding: 12px;
     max-width: 100%;
   }
   .home-tile {
-    height: var(--home-tile-height-mobile);  /* altezza fissa, NON aspect-ratio */
+    height: var(--home-tile-height-mobile);
     border-radius: 12px;
   }
   .home-tile-label {
@@ -1181,12 +1180,4 @@ body.home-active main {
     font-size: 22px;
     padding: 16px;
   }
-}
-body.home-active main {
-  margin-top: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
