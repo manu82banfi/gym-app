@@ -1,3 +1,31 @@
+  /* Esercizi mobile */
+  .esercizi-page {
+    padding: 10px;
+  }
+  .esercizi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .esercizio-thumb {
+    height: 90px;
+  }
+  .esercizio-nome {
+    font-size: 13px;
+  }
+  .esercizio-dettaglio {
+    padding: 10px;
+  }
+  .dettaglio-body {
+    flex-direction: column;
+  }
+  .dettaglio-foto {
+    width: 100%;
+    height: 220px;
+  }
+  .esercizio-form-page {
+    padding: 10px;
+  }
+
 /* ============================================
    HEADER NASCOSTO SULLA MASCHERA INIZIALE
    Quando body ha .home-active: nasconde header + centra la maschera
