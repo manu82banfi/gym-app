@@ -1017,6 +1017,7 @@ table {
 /* ============================================
    MEDIA QUERY - SMARTPHONE (max 900px)
    ============================================ */
+
 @media (max-width: 900px) {
   .desktop-header {
     display: none !important;
@@ -1108,28 +1109,7 @@ table {
     padding: 7px 12px !important;
     font-size: 12.6px !important;
   }
-  
-  /* ==========================================
-     HOME MOBILE - pulsanti con altezza fissa ridotta
-     (modifica --home-tile-height-mobile in :root)
-     ========================================== */
-  .home-screen {
-    gap: 14px;
-    padding: 12px;
-    max-width: 100%;
-  }
-  .home-tile {
-    height: var(--home-tile-height-mobile);  /* altezza fissa, NON aspect-ratio */
-    border-radius: 12px;
-  }
-  .home-tile-label {
-    font-size: 18px;
-    padding: 10px;
-  }
-  .home-tile.no-img .home-tile-label {
-    font-size: 22px;
-    padding: 16px;
-  }
+
   /* Esercizi mobile */
   .esercizi-page {
     padding: 10px;
@@ -1156,5 +1136,27 @@ table {
   }
   .esercizio-form-page {
     padding: 10px;
+  }
+  
+  /* ==========================================
+     HOME MOBILE - pulsanti con altezza fissa ridotta
+     (modifica --home-tile-height-mobile in :root)
+     ========================================== */
+  .home-screen {
+    gap: 14px;
+    padding: 12px;
+    max-width: 100%;
+  }
+  .home-tile {
+    height: var(--home-tile-height-mobile);  /* altezza fissa, NON aspect-ratio */
+    border-radius: 12px;
+  }
+  .home-tile-label {
+    font-size: 18px;
+    padding: 10px;
+  }
+  .home-tile.no-img .home-tile-label {
+    font-size: 22px;
+    padding: 16px;
   }
 }
